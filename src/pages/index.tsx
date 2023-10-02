@@ -1,16 +1,21 @@
+import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
+import Link from "next/link";
 
-export default function Login() {
+import { api } from "@/utils/api";
+
+export default function Home() {
+  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+
   return (
-    <>
-      <Head>
-        <title>Orbit NTNU Intranett</title>
-        <meta name="description" content="Intranett for Orbit NTNU" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <main className="flex h-screen items-center justify-center">
-        Welcome to the protected part of Orbit Intranett!
-      </main>
-    </>
+    <Layout>
+      <div>Velkomstord</div>
+      <Events></Events>
+      <Memes></Memes>
+      <Posts></Posts>
+      <NewMembers></NewMembers>
+    </Layout>
   );
 }
+
+export default Home;

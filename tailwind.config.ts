@@ -5,8 +5,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        "orbit-blue": "#1972B5",
-        "orbit-yellow": "#E3A836",
+        primaryColor: "#171026",
+        secondaryColorOne: "#586F7C",
+        secondaryColorTwo: "#271F38",
+        accentColorOne: "#B8DBD9",
+        accentColorTwo: "#EAB308",
       },
     },
   },
