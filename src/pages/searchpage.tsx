@@ -1,33 +1,8 @@
 import React, { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
-
-// Define the shape of a single search result
-interface SearchResult {
-    id: number;
-    name: string;
-    team: string;
-    role: string;
-    email: string;
-  }
-
-const members: SearchResult[] = [
-    {
-      id: 1,
-      name: 'John Doe',
-      team: 'Web',
-      role: 'Team Lead',
-      email: 'john@example.com',
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      team: 'SubOrbital',
-      role: 'Project Manager',
-      email: 'jane@example.com',
-    },
-    // Add more members here...
-  ];
+import { SearchResult } from '@/interfaces/SearchResult';
+import members from '@/mockdata/MockSearchResults';
 
 function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
