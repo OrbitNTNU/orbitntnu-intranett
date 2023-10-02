@@ -1,16 +1,9 @@
 // components/SearchResults.js
+import { SearchResult } from '@/interfaces/SearchResult';
 import React from 'react';
 
 interface SearchResultsProps {
   results: SearchResult[];
-}
-
-interface SearchResult {
-  id: number;
-  name: string;
-  team: string;
-  role: string;
-  email: string;
 }
 
 const SearchResults = ({ results }: SearchResultsProps) => {
