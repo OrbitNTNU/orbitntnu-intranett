@@ -1,12 +1,10 @@
-import { signIn, signOut, useSession } from "next-auth/react";
-import Head from "next/head";
-import Link from "next/link";
+import Layout from "@/templates/Layout";
+import Events from "@/views/Events";
+import Memes from "@/views/Memes";
+import NewMembers from "@/views/New-members";
+import Posts from "@/views/Posts";
 
-import { api } from "@/utils/api";
-
-export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
+const Home = () => {
   return (
     <Layout>
       <div>Velkomstord</div>
@@ -16,6 +14,6 @@ export default function Home() {
       <NewMembers></NewMembers>
     </Layout>
   );
-}
+};
 
 export default Home;
