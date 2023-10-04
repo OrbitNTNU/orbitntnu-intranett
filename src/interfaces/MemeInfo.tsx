@@ -1,7 +1,5 @@
-import { StaticImageData } from "next/image";
-
 export interface MemeInfo {
     creator: string;
-    meme: StaticImageData;
+    meme: string;
     date: Date;
   }
