@@ -4,7 +4,7 @@ import SearchResults from '@/components/SearchResults';
 import { SearchResult } from '@/interfaces/SearchResult';
 import members from '@/mockdata/MockSearchResults';
 
-function SearchPage() {
+export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>(members);
 
@@ -42,5 +42,3 @@ function SearchPage() {
     </div>
   );
 }
-
-export default SearchPage;
