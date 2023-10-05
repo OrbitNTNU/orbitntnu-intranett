@@ -1,4 +1,4 @@
-import { SearchResult } from "../interfaces/SearchResult";
+import { SearchResult } from "@/interfaces/SearchResult";
 
 const members: SearchResult[] = [
     {
