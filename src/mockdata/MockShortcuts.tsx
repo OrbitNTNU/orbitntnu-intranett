@@ -3,42 +3,42 @@ import { ShortcutLink } from "@/interfaces/ShortcutLink"
 const mockShortcuts: ShortcutLink[] = [
     {
         header: 'Your profile',
-        description: '',
+        description: 'Check out your profile',
         url: '/'
     },
     {
         header: 'Contact HR',
-        description: '',
+        description: 'Contact HR here',
         url: 'https://forms.gle/L7Kpnzb9w2qRa9Bx5',
     },
     {
         header: 'Calender',
-        description: '',
+        description: 'Check out Orbit events',
         url: '/',
     },
     {
         header: 'Search for Orbiter',
-        description: '',
+        description: 'Search for your friends',
         url: '/searchpage',
     },
     {
         header: 'Announcements',
-        description: '',
+        description: 'Announcements from Board',
         url: '/announcements',
     },
     {
         header: 'Blog',
-        description: '',
+        description: 'What is Orbit up to lately?',
         url: '/',
     },
     {
         header: 'Legacy page',
-        description: '',
+        description: 'View earlier Orbit teams',
         url: '/',
     },
     {
         header: 'Meme gallery',
-        description: '',
+        description: 'Check out our digital meme page',
         url: '/memegallery',
     }
 ]

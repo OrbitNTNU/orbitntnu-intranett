@@ -10,7 +10,7 @@ export const Shortcut = ({ header, description, url }: ShortcutLink) => {
             <p className="text-2xl font-bold text-center">
                 {header}
             </p>
-            <p className='align-left'>
+            <p className='align-left text-subtext'>
                 {description}
             </p>
         </a>
