@@ -36,7 +36,7 @@ const Header = () => {
         <p className={`${show ? "-mt-2" : ""}`}>ger</p>
         </button>}
         {show && 
-        <div className="absolute top-0 right-0 mt-16 flex flex-col bg-accentColorTwo justify-start items-end w-40 p-2 rounded-sm">
+        <div className="absolute top-0 right-0 mt-16 mr-1 flex flex-col bg-accentColorTwo justify-start items-end w-40 p-3 rounded-sm">
           <a href="https://orbitntnu.com/">Your profile</a>
           <a>Contact HR</a>
           <a>Calendar</a>
