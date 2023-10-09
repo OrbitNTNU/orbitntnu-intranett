@@ -11,6 +11,6 @@ h2 {
 }
 
 body {
-    @apply bg-primaryColor;
+    @apply bg-gradient-to-b from-[#010332] to-[#29011C];
     color: white;
 }

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
-import { SearchResult } from '@/interfaces/SearchResult';
-import members from '@/mockdata/MockSearchResults';
+import { Member } from '@/interfaces/Member';
+import members from '@/mockdata/MockMembers'; // Import your mock members data here
+import teamHistories from '@/mockdata/MockTeamHistory'; // Import your mock team histories data here
+import teams from '@/mockdata/MockTeams'; // Import your mock teams data here
 
-function SearchPage() {
+export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<SearchResult[]>(members);
+  const [searchResults, setSearchResults] = useState<Member[]>(members);
 
   // Define the handleSearch function to perform the search
   const handleSearch = (query: string) => {
@@ -15,7 +17,7 @@ function SearchPage() {
     // Filter members based on the name attribute (case-insensitive)
     const filteredResults = members
       .filter((member) =>
-        member.name.toLowerCase().includes(query.toLowerCase())
+        member.firstName.toLowerCase().includes(query.toLowerCase())
       );
 
     // Update the searchResults state with the filtered results
@@ -38,9 +40,7 @@ function SearchPage() {
         onChange={handleInputChange}
         onSearch={handleSearch}
       />
-      <SearchResults results={searchResults} />
+      <SearchResults members={searchResults} teamHistories={teamHistories} teams={teams} />
     </div>
   );
 }
-
-export default SearchPage;
