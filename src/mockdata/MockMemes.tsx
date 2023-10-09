@@ -1,7 +1,7 @@
 import { MemeInfo } from "@/interfaces/MemeInfo";
 import burningHouse from '@/mockdata/burning-house.png';
 
-const memes: MemeInfo[] = [
+const mockMemes: MemeInfo[] = [
     {
         creator: 'Knoll',
         meme: burningHouse,
@@ -44,4 +44,4 @@ const memes: MemeInfo[] = [
     }
 ];
 
-export default memes;
+export default mockMemes;
