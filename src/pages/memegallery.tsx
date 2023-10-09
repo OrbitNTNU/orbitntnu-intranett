@@ -14,7 +14,6 @@ const memegallery = () => {
             <Memes memes={memes}/>
         </div>
     );
-
 }
 
 export default memegallery;

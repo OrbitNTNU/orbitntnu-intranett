@@ -9,7 +9,7 @@ const mockShortcuts: ShortcutLink[] = [
     {
         header: 'Contact HR',
         description: '',
-        url: '/',
+        url: 'https://forms.gle/L7Kpnzb9w2qRa9Bx5',
     },
     {
         header: 'Calender',
@@ -17,14 +17,14 @@ const mockShortcuts: ShortcutLink[] = [
         url: '/',
     },
     {
-        header: 'Search for orbiter',
+        header: 'Search for Orbiter',
         description: '',
-        url: '/',
+        url: '/searchpage',
     },
     {
         header: 'Announcements',
         description: '',
-        url: '/',
+        url: '/announcements',
     },
     {
         header: 'Blog',
