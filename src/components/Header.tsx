@@ -23,10 +23,10 @@ const Header = () => {
       </div>
       
       
-      {<button  className={`${show ? "flex w-24" : "flex w-24 "} `} onClick={() => setShow(!show)}>  
-        <p>Ham</p>
-        <p>bur</p>
-        <p>ger</p></button>}
+      {<button  className={`${show ? "flex flex-col -gap-3 items-center transition-all duration-300 w-24" : "flex w-24 "} `} onClick={() => setShow(!show)}>  
+        <p className={`${show ? "-mt-2" : ""}`}>Ham</p>
+        <p className={`${show ? "-mt-2" : ""}`}>bur</p>
+        <p className={`${show ? "-mt-2" : ""}`}>ger</p></button>}
       {show && 
         <div className="absolute top-0 right-0 mt-16 flex flex-col bg-accentColorTwo flex justify-start items-end w-40 p-2 rounded-sm">
         <a href="https://orbitntnu.com/">Your profile</a>
