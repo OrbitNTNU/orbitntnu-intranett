@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
 import { Member } from '@/interfaces/Member';
+import { SearchResultCards } from '@/views/SearchResultCards';
 import members from '@/mockdata/MockMembers'; // Import your mock members data here
 import teamHistories from '@/mockdata/MockTeamHistory'; // Import your mock team histories data here
 import teams from '@/mockdata/MockTeams'; // Import your mock teams data here
@@ -40,7 +41,7 @@ export default function SearchPage() {
         onChange={handleInputChange}
         onSearch={handleSearch}
       />
-      <SearchResults members={searchResults} teamHistories={teamHistories} teams={teams} />
+      <SearchResultCards members={searchResults} teamHistories={teamHistories} teams={teams} />
     </div>
   );
 }
