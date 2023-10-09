@@ -3,18 +3,12 @@ import Events from "@/views/Events";
 import NewMembers from "@/views/New-members";
 import Posts from "@/views/Posts";
 import { Shortcuts } from "@/views/Shortcuts";
+import Welcome from "@/views/Welcome";
 
 const Home = () => {
   return (
     <Layout>
-      <hr className="border-t-4 border-accentColorTwo my-2"/>
-        <h2 className="flex justify-center font-bold text-5xl">
-            Velkommen
-        </h2>
-        <h1 className="flex justify-center font text-xl">
-            Velkommen
-        </h1>
-      <hr className="border-t-4 border-accentColorTwo my-2"/>
+      <Welcome></Welcome>
       <Events></Events>
       <Posts></Posts>
       <NewMembers></NewMembers>
