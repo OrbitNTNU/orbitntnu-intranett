@@ -44,7 +44,7 @@ const Header = () => {
           <a>Announcements</a>
           <a>Blog</a>
           <a>Legacy page</a>
-          <a>Meme gallery</a>
+          <a href="/memegallery">Meme gallery</a>
 
         </div>
       
