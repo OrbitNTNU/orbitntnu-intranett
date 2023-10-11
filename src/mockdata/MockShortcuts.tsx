@@ -9,7 +9,7 @@ const mockShortcuts: ShortcutLink[] = [
     {
         header: 'Contact HR',
         description: 'Contact HR here',
-        url: 'https://forms.gle/L7Kpnzb9w2qRa9Bx5',
+        url: 'https://forms.gle/f9J3YDGXo5tU4W6b7',
     },
     {
         header: 'Calendar',
