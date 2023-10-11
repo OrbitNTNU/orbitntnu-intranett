@@ -1,7 +1,7 @@
 // announcements.tsx
 
 import Layout from "@/templates/Layout";
-import Messages from "@/views/Messages";
+import Messages from "@/views/AnnouncementsView";
 
 const Announcements = () => {
   return (

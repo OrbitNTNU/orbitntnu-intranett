@@ -1,9 +1,8 @@
 import Layout from "@/templates/Layout";
-import Events from "@/views/Events";
-import NewMembers from "@/views/New-members";
-import Posts from "@/views/Posts";
-import { Shortcuts } from "@/views/Shortcuts";
-import Welcome from "@/views/Welcome";
+import Events from "@/views/CalendarView";
+import Posts from "@/views/PostsView";
+import { Shortcuts } from "@/views/ShortcutsView";
+import Welcome from "@/views/WelcomeView";
 
 const Home = () => {
   return (
@@ -11,7 +10,6 @@ const Home = () => {
       <Welcome></Welcome>
       <Events></Events>
       <Posts></Posts>
-      <NewMembers></NewMembers>
       <Shortcuts/>
     </Layout>
   );

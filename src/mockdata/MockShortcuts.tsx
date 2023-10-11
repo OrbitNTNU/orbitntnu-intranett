@@ -4,7 +4,7 @@ const mockShortcuts: ShortcutLink[] = [
     {
         header: 'Your profile',
         description: 'Check out your profile',
-        url: '/'
+        url: '/profile'
     },
     {
         header: 'Contact HR',
@@ -12,9 +12,9 @@ const mockShortcuts: ShortcutLink[] = [
         url: 'https://forms.gle/L7Kpnzb9w2qRa9Bx5',
     },
     {
-        header: 'Calender',
+        header: 'Calendar',
         description: 'Check out Orbit events',
-        url: '/',
+        url: '/calendar',
     },
     {
         header: 'Search for Orbiter',
@@ -29,17 +29,22 @@ const mockShortcuts: ShortcutLink[] = [
     {
         header: 'Blog',
         description: 'What is Orbit up to lately?',
-        url: '/',
+        url: '/blog',
     },
     {
         header: 'Legacy page',
         description: 'View earlier Orbit teams',
-        url: '/',
+        url: '/legacy',
     },
     {
         header: 'Meme gallery',
         description: 'Check out our digital meme page',
         url: '/memegallery',
+    },
+    {
+        header: 'Link tree',
+        description: 'Find a useful link',
+        url: '/links',
     }
 ]
 
