@@ -1,17 +1,16 @@
-import Layout from '@/templates/Layout';
-import React from 'react';
+import Layout from "@/templates/Layout";
 
-const homepage = () => {
+const profile = () => {
 
     return (
         <Layout>
             <div className="flex justify-center">
                 <p>
-                    This is the homepage
+                    This if your profile
                 </p>
             </div>
         </Layout>
     )
 }
 
-export default homepage;
+export default profile;

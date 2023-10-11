@@ -1,4 +1,4 @@
-import { Message } from "@/views/Messages";
+import { Message } from "@/views/AnnouncementsView";
 
 const mockMesages: Message[] = [
     { 
