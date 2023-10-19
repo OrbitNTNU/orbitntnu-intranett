@@ -34,22 +34,22 @@ const appications = () => {
             <div style={popupDisplay}>
                 <ApplicantPopUp applicant={popupApplicant} closePopUpFunction={closeApplicantPopUp}/>
             </div>
-            <div className="flex flex-row wrap justify-center gap-8">
-                <div className="flex flex-col items-center w-[400px]">
+            <div className="flex flex-row flex-wrap justify-center gap-8">
+                <div className="flex flex-col items-center w-[300px]">
                     <h2 className="font-medium">
                         Unhandled
                     </h2>
                     <ApplicantCards onClickFunction={applicantPopUp} applicants={unHandledApplicants}/>
                 </div>
                 <div className="border-r-2 border-secondaryColorTwo"/>
-                <div className="flex flex-col items-center w-[400px]">
+                <div className="flex flex-col items-center w-[300px]">
                     <h2 className="font-medium">
                         Conflict
                     </h2>
                     <ApplicantCards onClickFunction={applicantPopUp} applicants={conflictApplicants}/>
                 </div>
                 <div className="border-r-2 border-secondaryColorTwo"/>
-                <div className="flex flex-col items-center w-[400px]">
+                <div className="flex flex-col items-center w-[300px]">
                     <h2 className="font-medium">
                         For interview
                     </h2>
@@ -57,7 +57,7 @@ const appications = () => {
                 </div>
             </div>
             <div className="flex justify-center pt-20">
-                <div className="flex flex-col items-center w-[400px]">
+                <div className="flex flex-col items-center w-[300px]">
                     <h2 className="font-medium">
                         Dropped
                     </h2>
