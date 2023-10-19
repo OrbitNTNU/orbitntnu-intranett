@@ -19,12 +19,9 @@
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
-<<<<<<< HEAD
     "@types/jsonwebtoken": "^9.0.3",
     "jsonwebtoken": "^9.0.2",
-=======
     "font-awesome": "^4.7.0",
->>>>>>> a235cc8afe6d5f7545291c8c672849166d6b076e
     "next": "^13.4.19",
     "next-auth": "^4.23.0",
     "react": "18.2.0",
