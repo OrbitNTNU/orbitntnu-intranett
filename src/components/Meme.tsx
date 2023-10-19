@@ -3,8 +3,8 @@ import { MemeInfo } from '@/interfaces/MemeInfo';
 
 export const Meme = ({meme, creator, date}: MemeInfo) => {
     return (
-        <div className='m-4 p-4 rounded-lg bg-secondaryColorOne'>
-            <img src={meme.src} className='w-[350px]'/>
+        <div className='m-4 p-4'>
+            <img src={meme.src} className='w-[350px] rounded-lg'/>
             <p>
                 By: {creator}
             </p>
