@@ -20,6 +20,7 @@ const SearchBar = ({ query, onChange, onSearch }: SearchBarProps) => {
           width: '100%',
           padding: '10px',
           fontSize: '1.2rem',
+          color: 'black', // Set text color to black
         }}
       />
     </div>

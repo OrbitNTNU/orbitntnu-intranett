@@ -1,17 +1,16 @@
 import Layout from "@/templates/Layout";
-import Events from "@/views/Events";
-import Memes from "@/views/Memes";
-import NewMembers from "@/views/New-members";
-import Posts from "@/views/Posts";
+import Events from "@/views/CalendarView";
+import Posts from "@/views/PostsView";
+import { Shortcuts } from "@/views/ShortcutsView";
+import Welcome from "@/views/WelcomeView";
 
 const Home = () => {
   return (
     <Layout>
-      <div>Velkomstord</div>
+      <Welcome></Welcome>
       <Events></Events>
-      <Memes></Memes>
       <Posts></Posts>
-      <NewMembers></NewMembers>
+      <Shortcuts/>
     </Layout>
   );
 };
