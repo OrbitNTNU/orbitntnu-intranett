@@ -1,16 +1,16 @@
-import Layout from "@/templates/Layout";
+import mockMembers from '@/mockdata/MockMembers';
+import Layout from '@/templates/Layout';
+import { ProfileView } from '@/views/ProfileView';
+import { useSession } from 'next-auth/react';
 
-const profile = () => {
+const Profile = () => {
+  const { data: session } = useSession();
+   
+  return (
+    <Layout>
+      <ProfileView session={session} members={mockMembers} />
+    </Layout>
+  );
+};
 
-    return (
-        <Layout>
-            <div className="flex justify-center">
-                <p>
-                    This if your profile
-                </p>
-            </div>
-        </Layout>
-    )
-}
-
-export default profile;
+export default Profile;
