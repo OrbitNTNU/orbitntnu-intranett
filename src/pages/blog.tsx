@@ -1,10 +1,10 @@
 import Layout from "@/templates/Layout"
-import BlogPost from "@/components/blog/blogPost";
+import BlogPost from "@/components/blog/BlogPost";
 const blog = () => {
 
     return (
         <Layout>
-            <div className="flex flex-col justify-center">
+            <div className="">
                 <p>
                     This is the blog
                 </p>
