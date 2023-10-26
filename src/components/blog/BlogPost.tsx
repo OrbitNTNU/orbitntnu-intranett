@@ -26,13 +26,13 @@ const BlogPost = (post: BlogPostInterface) => {
       : blogPostData.announcement || ""; // Provide a default value if announcement is falsy
 
   return (
-    <div className="max-w-{74vw} m-3 flex flex-col items-center justify-between  outline">
+    <div className="max-w-74vw m-3 flex flex-col items-center justify-between outline">
       <h1>{blogPostData.title}</h1>
       <p className="m-3 text-center">{truncatedContent}</p>
-      <button className=" mb-2 h-7 w-24  rounded-md bg-[#EAB308] font-medium">
-        {" "}
+      <button className="mb-2 h-7 w-24 rounded-md bg-[#EAB308] font-medium">
         Read More
       </button>
+      <p className="text-sm">Posted: {blogPostData.postTime.toDateString()}</p>
     </div>
   );
 };

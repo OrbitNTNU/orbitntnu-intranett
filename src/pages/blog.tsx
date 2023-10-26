@@ -5,7 +5,6 @@ const blog = () => {
     <Layout>
       <div className="flex flex-col justify-start">
         <BlogPost />
-        <BlogPost />
       </div>
     </Layout>
   );
