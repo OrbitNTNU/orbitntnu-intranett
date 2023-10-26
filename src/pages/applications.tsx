@@ -11,11 +11,13 @@ const appications = () => {
     const conflictIDs: number[] = [3];
     const forInterviewIDs: number[] = [4];
     const droppedIDs: number[] = [1];
+    const acceptedIDs: number[] = [];
     
     const unHandledApplicants: Applicant[] = MockApplicants.filter((applicant) => unHandledIDs.includes(applicant.applicationID))
     const conflictApplicants: Applicant[] = MockApplicants.filter((applicant) => conflictIDs.includes(applicant.applicationID))
     const forInterviewApplicants: Applicant[] = MockApplicants.filter((applicant) => forInterviewIDs.includes(applicant.applicationID))
     const droppedApplicants: Applicant[] = MockApplicants.filter((applicant) => droppedIDs.includes(applicant.applicationID))
+    const acceptedApplicants: Applicant[] = MockApplicants.filter((applicant) => acceptedIDs.includes(applicant.applicationID))
 
     const [popupDisplay, setPopupDisplay] = useState({display: 'none'});
     const [popupApplicant, setPupupApplicant] = useState<Applicant | null>(null);
@@ -56,12 +58,18 @@ const appications = () => {
                     <ApplicantCards onClickFunction={applicantPopUp} applicants={forInterviewApplicants}/>
                 </div>
             </div>
-            <div className="flex justify-center pt-20">
+            <div className="flex flex-col justify-center pt-20">
                 <div className="flex flex-col items-center w-[300px]">
                     <h2 className="font-medium">
                         Dropped
                     </h2>
                     <ApplicantCards onClickFunction={applicantPopUp} applicants={droppedApplicants}/>
+                </div>
+                <div className="flex flex-col items-center w-[300px]">
+                    <h2 className="font-medium">
+                        Accepted
+                    </h2>
+                    <ApplicantCards onClickFunction={applicantPopUp} applicants={acceptedApplicants}/>
                 </div>
             </div>
         </Layout>
