@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import logoWhite from "../../public/images/orbitwhite.png"; // Import the image file
-import { VscAccount } from "react-icons/vsc";
 
 
 /* 
@@ -17,7 +16,7 @@ const Header = () => {
       
       <div className="flex justify-start">
         <a href="/">
-          <img className=" h-[8vh] relative" src={logoWhite.src} alt="Website logo"/>
+          <img className=" h-[7vh] p-4 relative" src={logoWhite.src} alt="Website logo"/>
         </a>
       </div>
 

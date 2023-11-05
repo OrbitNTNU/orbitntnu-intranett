@@ -7,6 +7,7 @@ import { api } from '@/utils/api';
 export default function SearchPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Member[]>([]); // Initialize searchResults with an empty array
 
   const membersData = api.members.getMembers.useQuery();
   const members = membersData.data || [];
@@ -26,9 +27,6 @@ export default function SearchPage() {
     setSearchResults(filteredResults);
   };
 
-  // Initialize search results with all members
-  const [searchResults, setSearchResults] = useState<Member[]>(members);
-
   const handleInputChange = (query: string) => {
     setSearchQuery(query);
     handleSearch(query);
@@ -38,6 +36,8 @@ export default function SearchPage() {
   useEffect(() => {
     if (membersData.isSuccess && teamHistoriesData.isSuccess && teamsData.isSuccess) {
       setLoading(false);
+      // Initialize searchResults with all members
+      setSearchResults(members);
     }
   }, [membersData.isSuccess, teamHistoriesData.isSuccess, teamsData.isSuccess]);
 
@@ -48,13 +48,10 @@ export default function SearchPage() {
       ) : (
         <div>
           <h1>Search Page</h1>
-          <SearchBar
-            query={searchQuery}
-            onChange={handleInputChange}
-          />
-          <SearchResults members={searchResults} teamHistories={teamHistories} teams={teams} />
         </div>
       )}
+      <SearchBar query={searchQuery} onChange={handleInputChange} />
+      <SearchResults members={searchResults} teamHistories={teamHistories} teams={teams} />
     </div>
   );
 }
