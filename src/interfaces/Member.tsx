@@ -1,14 +1,14 @@
 export interface Member {
-    mid: number;
-    firstName: string;
-    lastName: string;
-    activeStatus: boolean;
-    fieldOfStudy?: string;
-    birthday?: Date;
-    telephone?: number;
-    ntnuMail: string;
-    backupMail?: string;
-    nationalities?: string;
-    yearOfStudy?: number;
-    additionalComments?: string;
-  }
+  memberID?: number; // Make mid optional
+  firstName: string;
+  lastName: string;
+  activeStatus: boolean;
+  fieldOfStudy: string;
+  birthday: Date | null;
+  phoneNumber: string;
+  ntnuMail: string;
+  backupMail: string | null;
+  nationalities: string | null;
+  yearOfStudy: string | null;
+  additionalComments: string | null;
+}

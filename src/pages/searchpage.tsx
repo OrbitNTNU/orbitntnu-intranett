@@ -1,45 +1,56 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
 import { Member } from '@/interfaces/Member';
-import members from '@/mockdata/MockMembers'; // Import your mock members data here
-import teamHistories from '@/mockdata/MockTeamHistory'; // Import your mock team histories data here
-import teams from '@/mockdata/MockTeams'; // Import your mock teams data here
+import { api } from '@/utils/api';
 
 export default function SearchPage() {
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Member[]>(members);
+  const [searchResults, setSearchResults] = useState<Member[]>([]); // Initialize searchResults with an empty array
 
-  // Define the handleSearch function to perform the search
+  const membersData = api.members.getMembers.useQuery();
+  const members = membersData.data || [];
+
+  const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
+  const teamHistories = teamHistoriesData.data || [];
+
+  const teamsData = api.teams.getTeams.useQuery();
+  const teams = teamsData.data || [];
+
   const handleSearch = (query: string) => {
-    // Perform the search logic here based on the name attribute
-
     // Filter members based on the name attribute (case-insensitive)
     const filteredResults = members
       .filter((member) =>
         member.firstName.toLowerCase().includes(query.toLowerCase())
       );
-
-    // Update the searchResults state with the filtered results
     setSearchResults(filteredResults);
   };
 
-  // Handle input changes and trigger the search
   const handleInputChange = (query: string) => {
     setSearchQuery(query);
-
-    // Trigger the search with the updated query
     handleSearch(query);
   };
 
+  // Use `useEffect` to set `loading` to `false` when the data is available
+  useEffect(() => {
+    if (membersData.isSuccess && teamHistoriesData.isSuccess && teamsData.isSuccess) {
+      setLoading(false);
+      // Initialize searchResults with all members
+      setSearchResults(members);
+    }
+  }, [membersData.isSuccess, teamHistoriesData.isSuccess, teamsData.isSuccess]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh' }}>
-      <h1>Search Page</h1>
-      <SearchBar
-        query={searchQuery}
-        onChange={handleInputChange}
-        onSearch={handleSearch}
-      />
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          <h1>Search Page</h1>
+        </div>
+      )}
+      <SearchBar query={searchQuery} onChange={handleInputChange} />
       <SearchResults members={searchResults} teamHistories={teamHistories} teams={teams} />
     </div>
   );

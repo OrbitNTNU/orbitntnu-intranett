@@ -4,10 +4,9 @@ import React from 'react';
 interface SearchBarProps {
   query: string;
   onChange: (value: string) => void;
-  onSearch: (value: string) => void;
 }
 
-const SearchBar = ({ query, onChange, onSearch }: SearchBarProps) => {
+const SearchBar = ({ query, onChange}: SearchBarProps) => {
   return (
     <div style={{ marginTop: '20px' }}>
       {/* Add margin-top to move the SearchBar down */}
