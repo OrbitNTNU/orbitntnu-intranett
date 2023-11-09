@@ -2,27 +2,57 @@ import React, { useState } from "react";
 import Layout from "@/templates/Layout"
 import MockApplicants from "@/mockdata/MockApplicants";
 import { ApplicantCards } from "@/views/ApplicantCardsView/index";
-import Applicant from "@/interfaces/Applicant";
+import { Application } from "@/interfaces/Application";
 import ApplicantPopUp from "@/views/ApplicantPopUp";
+import { Interview } from "@/interfaces/Interview";
+import { api } from "@/utils/api";
+import { useSession } from "next-auth/react";
 
 const appications = () => {
-    
-    const unHandledIDs: number[] = [5, 2];
-    const conflictIDs: number[] = [3];
-    const forInterviewIDs: number[] = [4];
-    const droppedIDs: number[] = [1];
-    const acceptedIDs: number[] = [];
-    
-    const unHandledApplicants: Applicant[] = MockApplicants.filter((applicant) => unHandledIDs.includes(applicant.applicationID))
-    const conflictApplicants: Applicant[] = MockApplicants.filter((applicant) => conflictIDs.includes(applicant.applicationID))
-    const forInterviewApplicants: Applicant[] = MockApplicants.filter((applicant) => forInterviewIDs.includes(applicant.applicationID))
-    const droppedApplicants: Applicant[] = MockApplicants.filter((applicant) => droppedIDs.includes(applicant.applicationID))
-    const acceptedApplicants: Applicant[] = MockApplicants.filter((applicant) => acceptedIDs.includes(applicant.applicationID))
+
+    // const [fakeConflicts, setConflicts] = useState();
+
+    // const updateAll = () => {
+    //     const fakeConflictData = api.applications.fakeGetConflicts.useQuery();
+    //     const fakeConflicts = fakeConflictData.data || [];
+    //     setConflicts(fakeConflicts ? fakeConflicts : []);
+    // }
+
+    const session = useSession();
+    const googleToken = session.data?.user.id;
+    // console.log("\nGoogle token: " + googleToken)
+
+    const conflictsData = googleToken ? api.applications.getConflictApplicants.useQuery(googleToken) : undefined;
+    const conflicts = conflictsData ? conflictsData.data || [] : [];
+
+    const interviewData = googleToken ? api.applications.getInterviewApplications.useQuery(googleToken) : undefined;
+    // console.log("Interview data: " + interviewData)
+    const interviews = interviewData ? interviewData.data || [] : [];
+
+    // Without googleToken
+    const fakeUnhandledData = api.applications.fakeGetUnhandled.useQuery();
+    const fakeUnhandled = fakeUnhandledData.data || [];
+
+    const fakeInterestedInData = api.applications.fakeGetInterested.useQuery();
+    const fakeInterestedIn = fakeInterestedInData.data || [];
+
+    const fakeConflictData = api.applications.fakeGetConflicts.useQuery();
+    const fakeConflicts = fakeConflictData.data || [];
+
+    const fakeInterviewData = api.applications.fakeGetInterviews.useQuery();
+    const fakeInterviews = fakeInterviewData.data || [];
+
+    const fakeAcceptedData = api.applications.getAccepted.useQuery();
+    const fakeAccepted = fakeAcceptedData.data || [];
+
+    const allApplicationData = api.applications.getAllApplications.useQuery();
+    const allApplications = allApplicationData.data || [];
+
 
     const [popupDisplay, setPopupDisplay] = useState({display: 'none'});
-    const [popupApplicant, setPupupApplicant] = useState<Applicant | null>(null);
+    const [popupApplicant, setPupupApplicant] = useState<Application | null>(null);
 
-    function applicantPopUp (applicant: Applicant) {
+    function applicantPopUp (applicant: Application) {
         setPopupDisplay({display: 'block'});
         setPupupApplicant(applicant);
     }
@@ -41,35 +71,35 @@ const appications = () => {
                     <h2 className="font-medium">
                         Unhandled
                     </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={unHandledApplicants}/>
+                    <ApplicantCards onClickFunction={applicantPopUp} applicants={fakeUnhandled}/>
                 </div>
                 <div className="border-r-2 border-secondaryColorTwo"/>
                 <div className="flex flex-col items-center w-[300px]">
                     <h2 className="font-medium">
                         Conflict
                     </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={conflictApplicants}/>
+                    <ApplicantCards onClickFunction={applicantPopUp} applicants={fakeConflicts}/>
                 </div>
                 <div className="border-r-2 border-secondaryColorTwo"/>
                 <div className="flex flex-col items-center w-[300px]">
                     <h2 className="font-medium">
                         For interview
                     </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={forInterviewApplicants}/>
+                    <ApplicantCards onClickFunction={applicantPopUp} applicants={fakeInterviews}/>
                 </div>
             </div>
             <div className="flex flex-col justify-center pt-20">
                 <div className="flex flex-col items-center w-[300px]">
                     <h2 className="font-medium">
-                        Dropped
+                        Accepted
                     </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={droppedApplicants}/>
+                    <ApplicantCards onClickFunction={applicantPopUp} applicants={fakeAccepted}/>
                 </div>
                 <div className="flex flex-col items-center w-[300px]">
                     <h2 className="font-medium">
-                        Accepted
+                        Dropped
                     </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={acceptedApplicants}/>
+                    <ApplicantCards onClickFunction={applicantPopUp} applicants={[]}/>
                 </div>
             </div>
         </Layout>
