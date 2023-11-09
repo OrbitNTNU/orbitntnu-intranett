@@ -1,10 +1,10 @@
 import React from "react";
-import Applicant from "@/interfaces/Applicant";
+import { Application } from "@/interfaces/Application";
 import ApplicantCard from "@/components/ApplicantCard";
 
 interface ApplicantsCards {
     onClickFunction: any,
-    applicants: Applicant[]
+    applicants: Application[]
 }
 
 export const ApplicantCards = ({onClickFunction, applicants}: ApplicantsCards) => {
@@ -14,7 +14,8 @@ export const ApplicantCards = ({onClickFunction, applicants}: ApplicantsCards) =
                 <div onClick={() => onClickFunction(applicant)} className="cursor-pointer">
                     <ApplicantCard
                         applicationID={applicant.applicationID}
-                        fullName={applicant.fullName}
+                        firstName={applicant.firstName}
+                        lastName={applicant.lastName}
                         fieldOfStudy={applicant.fieldOfStudy}
                         yearOfStudy={applicant.yearOfStudy}
                         ntnuUsername={applicant.ntnuUsername}
@@ -25,6 +26,8 @@ export const ApplicantCards = ({onClickFunction, applicants}: ApplicantsCards) =
                         accepted={applicant.accepted}
                         keep={applicant.keep}
                         rejectTime={applicant.rejectTime}
+                        teams={applicant.teams}
+                        inInterestOf={applicant.inInterestOf}                        
                     />
                 </div>
             ))

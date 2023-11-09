@@ -1,13 +1,22 @@
 import React from "react"
-import Applicant from "@/interfaces/Applicant";
+import { Application } from "@/interfaces/Application";
 
 
 
-const ApplicantCard = ({applicationID, fullName, fieldOfStudy, yearOfStudy}: Applicant) => {
+const ApplicantCard = ({applicationID, firstName, lastName, fieldOfStudy, yearOfStudy}: Application) => {
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder("utf-8");
+
+    const firstNameEncoded = encoder.encode(firstName)
+    const firstNameDecoded = decoder.decode(firstNameEncoded);
+
+    const lastNameEncoded = encoder.encode(lastName)
+    const lastNameDecoded = decoder.decode(lastNameEncoded);
+    
     return (
-        <div className="bg-secondaryColorTwo rounded-lg my-4 p-4 hover:bg-[#211932]">
+        <div key={applicationID} className="bg-secondaryColorTwo rounded-lg my-4 p-4 hover:bg-[#211932]">
             <p className="text-lg font-bold">
-                {fullName}
+                {firstNameDecoded + " " + lastNameDecoded}
             </p>
             <p>
                 {fieldOfStudy}, {yearOfStudy}. year

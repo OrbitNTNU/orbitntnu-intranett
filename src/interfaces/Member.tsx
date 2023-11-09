@@ -1,14 +1,28 @@
+import { Announcement } from "./Announcement";
+import { InterestedIn } from "./InterestedIn";
+import { Interview } from "./Interview";
+import { MemeInfo } from "./MemeInfo";
+import { TeamHistory } from "./TeamHistory";
+
 export interface Member {
-  memberID?: number; // Make mid optional
-  firstName: string;
-  lastName: string;
-  activeStatus: boolean;
-  fieldOfStudy: string;
-  birthday: Date | null;
-  phoneNumber: string;
-  ntnuMail: string;
-  backupMail: string | null;
-  nationalities: string | null;
-  yearOfStudy: string | null;
-  additionalComments: string | null;
-}
+    memberID: number;
+    firstName: string;
+    lastName: string;
+    activeStatus: boolean;
+    fieldOfStudy: string;
+    birthday: Date;
+    phoneNumber: string;
+    ntnuMail: string;
+    backupMail: string;
+    nationalities: string;
+    yearOfStudy: number;
+    additionalComments: string;
+    googleToken: string;
+    slackToken: string;
+    anouncements: Announcement[];
+    events: Event[];
+    interestedIn: InterestedIn[];
+    interviews: Interview[];
+    memes: MemeInfo[];
+    team: TeamHistory[];
+  }

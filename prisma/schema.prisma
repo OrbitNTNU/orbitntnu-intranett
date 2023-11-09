@@ -134,7 +134,7 @@ model Member {
   nationalities      String?
   yearOfStudy        Int?
   additionalComments String?        @db.Text
-  googleToken        String?
+  googleToken        String        @unique
   slackToken         String?
   anouncements       Announcement[]
   events             Event[]
