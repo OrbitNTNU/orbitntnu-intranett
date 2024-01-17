@@ -1,7 +1,8 @@
 import { Member } from '@/interfaces/Member';
 import { Team } from '@/interfaces/Team';
 import { TeamHistory } from '@/interfaces/TeamHistory';
-import React from 'react';
+import { Meme } from '@prisma/client';
+import React, { useState } from 'react';
 
 interface SearchResultsProps {
   members: Member[];
@@ -9,45 +10,9 @@ interface SearchResultsProps {
   teams: Team[]
 }
 
-const SearchResults = ({ members, teamHistories, teams }: SearchResultsProps) => {
-  return (
-    <table style={{ width: '80%', fontSize: '1.2rem' }}>
-      <thead>
-        <tr>
-          <th style={{ width: '30%' }}>Name</th>
-          <th style={{ width: '20%' }}>Team</th>
-          <th style={{ width: '20%' }}>Role</th>
-          <th style={{ width: '30%' }}>Email</th>
-        </tr>
-      </thead>
-      <tbody>
-        {members.map((member) => {
-          // Find the current team for the member
-          const currentTeam = teamHistories.find(
-            (team) =>
-            team.mid === member.mid &&
-              (team.endYear === undefined || team.endYear === null)
-          );
-
-          return (
-            <tr key={member.mid}>
-              <td>{member.firstName + ' ' + member.lastName}</td>
-              <td>
-                {currentTeam ? getTeamName(currentTeam.tid, teams) : 'N/A'}
-              </td>
-              <td>{currentTeam ? currentTeam.priveledges : 'N/A'}</td>
-              <td>{currentTeam ? getOrbitMail(member.firstName, member.lastName) : "N/A"}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-};
-
 // Helper function to get team name by tid
-const getTeamName = (tid: number, teams: Team[]) => {
-  const matchedTeam = teams.find((team) => team.tid === tid);
+const getTeamName = (teamID: number, teams: Team[]) => {
+  const matchedTeam = teams.find((team) => team.teamID === teamID);
   return matchedTeam ? matchedTeam.teamName : 'N/A';
 };
 
@@ -68,6 +33,57 @@ const getOrbitMail = (firstName: string, lastName: string) => {
   return orbitMail;
 };
 
+const getCurrentTeam = (teamHistories: TeamHistory[], member: Member, teams: Team[]) => {
+  const currentTeam = teamHistories.find(
+    (team) =>
+    team.memberID === member.memberID &&
+      (team.endYear === undefined || team.endYear === null)
+  );
+  
+  return currentTeam ? getTeamName(currentTeam?.teamID, teams) : "N/A";
+};
+
+function capitalizeFirstLetter(input: string): string {
+  return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
+const getRole = (member: Member, teamHistories: TeamHistory[]) => {
+  const currentTeam = teamHistories.find(
+    (team) =>
+      team.memberID === member.memberID &&
+      (team.endYear === undefined || team.endYear === null)
+  );
+  
+  return currentTeam ? capitalizeFirstLetter(currentTeam.priviledges.toLowerCase()) : "N/A";
+};
+
+const handleBoxClick = (member: Member) => {
+  const profileUrl = `/profile/${member.memberID}`;
+
+  // Use window.location.assign to change the URL
+  window.location.assign(profileUrl);
+};
+
+
+const SearchResults = ({ members, teamHistories, teams }: SearchResultsProps) => {
+  return (
+    <div className="flex items-center ">
+      <div className="flex flex-wrap justify-center">
+        {members.map((member) => (
+          <div
+            key={member.memberID}
+            className="bg-secondaryColorTwo rounded-lg w-[400px] hover:bg-[#211932] p-10 m-10 cursor-pointer"
+            onClick={() => handleBoxClick(member)}
+          >
+            <h2>{member.firstName} {member.lastName}</h2>
+            <p>{getOrbitMail(member.firstName, member.lastName)}</p>
+            <p>{getCurrentTeam(teamHistories, member, teams) + ", " + getRole(member, teamHistories)}</p>
+            <p>Active Status: {member.activeStatus ? 'Active' : 'Inactive'}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default SearchResults;
-

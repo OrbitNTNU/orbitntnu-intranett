@@ -1,9 +1,9 @@
 export interface TeamHistory {
-    mid: number;
-    tid: number;
+    memberID: number;
+    teamID: number;
     startYear: number;
-    startSem: number;
+    startSem: string;
     endYear?: number;
-    endSem?: number;
-    priveledges: string;
+    endSem?: string;
+    priviledges?: string | "Member"; 
   }
