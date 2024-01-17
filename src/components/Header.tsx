@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import logoWhite from "../../public/images/orbitwhite.png"; // Import the image file
-import { VscAccount } from "react-icons/vsc";
 
 /* 
 Her er kode for navbaren til siden, resolutionen brukt under designingen er 1512x982 px
@@ -14,7 +13,7 @@ const Header = () => {
       <div className="flex justify-start">
         <a href="/">
           <img
-            className=" relative h-[8vh]"
+            className=" relative h-[80px] p-4"
             src={logoWhite.src}
             alt="Website logo"
           />

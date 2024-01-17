@@ -1,15 +1,17 @@
+// pages/profile/[memberId].js
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
-import { useParams } from 'react-router-dom';
+import { useRouter } from 'next/router';
 
 const Profile = () => {
-    const { memberId } = useParams();
+    const router = useRouter();
+    const { memberID } = router.query;
 
     const membersData = api.members.getMembers.useQuery();
     const members = membersData.data || [];
 
     // Find the selected member based on memberId
-    const selectedMember = members.find((member) => member.memberID === Number(memberId)); // Parse memberId as a number
+    const selectedMember = members.find((member) => member.memberID === Number(memberID)); // Parse memberId as a number
 
     if (!selectedMember) {
         // Handle the case where the member is not found
