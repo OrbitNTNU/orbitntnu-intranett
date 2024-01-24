@@ -1,4 +1,4 @@
-import { Member } from "@/interfaces/Member"
+import type { Member } from "@/interfaces/Member"
 import { createTRPCRouter, publicProcedure } from "../trpc"
 
 export const membersRouter = createTRPCRouter({
