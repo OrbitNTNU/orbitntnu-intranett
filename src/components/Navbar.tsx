@@ -8,7 +8,7 @@ Her er kode for navbaren til siden, resolutionen brukt under designingen er 1512
 
 
 
-const Header = () => {
+const Navbar = () => {
   const [show, setShow] = useState(false);
 
   return (
@@ -55,4 +55,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default Navbar;
