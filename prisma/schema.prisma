@@ -52,6 +52,7 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
+  Member        Member?
   sessions      Session[]
 }
 
@@ -136,10 +137,12 @@ model Member {
   additionalComments String?        @db.Text
   googleToken        String?
   slackToken         String?
+  userId             String?        @unique
   anouncements       Announcement[]
   events             Event[]
   interestedIn       InterestedIn[]
   interviews         Interview[]
+  User               User?          @relation(fields: [userId], references: [id])
   memes              Meme[]
   team               TeamHistory[]
 }
@@ -147,13 +150,14 @@ model Member {
 model TeamHistory {
   memberID    Int
   teamID      Int
-  startYear   Int        @db.Year
-  startSem    Semester
-  endYear     Int?       @db.Year
-  endSem      Semester?
-  priviledges Priviledge @default(MEMBER)
-  member      Member     @relation(fields: [memberID], references: [memberID])
-  team        Team       @relation(fields: [teamID], references: [teamID])
+  startYear   Int                    @db.Year
+  startSem    TeamHistory_startSem
+  endYear     Int?                   @db.Year
+  endSem      TeamHistory_endSem?
+  priviledges Priviledge             @default(MEMBER)
+  cPosition   TeamHistory_cPosition?
+  member      Member                 @relation(fields: [memberID], references: [memberID])
+  team        Team                   @relation(fields: [teamID], references: [teamID])
 
   @@id([memberID, teamID, startYear, startSem])
   @@index([teamID], map: "TeamHistory_teamID_fkey")
@@ -201,13 +205,32 @@ enum Priviledge {
   LEADER
 }
 
-enum Semester {
-  FALL
-  SRING
-}
-
 enum EventType {
   SOCIAL
   WORK
   PRIORITY
+}
+
+enum TeamHistory_startSem {
+  FALL
+  SPRING
+}
+
+enum TeamHistory_endSem {
+  FALL
+  SPRING
+}
+
+enum TeamHistory_cPosition {
+  CEO
+  COO
+  CTO
+  CFO
+  CMO
+  CIO
+  CHRO
+  PM_FS1
+  PM_FS1_5 @map("PM_FS1.5")
+  PM_FS2
+  PM_BS
 }

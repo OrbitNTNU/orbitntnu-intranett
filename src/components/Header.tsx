@@ -14,7 +14,7 @@ const Header = () => {
 
   return (
     <header className=" flex h-16 w-screen items-center justify-between p-1">
-      <div className="min-w-52 flex justify-start px-4">
+      <div className="flex min-w-52 justify-start px-4">
         <Link href="/" className="relative h-[7vh] w-full p-4">
           <Image
             src={logoWhite.src}
