@@ -4,7 +4,7 @@ const mockShortcuts: ShortcutLink[] = [
     {
         header: 'Your profile',
         description: 'Check out your profile',
-        url: '/profile'
+        url: '/profile/me'
     },
     {
         header: 'Contact HR',

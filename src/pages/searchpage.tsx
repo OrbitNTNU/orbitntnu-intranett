@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
-import { Member } from '@/interfaces/Member';
 import { api } from '@/utils/api';
+import type { Member } from '@prisma/client';
 
 export default function SearchPage() {
   const [loading, setLoading] = useState(true);
@@ -10,13 +10,13 @@ export default function SearchPage() {
   const [searchResults, setSearchResults] = useState<Member[]>([]); // Initialize searchResults with an empty array
 
   const membersData = api.members.getMembers.useQuery();
-  const members = membersData.data || [];
+  const members = membersData.data ?? [];
 
   const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
-  const teamHistories = teamHistoriesData.data || [];
+  const teamHistories = teamHistoriesData.data ?? [];
 
   const teamsData = api.teams.getTeams.useQuery();
-  const teams = teamsData.data || [];
+  const teams = teamsData.data ?? [];
 
   const handleSearch = (query: string) => {
     // Filter members based on the name attribute (case-insensitive)
@@ -39,7 +39,7 @@ export default function SearchPage() {
       // Initialize searchResults with all members
       setSearchResults(members);
     }
-  }, [membersData.isSuccess, teamHistoriesData.isSuccess, teamsData.isSuccess]);
+  }, [members, membersData.isSuccess, teamHistoriesData.isSuccess, teamsData.isSuccess]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh' }}>

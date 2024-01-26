@@ -2,40 +2,31 @@
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
 import { useRouter } from 'next/router';
+import ProfileDisplay from '../../components/Profile';
 
-const Profile = () => {
+const ProfilePage = () => {
     const router = useRouter();
     const { memberID } = router.query;
+    
+    const selectedMember = api.members.getMemberById.useQuery(Number(memberID));
+    const member = selectedMember.data ?? null;
 
-    const membersData = api.members.getMembers.useQuery();
-    const members = membersData.data || [];
-
-    // Find the selected member based on memberId
-    const selectedMember = members.find((member) => member.memberID === Number(memberID)); // Parse memberId as a number
-
-    if (!selectedMember) {
+    if (!member) {
         // Handle the case where the member is not found
         return (
             <Layout>
                 <div className="flex justify-center">
-                    <p>Member not found.</p>
+                    <p>Loading ...</p>
                 </div>
             </Layout>
         );
     }
 
     return (
-        <Layout>
-            <div className="flex justify-center">
-                <div>
-                    <h1>Your Profile</h1>
-                    <p>Name: {selectedMember.firstName} {selectedMember.lastName}</p>
-                    <p>Active Status: {selectedMember.activeStatus ? 'Active' : 'Inactive'}</p>
-                    {/* Display other member information as needed */}
-                </div>
-            </div>
-        </Layout>
+        <div className="flex justify-center">
+            <ProfileDisplay selectedMember={member}/>
+        </div>
     );
 };
 
-export default Profile;
+export default ProfilePage;

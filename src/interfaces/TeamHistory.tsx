@@ -6,4 +6,5 @@ export interface TeamHistory {
     endYear?: number;
     endSem?: string;
     priviledges?: string | "Member"; 
+    cPosition?: string;
   }
