@@ -1,10 +1,6 @@
-import { Shortcut } from "@/components/Shortcut";
+import { Shortcut } from "@/components/HomePage/Shortcut";
 import { ShortcutLink } from "@/interfaces/ShortcutLink";
 import mockShortcuts from "@/mockdata/MockShortcuts";
-
-interface ShortcutsProps {
-    info: ShortcutLink[];
-}
 
 export const Shortcuts = () => {
 
