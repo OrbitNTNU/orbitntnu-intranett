@@ -1,5 +1,5 @@
 import React from 'react';
-import { Meme } from '@/components/Meme';
+import { Meme } from '@/components/MemePage/Meme';
 import { MemeInfo } from '@/interfaces/MemeInfo';
 
 interface MemesProps {

@@ -1,6 +1,6 @@
 import React from "react";
 import Applicant from "@/interfaces/Applicant";
-import ApplicantCard from "@/components/ApplicantCard";
+import ApplicantCard from "@/components/ApplicationPage/ApplicantCard";
 
 interface ApplicantsCards {
     onClickFunction: any,

@@ -1,8 +1,5 @@
-import { Member } from '@/interfaces/Member';
-import { Team } from '@/interfaces/Team';
-import { TeamHistory } from '@/interfaces/TeamHistory';
-import { Meme } from '@prisma/client';
-import React, { useState } from 'react';
+import type { Member, Team, TeamHistory } from '@prisma/client';
+import { useRouter, type NextRouter } from 'next/router';
 
 interface SearchResultsProps {
   members: Member[];
@@ -11,12 +8,12 @@ interface SearchResultsProps {
 }
 
 // Helper function to get team name by tid
-const getTeamName = (teamID: number, teams: Team[]) => {
+export const getTeamName = (teamID: number, teams: Team[]) => {
   const matchedTeam = teams.find((team) => team.teamID === teamID);
   return matchedTeam ? matchedTeam.teamName : 'N/A';
 };
 
-const getOrbitMail = (firstName: string, lastName: string) => {
+export const getOrbitMail = (firstName: string, lastName: string) => {
   // Convert first name and last name to lowercase
   const lowerFirstName = firstName.toLowerCase();
   const lowerLastName = lastName.toLowerCase();
@@ -33,7 +30,7 @@ const getOrbitMail = (firstName: string, lastName: string) => {
   return orbitMail;
 };
 
-const getCurrentTeam = (teamHistories: TeamHistory[], member: Member, teams: Team[]) => {
+export const getCurrentTeam = (teamHistories: TeamHistory[], member: Member, teams: Team[]) => {
   const currentTeam = teamHistories.find(
     (team) =>
     team.memberID === member.memberID &&
@@ -43,37 +40,43 @@ const getCurrentTeam = (teamHistories: TeamHistory[], member: Member, teams: Tea
   return currentTeam ? getTeamName(currentTeam?.teamID, teams) : "N/A";
 };
 
-function capitalizeFirstLetter(input: string): string {
+export function capitalizeFirstLetter(input: string): string {
   return input.charAt(0).toUpperCase() + input.slice(1);
 }
 
-const getRole = (member: Member, teamHistories: TeamHistory[]) => {
+export const getRole = (member: Member, teamHistories: TeamHistory[]) => {
   const currentTeam = teamHistories.find(
     (team) =>
       team.memberID === member.memberID &&
       (team.endYear === undefined || team.endYear === null)
   );
-  
-  return currentTeam ? capitalizeFirstLetter(currentTeam.priviledges.toLowerCase()) : "N/A";
+
+  if(currentTeam && currentTeam.teamID == 1) {
+    return currentTeam.cPosition ? capitalizeFirstLetter(currentTeam.cPosition.toLowerCase()) : "N/A";
+  }
+
+  return currentTeam && currentTeam.priviledges ? capitalizeFirstLetter(currentTeam.priviledges.toLowerCase()) : "N/A";
 };
 
-const handleBoxClick = (member: Member) => {
-  const profileUrl = `/profile/${member.memberID}`;
-
-  // Use window.location.assign to change the URL
-  window.location.assign(profileUrl);
+const handleBoxClick = (member: Member, router: NextRouter) => {
+  void router.push(
+    {
+      pathname: `/profile/${member.memberID}`,
+    }
+  )
 };
-
 
 const SearchResults = ({ members, teamHistories, teams }: SearchResultsProps) => {
+  const router = useRouter();
+
   return (
-    <div className="flex items-center ">
+    <div className="flex items-center">
       <div className="flex flex-wrap justify-center">
         {members.map((member) => (
           <div
             key={member.memberID}
-            className="bg-secondaryColorTwo rounded-lg w-[400px] hover:bg-[#211932] p-10 m-10 cursor-pointer"
-            onClick={() => handleBoxClick(member)}
+            className="bg-secondaryColorTwo rounded-lg w-[350px] sm:m-10 md:w-[350px] lg:w-[350px] xl:w-[350px] hover:bg-[#211932] p-10 mx-3 my-10 cursor-pointer"
+            onClick={() => handleBoxClick(member, router)}
           >
             <h2>{member.firstName} {member.lastName}</h2>
             <p>{getOrbitMail(member.firstName, member.lastName)}</p>

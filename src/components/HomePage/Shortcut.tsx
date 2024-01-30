@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShortcutLink } from '@/interfaces/ShortcutLink';
+import type { ShortcutLink } from '@/interfaces/ShortcutLink';
 
 export const Shortcut = ({ header, description, url }: ShortcutLink) => {
     return (
