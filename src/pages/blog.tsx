@@ -6,12 +6,10 @@ import BlogPostPopUp from "@/components/blog/BlogPostPopUp";
 const blog = () => {
   return (
     <Layout>
-      {/* <div className="flex flex-col justify-start">
+      <div className="flex flex-col justify-start">
         <BlogPosts posts={post} />
-      </div> */}
-      <div className="">
-        <BlogPostPopUp />
       </div>
+      <div className="">{/* <BlogPostPopUp /> */}</div>
     </Layout>
   );
 };

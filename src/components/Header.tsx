@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import logoWhite from "../../public/images/orbitwhite.png"; // Import the image file
+import Link from "next/link";
+import Image from "next/image";
 
 /* 
-Her er kode for navbaren til siden, resolutionen brukt under designingen er 1512x982 px
-*/
+  Her er kode for navbaren til siden, resolutionen brukt under designingen er 1512x982 px
+  */
 
 const Header = () => {
   const [show, setShow] = useState(false);
@@ -11,13 +13,15 @@ const Header = () => {
   return (
     <header className=" flex h-16 w-screen items-center justify-between p-1">
       <div className="flex justify-start">
-        <a href="/">
-          <img
-            className=" relative h-[80px] p-4"
+        <Link href="/">
+          <Image
+            className="relative h-[80px] p-4"
             src={logoWhite.src}
             alt="Website logo"
+            width={250}
+            height={90}
           />
-        </a>
+        </Link>
       </div>
 
       <div>
@@ -65,7 +69,7 @@ const Header = () => {
             <a>Announcements</a>
             <a>Blog</a>
             <a>Legacy page</a>
-            <a href="/memegallery">Meme gallery</a>
+            <Link href="/memegallery">Meme gallery</Link>
           </div>
         )}
       </div>

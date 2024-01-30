@@ -6,7 +6,7 @@ const mockBlogPosts: BlogPostInterface[] = [
     postTime: new Date("2023-10-25T09:30:00"),
     memberID: 101,
     announcement:
-      "This is the first blog post. It contains a longer announcement text to test the preview feature, which should truncate this content in the user interface.",
+      "This is the first blog post. It contains a longer announcement text to test the preview feature, which should not truncate.",
     title: "First Blog Post",
   },
   {
