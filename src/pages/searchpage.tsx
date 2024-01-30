@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { api } from '@/utils/api';
+import type { Member } from '@prisma/client';
 import SearchBar from '@/components/General/SearchBar';
 import SearchResults from '@/components/ProfilePage/SearchResults';
-import type { Member } from '@/interfaces/Member';
-import { api } from '@/utils/api';
 
 export default function SearchPage() {
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,7 @@ export default function SearchPage() {
       // Initialize searchResults with all members
       setSearchResults(members);
     }
-  }, [members, membersData.isSuccess, teamHistoriesData.isSuccess, teamsData.isSuccess]);
+  }, [membersData.isSuccess, teamHistoriesData.isSuccess, teamsData.isSuccess]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh' }}>

@@ -2,7 +2,7 @@
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
 import { useRouter } from 'next/router';
-import Profile from '../../components/ProfilePage/Profile';
+import ProfileDisplay from '../../components/Profile';
 
 const ProfilePage = () => {
     const router = useRouter();
@@ -24,7 +24,7 @@ const ProfilePage = () => {
 
     return (
         <div className="flex justify-center">
-            <Profile selectedMember={member}/>
+            <ProfileDisplay selectedMember={member}/>
         </div>
     );
 };
