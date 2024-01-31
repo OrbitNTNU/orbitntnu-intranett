@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import SearchResults from '@/components/SearchResults';
+import SearchResults from '@/components/ProfilePage/SearchResults';
 import { api } from '@/utils/api';
 import type { Member } from '@prisma/client';
 import SearchBar from '@/components/General/SearchBar';

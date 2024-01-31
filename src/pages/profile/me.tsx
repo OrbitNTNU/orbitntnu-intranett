@@ -1,4 +1,4 @@
-import ProfileDisplay from '@/components/Profile';
+import ProfileDisplay from '@/components/ProfilePage/ProfileDisplay';
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
 import type { Member } from '@prisma/client';
