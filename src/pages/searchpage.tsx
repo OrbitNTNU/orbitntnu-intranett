@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import SearchBar from '@/components/General/SearchBar';
 import SearchResults from '@/components/ProfilePage/SearchResults';
-import type { Member } from '@/interfaces/Member';
 import { api } from '@/utils/api';
+import type { Member } from '@prisma/client';
+import SearchBar from '@/components/General/SearchBar';
 
 export default function SearchPage() {
   const [loading, setLoading] = useState(true);

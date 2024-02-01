@@ -1,7 +1,7 @@
 import type { Member } from '@prisma/client';
 import React from 'react';
 
-interface ProfileProps {
+interface ProfileDisplayProps {
     selectedMember: Member;
 }
 
@@ -25,7 +25,7 @@ const InfoComponent: React.FC<InfoComponentProps> = ({ label, value, size }) => 
     );
 };
 
-const Profile: React.FC<ProfileProps> = ({ selectedMember }) => {
+const ProfileDisplay: React.FC<ProfileDisplayProps> = ({ selectedMember }) => {
     const memberInfo = [
         { label: 'Name', value: `${selectedMember.firstName} ${selectedMember.lastName}`, size: 'medium' },
         { label: 'Active Status', value: selectedMember.activeStatus ? 'Active' : 'Inactive', size: 'small' },
@@ -51,4 +51,4 @@ const Profile: React.FC<ProfileProps> = ({ selectedMember }) => {
     );
 };
 
-export default Profile;
+export default ProfileDisplay;
