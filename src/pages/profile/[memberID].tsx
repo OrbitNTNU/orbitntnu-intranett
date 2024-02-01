@@ -7,7 +7,7 @@ import ProfileDisplay from '@/components/ProfilePage/ProfileDisplay';
 const ProfilePage = () => {
     const router = useRouter();
     const { memberID } = router.query;
-    
+
     const selectedMember = api.members.getMemberById.useQuery(Number(memberID));
     const member = selectedMember.data ?? null;
 
@@ -15,17 +15,15 @@ const ProfilePage = () => {
         // Handle the case where the member is not found
         return (
             <Layout>
-                <div className="flex justify-center">
-                    <p>Loading ...</p>
-                </div>
+                <p>Loading ...</p>
             </Layout>
         );
     }
 
     return (
-        <div className="flex justify-center">
-            <ProfileDisplay selectedMember={member}/>
-        </div>
+        <Layout>
+            <ProfileDisplay selectedMember={member} />
+        </Layout>
     );
 };
 

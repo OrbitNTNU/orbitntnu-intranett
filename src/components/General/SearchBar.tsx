@@ -8,7 +8,7 @@ interface SearchBarProps {
 
 const SearchBar = ({ query, onChange }: SearchBarProps) => {
   return (
-    <div className='mt-2'>
+    <div className='my-10 flex items-center justify-center'>
       <input
         className="rounded-md p-2 text-black"
         type="text"

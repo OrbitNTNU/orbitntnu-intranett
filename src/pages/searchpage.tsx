@@ -3,6 +3,8 @@ import SearchResults from '@/components/ProfilePage/SearchResults';
 import { api } from '@/utils/api';
 import type { Member } from '@prisma/client';
 import SearchBar from '@/components/General/SearchBar';
+import BreakLine from '@/components/General/Breakline';
+import Layout from '@/templates/Layout';
 
 export default function SearchPage() {
   const [loading, setLoading] = useState(true);
@@ -42,16 +44,19 @@ export default function SearchPage() {
   }, [members, membersData.isSuccess, teamHistoriesData.isSuccess, teamsData.isSuccess]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh' }}>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <div>
-          <h1>Search Page</h1>
-        </div>
-      )}
-      <SearchBar query={searchQuery} onChange={handleInputChange} />
-      <SearchResults members={searchResults} teamHistories={teamHistories} teams={teams} />
-    </div>
+    <Layout>
+      <div>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <div>
+          <h2>Search for Orbiter</h2>
+          <BreakLine />
+          <SearchBar query={searchQuery} onChange={handleInputChange} />
+          <SearchResults members={searchResults} teamHistories={teamHistories} teams={teams} />
+          </div>
+        )}
+      </div>
+    </Layout>
   );
 }

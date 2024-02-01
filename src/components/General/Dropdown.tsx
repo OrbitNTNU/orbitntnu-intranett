@@ -56,20 +56,20 @@ const Dropdown: React.FC<DropdownProps> = ({ shortcuts, handleLogout, handleLogi
                 )}
             </svg>
             {/* Dropdown content */}
-            <div className={`absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg ${isOpen ? 'block' : 'hidden'}`}>
+            <div className={`absolute right-0 mt-4 w-48 bg-black rounded-md shadow-lg ${isOpen ? 'block' : 'hidden'}`}>
                 {shortcuts.map((shortcut, index) => (
-                    <a key={index} href={shortcut.url} className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white">
-                        <div className="font-semibold">{shortcut.header}</div>
-                        <div className="text-xs text-gray-500">{shortcut.description}</div>
+                    <a key={index} href={shortcut.url} className="block px-4 py-2 text-sm text-white hover:bg-blue-500 hover:text-white">
+                        <h3>{shortcut.header}</h3>
+                        <p className="text-xs text-subtext">{shortcut.description}</p>
                     </a>
                 ))}
 
                 {session ? (
-                    <a key={"logOut"} onClick={handleLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-500 hover:text-white">
-                        <div className="font-semibold">{"Log out"}</div>
+                    <a key={"logOut"} onClick={handleLogout} className="block px-4 py-2 text-sm hover:bg-red-500 hover:text-white">
+                        <h3 className="font-semibold">{"Log out"}</h3>
                     </a>
-                ) : <a key={"logOut"} onClick={handleLogin} className="block px-4 py-2 text-sm text-gray-700 hover:bg-green-500 hover:text-white">
-                    <div className="font-semibold">{"Log out"}</div>
+                ) : <a key={"logOut"} onClick={handleLogin} className="block px-4 py-2 text-sm hover:bg-green-500 hover:text-white">
+                    <h3 className="font-semibold">{"Log out"}</h3>
                 </a>
                 }
             </div>
