@@ -139,9 +139,9 @@ model TeamHistory {
   memberID    Int
   teamID      Int
   startYear   Int                    @db.Year
-  startSem    TeamHistory_startSem
+  startSem    SemType
   endYear     Int?                   @db.Year
-  endSem      TeamHistory_endSem?
+  endSem      SemType?
   priviledges Priviledge             @default(MEMBER)
   cPosition   TeamHistory_cPosition?
   member      Member                 @relation(fields: [memberID], references: [memberID])
@@ -199,12 +199,7 @@ enum EventType {
   PRIORITY
 }
 
-enum TeamHistory_startSem {
-  FALL
-  SPRING
-}
-
-enum TeamHistory_endSem {
+enum SemType {
   FALL
   SPRING
 }

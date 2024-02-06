@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemeInfo } from '@/interfaces/MemeInfo';
+import type { MemeInfo } from '@/interfaces/MemeInfo';
 
 export const Meme = ({meme, creator, date}: MemeInfo) => {
     return (
