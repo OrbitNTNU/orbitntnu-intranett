@@ -12,7 +12,7 @@ export const Shortcuts = () => {
             <BreakLine/>
             <div className="flex flex-row flex-wrap justify-center">
                 {mockShortcuts.map((infoLink) => (
-                    <Shortcut url={infoLink.url} header={infoLink.header} description={infoLink.description}/>
+                    <Shortcut key={infoLink.header} url={infoLink.url} header={infoLink.header} description={infoLink.description}/>
                 ))}
             </div>
         </div>

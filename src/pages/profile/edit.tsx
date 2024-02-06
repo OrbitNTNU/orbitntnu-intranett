@@ -1,23 +1,18 @@
+import BreakLine from '@/components/General/Breakline';
+import EditInfoDisplay from '@/components/ProfilePage/EditInfoDisplay';
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
-import ProfileView from '@/views/ProfileView';
+import { getMemberInfo } from '@/views/ProfileView';
 import type { Member } from '@prisma/client';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
-const Profile = () => {
+const EditProfile = () => {
     const session = useSession();
     const [member, setMember] = useState<Member | null>(null);
     const [loading, setLoading] = useState(true);
 
     const query = api.members.getMemberByOrbitMail.useQuery(session.data?.user.email ?? "");
-
-    const router = useRouter();
-
-    const handleRedirect = () => {
-        void router.push("/profile/edit")
-    }
 
     const fetchData = async () => {
         if (session.data?.user.email) {
@@ -49,9 +44,17 @@ const Profile = () => {
     }
 
     if (member) {
+        const memberInfo = getMemberInfo(member);
 
         return (
-            <ProfileView member={member} edit={true} handleRedirect={handleRedirect}/>
+            <Layout>
+                <div className='flex justify-between items-center'>
+                    <h1 className='mr-2'>{member.firstName} {member.lastName}</h1>
+                </div>
+                <BreakLine/>
+                <h2>Member information:</h2>
+                <EditInfoDisplay memberInfo={memberInfo} onUpdateInfo={console.log("Edited")}/>
+            </Layout>
         );
     }
 
@@ -62,4 +65,4 @@ const Profile = () => {
     )
 };
 
-export default Profile;
+export default EditProfile;

@@ -47,13 +47,13 @@ const Footer = () => {
           </div>
         </div>
 
-      <div className="text-sm flex flex-wrap items-center justify-center p-8">
-        <p className="m-2 text-gray-500">Hanne Marie Haakaas</p>
-        <p className="m-2 text-gray-500">Idar Buer</p>
-        <p className="m-2 text-gray-500">Mads Kvanvik</p>
-        <p className="m-2 text-gray-500">Magnus Andreas Giverin</p>
-        <p className="m-2 text-gray-500">Simon Bjerkås</p>
-      </div>
+        <div className="text-sm flex flex-wrap items-center justify-center p-8">
+          <p className="m-2 text-gray-500">Hanne Marie Haakaas</p>
+          <p className="m-2 text-gray-500">Idar Buer</p>
+          <p className="m-2 text-gray-500">Mats Kvanvik</p>
+          <p className="m-2 text-gray-500">Magnus Andreas Giverin</p>
+          <p className="m-2 text-gray-500">Simon Bjerkås</p>
+        </div>
       </div>
 
     </footer>

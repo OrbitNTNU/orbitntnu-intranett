@@ -56,7 +56,7 @@ const SearchResults = ({ members, teamHistories, teams }: SearchResultsProps) =>
         {members.map((member) => (
           <div
             key={member.memberID}
-            className="bg-blue-600 rounded-lg w-[270px] mb-6 hover:bg-blue-800 p-10 mx-3 cursor-pointer"
+            className="rounded-lg w-[270px] mb-6 bg-blue-600 hover:bg-blue-800 p-10 mx-3 cursor-pointer"
             onClick={() => handleBoxClick(member, router)}
           >
             <h3 className='font-bold'>{member.firstName} {member.lastName}</h3>

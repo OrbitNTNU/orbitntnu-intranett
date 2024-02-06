@@ -50,7 +50,7 @@ export default function SearchPage() {
           <p>Loading...</p>
         ) : (
           <div>
-          <h2>Search for Orbiter</h2>
+          <h1>Search for Orbiter</h1>
           <BreakLine />
           <SearchBar query={searchQuery} onChange={handleInputChange} />
           <SearchResults members={searchResults} teamHistories={teamHistories} teams={teams} />
