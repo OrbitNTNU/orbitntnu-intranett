@@ -4,21 +4,6 @@ import InfoDisplay from "@/components/ProfilePage/InfoDisplay";
 import Layout from "@/templates/Layout";
 import type { Member } from "@prisma/client";
 
-export const getMemberInfo = (member: Member) => {
-    const memberInfo = [
-        { label: 'Active Status', value: member.activeStatus ? 'Active' : 'Inactive', type: 'checkbox' },
-        { label: 'Field of Study', value: member.fieldOfStudy, type: 'text' },
-        { label: 'Birthday', value: member.birthday ? member.birthday.toLocaleDateString() : undefined, type: 'date' },
-        { label: 'Nationalities', value: member.nationalities, type: 'text' },
-        { label: 'Phone Number', value: member.phoneNumber, type: 'phone' },
-        { label: 'NTNU Mail', value: member.ntnuMail, type: 'text' },
-        { label: 'Orbit Mail', value: member.orbitMail, type: 'string' },
-        { label: 'Year of Study', value: String(member.yearOfStudy), type: 'number' },
-    ];
-
-    return memberInfo;
-}
-
 interface ProfileViewProps {
     member: Member;
     edit: boolean;
@@ -26,13 +11,15 @@ interface ProfileViewProps {
 }
 
 const ProfileView: React.FC<ProfileViewProps> = ({ member, edit, handleRedirect }) => {
-    const memberInfo = getMemberInfo(member);
-
     return (
         <Layout>
-            <div className='flex justify-between items-center'>
-                <h1>{member.firstName} {member.lastName}</h1>
+            <div className='md:flex justify-between items-center'>
+                <ul>
+                    <h1>{member.firstName} {member.lastName}</h1>
+                    <div className='text-xl'>{member.orbitMail}</div>
+                </ul>
                 {edit && (
+                    <div className="md:mt-0 mt-4">
                     <Button label={'Edit Information'} onClick={handleRedirect} icon={
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -53,17 +40,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({ member, edit, handleRedirect 
                             />
                         </svg>
                     } />
+                    </div>
                 )}
             </div>
-
             <BreakLine />
-            <h2>Member information:</h2>
-
-            <div className='ml-4'>
-                {memberInfo.map((info) => (
-                    info.value && <InfoDisplay key={info.label} label={info.label} value={info.value} full={false} />
-                ))}
-            </div>
+            <InfoDisplay member={member}/>
         </Layout>
     );
 }

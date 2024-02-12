@@ -28,7 +28,7 @@ export const membersRouter = createTRPCRouter({
         const member = await opts.ctx.db.member.findUnique({
             where: { orbitMail: opts.input },
         });
-    
+
         return member;
     }),
 
@@ -41,7 +41,7 @@ export const membersRouter = createTRPCRouter({
             phoneNumber: z.string(),
             ntnuMail: z.string(),
             orbitMail: z.string(),
-            })
+        })
         )
         .mutation(async (opts) => {
 
@@ -51,18 +51,58 @@ export const membersRouter = createTRPCRouter({
                 }
             });
 
-            if(!foundMember) {
+            if (!foundMember) {
                 const { input } = opts;
 
                 // Create a new user in the database
                 const member = await db.member.create({
                     data: input,
                 });
-    
+
                 return member;
             }
-            
+
             return foundMember;
+        }),
+
+    updateMemberInformation: publicProcedure
+        .input(z.object({
+            firstName: z.string(),
+            activeStatus: z.boolean(),
+            fieldOfStudy: z.string(),
+            ntnuMail: z.string(),
+            orbitMail: z.string(),
+            phoneNumber: z.string(),
+            yearOfStudy: z.number().nullable(),
+            birthday: z.date().nullable(),
+            nationalities: z.string().nullable(),
+            additionalComments: z.string().nullable()
+        })
+        )
+        .mutation(async (opts) => {
+            const { input } = opts;
+
+            // Find the member by orbitMail
+            const foundMember = await db.member.findUnique({
+                where: {
+                    orbitMail: input.orbitMail,
+                },
+            });
+
+            if (foundMember) {
+                // Update the existing member information
+                const updatedMember = await db.member.update({
+                    where: {
+                        orbitMail: input.orbitMail,
+                    },
+                    data: input,
+                });
+
+                return updatedMember;
+            }
+
+            // Member not found, return null or handle accordingly
+            return null;
         }),
 })
 

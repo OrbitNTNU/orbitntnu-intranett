@@ -1,84 +1,138 @@
 import React, { useState } from 'react';
 import Button from '../General/Button';
-import InfoDisplay from './InfoDisplay';
 import 'react-phone-number-input/style.css';
-import PhoneInput from 'react-phone-number-input'
+import PhoneInput from 'react-phone-number-input';
+import type { Member } from '@prisma/client';
 
-type MemberInfo = {
-    label: string;
-    value: string | null; // Adjust the types based on actual data types
-    type: string;
-};
-
-interface EditInfoDisplayProps {
-    memberInfo: MemberInfo[];
-    onUpdateInfo: (label: string, value: string) => void;
+interface InfoDisplayProps {
+    member: Member;
+    onUpdateInfo: (member: Member) => Promise<void>;
 }
 
-const EditInfoDisplay: React.FC<EditInfoDisplayProps> = ({ memberInfo, onUpdateInfo }) => {
-    const [editableValues, setEditableValues] = useState<MemberInfo[]>(memberInfo);
+const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) => {
+    const [editedMember, setEditedMember] = useState<Member>(member);
 
-    const handleInputChange = (label: string, newValue: string) => {
-        setEditableValues((prevValues) => ({ ...prevValues, [label]: newValue }));
+    // Function to get the input element based on type
+    const getInputElement = (label: string) => {
+        const handleChange = (newValue: string | boolean | Date | number | null) => {
+            let parsedValue: string | boolean | Date | number | null = newValue;
+        
+            if (label === 'yearOfStudy') {
+                // Parse newValue as an integer for yearOfStudy
+                parsedValue = newValue !== null ? parseInt(newValue.toString()) : null;
+            } else if (label === 'birthday' && typeof newValue === 'string') {
+                // Parse newValue as a Date object for birthday
+                parsedValue = new Date(newValue);
+                console.log(parsedValue);
+            }
+        
+            setEditedMember(prevState => ({
+                ...prevState,
+                [label]: parsedValue
+            }));
+        };
+
+        switch (label) {
+            case 'firstName':
+            case 'lastName':
+            case 'ntnuMail':
+            case 'fieldOfStudy':
+            case 'nationalities':
+            case 'additionalComments':
+                return (
+                    <input
+                        className='md:ml-2 rounded-md text-black px-2'
+                        type='text'
+                        defaultValue={member[label]}
+                        onChange={(e) => handleChange(e.target.value)}
+                    />
+                );
+            case 'activeStatus':
+                return (
+                    <input
+                        className='md:ml-2 w-4'
+                        type='checkbox'
+                        checked={editedMember[label]}
+                        onChange={() => handleChange(!editedMember[label])}
+                    />
+                );
+            case 'birthday':
+                return (
+                    <input
+                        className='md:ml-2 text-black rounded-md px-2'
+                        type='date'
+                        defaultValue={editedMember[label] ? new Date(String(editedMember[label])).toISOString().split('T')[0] : ''}
+                        onChange={(e) => handleChange(e.target.value)}
+                    />
+                );
+            case 'phoneNumber':
+                return (
+                    <PhoneInput
+                        className='rounded-md md:ml-4 text-black'
+                        style={{
+                            '--PhoneInputCountryFlag-height': '1.0em', // Adjust the size as needed
+                            // Add other custom styles here if needed
+                        }}
+                        placeholder="Enter phone number"
+                        value={editedMember[label]}
+                        onChange={handleChange}
+                        defaultCountry='NO'
+                        countryCallingCodeEditable={false}
+                        international                   // Add required props
+                    />
+                );
+            case 'yearOfStudy':
+                return (
+                    <input
+                        className='md:ml-2 text-black rounded-md px-2 w-[45px]'
+                        type='number'
+                        defaultValue={editedMember[label]}
+                        onChange={(e) => handleChange(e.target.value)}
+                    />
+                );
+            default:
+                return null;
+        }
     };
-
+    
     const handleUpdateInfo = () => {
-        Object.entries(editableValues).forEach(([label, value]) => {
-            onUpdateInfo(label, value);
-        });
-
-        // Clear editable values after updating
-        setEditableValues({});
+        onUpdateInfo(editedMember);
     };
-
-    const [value, setValue] = useState();
-    console.log(value);
 
     return (
-        <>
-            <div className='ml-4'>
-                {memberInfo.map((info) => (
-                    <div key={info.label}>
-                        <div className='flex flex-row'>
-                            <InfoDisplay label={info.label} value={info.value} full={true} />
-                            {info.type === "phone" ? (
-                                <PhoneInput
-                                    className='rounded-md mb-4 ml-4 text-black'
-                                    style={{
-                                        '--PhoneInputCountryFlag-height': '1.0em', // Adjust the size as needed
-                                        // Add other custom styles here if needed
-                                    }}
-                                    placeholder="Enter phone number"
-                                    value={value}
-                                    onChange={setValue}
-                                    defaultCountry='NO'
-                                    countryCallingCodeEditable={false}
-                                    international
-                                />
-                            ) : (
-                                <input
-                                    className='rounded-md mb-4 ml-4 text-black'
-                                    id={info.label}
-                                    name={info.label}
-                                    type={info.type}
-                                    defaultValue={info.value}
-                                />
-                            )}
-
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <>
-                {Object.keys(editableValues).length > 0 && (
-                    <Button label={'Save Changes'} onClick={handleUpdateInfo} />
-                    // <button onClick={handleUpdateInfo} className='bg-blue-500 text-white px-4 py-2'>
-                    //     Save Changes
-                    // </button>
-                )}
-            </>
-        </>
+        <div>
+            <h2>Member information:</h2>
+            <ul className='list-disc mb-4 text-xl'>
+                {Object.entries(editedMember).map(([key, value]) => {
+                    const renderValueString = renderValue(value, key);
+                    if (renderValueString === 'excluded') {
+                        return null;
+                    }
+                    return (
+                        <li key={key} className='flex mb-4'>
+                            <div className='flex flex-col md:flex-row'>
+                                <strong>{key}:</strong>
+                                {getInputElement(key)}
+                            </div>
+                        </li>
+                    );
+                })}
+            </ul>
+            <Button label={'Save Changes'} onClick={handleUpdateInfo} />
+        </div>
     );
+};
+
+const renderValue = (value: string | number | boolean | Date | null, key: string) => {
+    // Exclude rendering for specified properties
+    if (key === 'memberID' || key === 'userId' || key === 'slackToken' || key === 'orbitMail') {
+        return 'excluded'; // Or any other value indicating exclusion
+    }
+    if (value instanceof Date) {
+        return value.toLocaleDateString(); // or any other format you prefer
+    } else {
+        return value !== null ? value.toString() : 'unknown';
+    }
 };
 
 export default EditInfoDisplay;

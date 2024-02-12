@@ -49,7 +49,6 @@ const Profile = () => {
     }
 
     if (member) {
-
         return (
             <ProfileView member={member} edit={true} handleRedirect={handleRedirect}/>
         );

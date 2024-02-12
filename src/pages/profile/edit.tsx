@@ -2,9 +2,9 @@ import BreakLine from '@/components/General/Breakline';
 import EditInfoDisplay from '@/components/ProfilePage/EditInfoDisplay';
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
-import { getMemberInfo } from '@/views/ProfileView';
 import type { Member } from '@prisma/client';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
 const EditProfile = () => {
@@ -29,6 +29,22 @@ const EditProfile = () => {
         }
     };
 
+    const mutation = api.members.updateMemberInformation.useMutation();
+    const router = useRouter();
+
+    async function handleUpdateInfo(member: Member) {
+        try {
+            // Perform the mutation and wait for it to complete
+            await mutation.mutateAsync(member);
+
+            // Once the mutation is successful, navigate to the profile page
+            void router.push("/profile/me");
+        } catch (error) {
+            // Handle any errors that occur during the mutation
+            console.error("Error updating member information:", error);
+        }
+    }
+
     useEffect(() => {
         void fetchData();
     }, [session]);
@@ -44,23 +60,21 @@ const EditProfile = () => {
     }
 
     if (member) {
-        const memberInfo = getMemberInfo(member);
-
         return (
             <Layout>
-                <div className='flex justify-between items-center'>
-                    <h1 className='mr-2'>{member.firstName} {member.lastName}</h1>
-                </div>
-                <BreakLine/>
-                <h2>Member information:</h2>
-                <EditInfoDisplay memberInfo={memberInfo} onUpdateInfo={console.log("Edited")}/>
+                <ul>
+                    <h1>{member.firstName} {member.lastName}</h1>
+                    <div className='text-xl'>{member.orbitMail}</div>
+                </ul>
+                <BreakLine />
+                <EditInfoDisplay member={member} onUpdateInfo={handleUpdateInfo} />
             </Layout>
         );
     }
 
     return (
         <div>
-            Error
+            Error fetching member from Google login
         </div>
     )
 };
