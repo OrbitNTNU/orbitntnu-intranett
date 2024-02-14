@@ -5,12 +5,13 @@ import { Shortcuts } from "@/views/ShortcutsView";
 import Welcome from "@/views/WelcomeView";
 
 const Home = () => {
+
   return (
     <Layout>
       <Welcome></Welcome>
       <Events></Events>
       <Posts></Posts>
-      <Shortcuts/>
+      <Shortcuts />
     </Layout>
   );
 };

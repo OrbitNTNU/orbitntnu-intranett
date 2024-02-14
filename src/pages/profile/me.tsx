@@ -1,8 +1,9 @@
-import ProfileDisplay from '@/components/ProfilePage/ProfileDisplay';
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
+import ProfileView from '@/views/ProfileView';
 import type { Member } from '@prisma/client';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
 const Profile = () => {
@@ -11,6 +12,12 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
 
     const query = api.members.getMemberByOrbitMail.useQuery(session.data?.user.email ?? "");
+
+    const router = useRouter();
+
+    const handleRedirect = () => {
+        void router.push("/profile/edit")
+    }
 
     const fetchData = async () => {
         if (session.data?.user.email) {
@@ -31,8 +38,6 @@ const Profile = () => {
         void fetchData();
     }, [session]);
 
-    console.log(member);
-
     if (loading) {
         return (
             <Layout>
@@ -43,20 +48,17 @@ const Profile = () => {
         );
     }
 
+    if (member) {
+        return (
+            <ProfileView member={member} edit={true} handleRedirect={handleRedirect}/>
+        );
+    }
+
     return (
-        <Layout>
-            <div className="flex justify-center">
-                {/* Render your member data here */}
-                {member ? (
-                    <div className="flex justify-center">
-                        <ProfileDisplay selectedMember={member} />
-                    </div>
-                ) : (
-                    <p>Member not found</p>
-                )}
-            </div>
-        </Layout>
-    );
+        <div>
+            Error
+        </div>
+    )
 };
 
 export default Profile;

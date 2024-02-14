@@ -10,7 +10,7 @@ export default {
         secondaryColorTwo: '#271F38',
         accentColorOne: '#B8DBD9',
         accentColorTwo: '#EAB308',
-        subtext: '#9CA3AF'
+        subtext: '#D7D4D3'
       }
     },
   },

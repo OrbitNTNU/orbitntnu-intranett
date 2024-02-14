@@ -1,4 +1,5 @@
 import type { Member, Team, TeamHistory } from '@prisma/client';
+import { useSession } from 'next-auth/react';
 import { useRouter, type NextRouter } from 'next/router';
 
 interface SearchResultsProps {
@@ -41,30 +42,27 @@ export const getRole = (member: Member, teamHistories: TeamHistory[]) => {
   return currentTeam?.priviledges ? capitalizeFirstLetter(currentTeam.priviledges.toLowerCase()) : "N/A";
 };
 
-const handleBoxClick = (member: Member, router: NextRouter) => {
-  void router.push(
-    {
-      pathname: `/profile/${member.memberID}`,
-    }
-  )
-};
-
 const SearchResults = ({ members, teamHistories, teams }: SearchResultsProps) => {
   const router = useRouter();
+  const session = useSession();
+
+  const handleBoxClick = (member: Member, router: NextRouter) => {
+    void router.push(session.data?.user.email === member.orbitMail ? "profile/me" : `/profile/${member.memberID}`)
+  };
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center justify-center">
       <div className="flex flex-wrap justify-center">
-        {members.map((member) => (
+        {members.sort((a, b) => a.firstName.localeCompare(b.firstName)).map((member) => (
           <div
             key={member.memberID}
-            className="bg-secondaryColorTwo rounded-lg w-[350px] sm:m-10 md:w-[350px] lg:w-[350px] xl:w-[350px] hover:bg-[#211932] p-10 mx-3 my-10 cursor-pointer"
+            className="rounded-lg w-[270px] mb-6 bg-blue-600 hover:bg-blue-800 p-10 mx-3 cursor-pointer"
             onClick={() => handleBoxClick(member, router)}
           >
-            <h2>{member.firstName} {member.lastName}</h2>
-            <p>{member.orbitMail}</p>
-            <p>{getCurrentTeam(teamHistories, member, teams) + ", " + getRole(member, teamHistories)}</p>
-            <p>Active Status: {member.activeStatus ? 'Active' : 'Inactive'}</p>
+            <h3 className='font-bold'>{member.firstName} {member.lastName}</h3>
+            <p className='text-subtext'>{member.orbitMail}</p>
+            <p className='text-subtext'>{getCurrentTeam(teamHistories, member, teams) + ", " + getRole(member, teamHistories)}</p>
+            <p className='text-subtext'>Active Status: {member.activeStatus ? 'Active' : 'Inactive'}</p>
           </div>
         ))}
       </div>

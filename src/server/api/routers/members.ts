@@ -8,7 +8,7 @@ export const membersRouter = createTRPCRouter({
         return members;
     }),
 
-    getMemberById: publicProcedure.input(Number).query(async (opts) => {
+    getMemberById: publicProcedure.input(z.number()).query(async (opts) => {
         if (!opts.input) {
             throw new Error("Input is missing.");
         }
@@ -24,11 +24,11 @@ export const membersRouter = createTRPCRouter({
         return member;
     }),
 
-    getMemberByOrbitMail: publicProcedure.input(String).query(async (opts) => {
-        const member = await opts.ctx.db.member.findUnique({
+    getMemberByOrbitMail: publicProcedure.input(z.string()).query(async (opts) => {
+        const member = await opts.ctx.db.member.findFirst({
             where: { orbitMail: opts.input },
         });
-    
+
         return member;
     }),
 
@@ -37,11 +37,15 @@ export const membersRouter = createTRPCRouter({
             firstName: z.string(),
             lastName: z.string(),
             activeStatus: z.boolean(),
-            fieldOfStudy: z.string(),
-            phoneNumber: z.string(),
-            ntnuMail: z.string(),
+            fieldOfStudy: z.string().nullable(),
+            ntnuMail: z.string().nullable(),
             orbitMail: z.string(),
-            })
+            phoneNumber: z.string().nullable(),
+            yearOfStudy: z.number().nullable(),
+            birthday: z.date().nullable(),
+            nationalities: z.string().nullable(),
+            additionalComments: z.string().nullable()
+        })
         )
         .mutation(async (opts) => {
 
@@ -51,18 +55,59 @@ export const membersRouter = createTRPCRouter({
                 }
             });
 
-            if(!foundMember) {
+            if (!foundMember) {
                 const { input } = opts;
 
                 // Create a new user in the database
                 const member = await db.member.create({
                     data: input,
                 });
-    
+
                 return member;
             }
-            
+
             return foundMember;
+        }),
+
+    updateMemberInformation: publicProcedure
+        .input(z.object({
+            firstName: z.string(),
+            lastName: z.string(),
+            activeStatus: z.boolean(),
+            fieldOfStudy: z.string().nullable(),
+            ntnuMail: z.string().nullable(),
+            orbitMail: z.string(),
+            phoneNumber: z.string().nullable(),
+            yearOfStudy: z.number().nullable(),
+            birthday: z.date().nullable(),
+            nationalities: z.string().nullable(),
+            additionalComments: z.string().nullable()
+        })
+        )
+        .mutation(async (opts) => {
+            const { input } = opts;
+
+            // Find the member by orbitMail
+            const foundMember = await db.member.findUnique({
+                where: {
+                    orbitMail: input.orbitMail,
+                },
+            });
+
+            if (foundMember) {
+                // Update the existing member information
+                const updatedMember = await db.member.update({
+                    where: {
+                        orbitMail: input.orbitMail,
+                    },
+                    data: input,
+                });
+
+                return updatedMember;
+            } 
+
+            // Member not found, return null or handle accordingly
+            return null;
         }),
 })
 
