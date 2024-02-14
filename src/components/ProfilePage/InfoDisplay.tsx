@@ -8,7 +8,6 @@ interface InfoDisplayProps {
 const InfoDisplay: React.FC<InfoDisplayProps> = ({ member }) => {
     const knownData: JSX.Element[] = [];
     const unknownData: JSX.Element[] = [];
-    console.log(unknownData);
     // Separate known and unknown data
     Object.entries(member).forEach(([key, value]) => {
         const renderValueString = renderValue(value, key);

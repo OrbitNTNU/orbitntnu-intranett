@@ -12,14 +12,42 @@ const EditProfile = () => {
     const [member, setMember] = useState<Member | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const query = api.members.getMemberByOrbitMail.useQuery(session.data?.user.email ?? "");
+    const getMemberQuery = api.members.getMemberByOrbitMail.useQuery(session.data?.user.email ?? "");
+    const newMemberQuery = api.members.createMember.useMutation();
 
     const fetchData = async () => {
         if (session.data?.user.email) {
             try {
-                const response = await query.refetch();
+                const response = await getMemberQuery.refetch();
                 if (response.data) {
                     setMember(response.data);
+                } else {
+                    const sessionName = session.data.user.name;
+                    const nameParts = sessionName?.split(' ') ?? [];
+                    const firstName = nameParts.slice(0, -1).join(' ');
+                    const lastName = nameParts[nameParts.length - 1] ?? "";
+
+                    const tempMember = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        activeStatus: true,
+                        fieldOfStudy: null,
+                        ntnuMail: null,
+                        orbitMail: session.data.user.email,
+                        phoneNumber: null,
+                        yearOfStudy: null,
+                        birthday: null,
+                        nationalities: null,
+                        additionalComments: null,
+                        slackToken: null,
+                        userId: null
+                    };
+
+                    await newMemberQuery.mutateAsync(tempMember);
+                    const response = await getMemberQuery.refetch();
+                    if(response.data) {
+                        setMember(response.data);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching member:', error);

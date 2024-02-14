@@ -53,7 +53,7 @@ const SearchResults = ({ members, teamHistories, teams }: SearchResultsProps) =>
   return (
     <div className="flex items-center justify-center">
       <div className="flex flex-wrap justify-center">
-        {members.map((member) => (
+        {members.sort((a, b) => a.firstName.localeCompare(b.firstName)).map((member) => (
           <div
             key={member.memberID}
             className="rounded-lg w-[270px] mb-6 bg-blue-600 hover:bg-blue-800 p-10 mx-3 cursor-pointer"

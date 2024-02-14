@@ -117,10 +117,10 @@ model Member {
   firstName          String
   lastName           String
   activeStatus       Boolean        @default(true)
-  fieldOfStudy       String
+  fieldOfStudy       String?
   birthday           DateTime?      @db.Date
-  phoneNumber        String         @unique
-  ntnuMail           String         @unique
+  phoneNumber        String?        @unique
+  ntnuMail           String?        @unique
   orbitMail          String         @unique
   nationalities      String?
   yearOfStudy        Int?

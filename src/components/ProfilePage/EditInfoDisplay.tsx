@@ -14,16 +14,15 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
 
     // Function to get the input element based on type
     const getInputElement = (label: string) => {
-        const handleChange = (newValue: string | boolean | Date | number | null) => {
-            let parsedValue: string | boolean | Date | number | null = newValue;
+        const handleChange = (newValue: string | boolean | Date | number | undefined) => {
+            let parsedValue: string | boolean | Date | number | undefined = newValue;
         
             if (label === 'yearOfStudy') {
                 // Parse newValue as an integer for yearOfStudy
-                parsedValue = newValue !== null ? parseInt(newValue.toString()) : null;
+                parsedValue = newValue !==  undefined ? parseInt(newValue.toString()) : undefined;
             } else if (label === 'birthday' && typeof newValue === 'string') {
                 // Parse newValue as a Date object for birthday
                 parsedValue = new Date(newValue);
-                console.log(parsedValue);
             }
         
             setEditedMember(prevState => ({
@@ -43,7 +42,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                     <input
                         className='md:ml-2 rounded-md text-black px-2'
                         type='text'
-                        defaultValue={member[label]}
+                        defaultValue={member[label] ?? undefined}
                         onChange={(e) => handleChange(e.target.value)}
                     />
                 );
@@ -74,7 +73,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                             // Add other custom styles here if needed
                         }}
                         placeholder="Enter phone number"
-                        value={editedMember[label]}
+                        value={editedMember[label] ?? undefined}
                         onChange={handleChange}
                         defaultCountry='NO'
                         countryCallingCodeEditable={false}
@@ -86,7 +85,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                     <input
                         className='md:ml-2 text-black rounded-md px-2 w-[45px]'
                         type='number'
-                        defaultValue={editedMember[label]}
+                        defaultValue={editedMember[label] ?? undefined}
                         onChange={(e) => handleChange(e.target.value)}
                     />
                 );
@@ -96,7 +95,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
     };
     
     const handleUpdateInfo = () => {
-        onUpdateInfo(editedMember);
+        void onUpdateInfo(editedMember);
     };
 
     return (
