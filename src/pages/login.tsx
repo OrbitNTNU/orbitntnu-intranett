@@ -7,7 +7,6 @@ import { getServerSession } from "next-auth";
 import { getProviders, signIn } from "next-auth/react";
 import Welcome from "@/views/WelcomeView";
 import Footer from "@/components/General/Footer";
-import { useMedia } from 'react-use';
 import Button from "@/components/General/Button";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
@@ -40,14 +39,12 @@ const LoginPage = ({
     }
   };
 
-  const isSmallScreen = useMedia('(max-width: 600px)');
-
   return (
     <div className="min-h-screen flex flex-col mt-10">
       <>
         <div className="min-h-screen flex flex-col mt-10">
           <main className="flex w-full flex-col items-center mb-10">
-            <div className={`${isSmallScreen ? 'w-full p-4' : 'w-2/3'}`}>
+            <div className='w-full p-4 md:w-2/3 md:p-0'>
               <Welcome />
             </div>
             {Object.values(providers).map((provider) => (

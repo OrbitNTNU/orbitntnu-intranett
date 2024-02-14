@@ -38,28 +38,26 @@ const Navbar = () => {
           </svg>
         </Link>
       </div>
-      {!isSmallScreen && (
         <div className='flex'>
-        {session.data ? (
-          <Link href="/profile/me">
-            <p>{session.data.user.name}</p>
-          </Link>
-        ) : (
-          <button onClick={handleLogin}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </button>
-        )}
-        <Dropdown 
-          shortcuts={mockShortcuts} 
-          handleLogout={handleLogout} 
-          handleLogin={handleLogin}
-        />
-      </div>
-      )}
+          {session.data ? (
+            <Link href="/profile/me" className="hidden md:block">
+              <p>{session.data.user.name}</p>
+            </Link>
+          ) : (
+            <button onClick={handleLogin}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </button>
+          )}
+          <Dropdown
+            shortcuts={mockShortcuts}
+            handleLogout={handleLogout}
+            handleLogin={handleLogin}
+          />
+        </div>
     </nav>
   )
 }
