@@ -7,15 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([name])
-}
-
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -126,16 +117,16 @@ model Member {
   firstName          String
   lastName           String
   activeStatus       Boolean        @default(true)
-  fieldOfStudy       String
+  fieldOfStudy       String?
   birthday           DateTime?      @db.Date
-  phoneNumber        String         @unique
-  ntnuMail           String         @unique
-  backupMail         String?
+  phoneNumber        String?        @unique
+  ntnuMail           String?        @unique
+  orbitMail          String         @unique
   nationalities      String?
   yearOfStudy        Int?
   additionalComments String?        @db.Text
-  googleToken        String?
-  slackToken         String?
+  slackToken         String?        @unique
+  userId             String?        @unique
   anouncements       Announcement[]
   events             Event[]
   interestedIn       InterestedIn[]
@@ -147,13 +138,14 @@ model Member {
 model TeamHistory {
   memberID    Int
   teamID      Int
-  startYear   Int        @db.Year
-  startSem    Semester
-  endYear     Int?       @db.Year
-  endSem      Semester?
-  priviledges Priviledge @default(MEMBER)
-  member      Member     @relation(fields: [memberID], references: [memberID])
-  team        Team       @relation(fields: [teamID], references: [teamID])
+  startYear   Int                    @db.Year
+  startSem    SemType
+  endYear     Int?                   @db.Year
+  endSem      SemType?
+  priviledges Priviledge             @default(MEMBER)
+  cPosition   TeamHistory_cPosition?
+  member      Member                 @relation(fields: [memberID], references: [memberID])
+  team        Team                   @relation(fields: [teamID], references: [teamID])
 
   @@id([memberID, teamID, startYear, startSem])
   @@index([teamID], map: "TeamHistory_teamID_fkey")
@@ -201,13 +193,27 @@ enum Priviledge {
   LEADER
 }
 
-enum Semester {
-  FALL
-  SRING
-}
-
 enum EventType {
   SOCIAL
   WORK
   PRIORITY
+}
+
+enum SemType {
+  FALL
+  SPRING
+}
+
+enum TeamHistory_cPosition {
+  CEO
+  COO
+  CTO
+  CFO
+  CMO
+  CIO
+  CHRO
+  PM_FS1
+  PM_FS1_5 @map("PM_FS1.5")
+  PM_FS2
+  PM_BS
 }

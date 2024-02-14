@@ -6,21 +6,15 @@ interface SearchBarProps {
   onChange: (value: string) => void;
 }
 
-const SearchBar = ({ query, onChange}: SearchBarProps) => {
+const SearchBar = ({ query, onChange }: SearchBarProps) => {
   return (
-    <div style={{ marginTop: '20px' }}>
-      {/* Add margin-top to move the SearchBar down */}
+    <div className='my-10 flex items-center justify-center'>
       <input
+        className="rounded-md p-2 text-black w-1/4"
         type="text"
         placeholder="Search..."
         value={query}
         onChange={(e) => onChange(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '10px',
-          fontSize: '1.2rem',
-          color: 'black', // Set text color to black
-        }}
       />
     </div>
   );
