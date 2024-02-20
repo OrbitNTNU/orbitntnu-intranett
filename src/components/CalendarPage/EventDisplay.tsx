@@ -57,11 +57,11 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
                 </p>
             </div>
             <div className="mt-auto">
-                <p className="flex flex-row gap-2">
+                <div className="flex flex-row gap-2">
                     <Icons name="User" />
                     {eventCombo.author.firstName + " " + eventCombo.author.lastName}
                     {", " + eventCombo.event.type}
-                </p>
+                </div>
             </div>
         </div>
     )

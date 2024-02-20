@@ -41,9 +41,9 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ combinedInfo }) => {
                         .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime))) // Sort the array based on startTime
                         .slice(0, 3)
                         .map((combo) => (
-                            <>
+                            <div key={combo.event.eventID}>
                                 <EventDisplay eventCombo={combo} eventColors={eventColors} indexes={generatedIndexes} />
-                            </>
+                            </div>
                         ))}
                     <button
                         className="bg-gradient-to-r w-full h-[46px] from-cyan-500 to-blue-500 font-bold py-2 px-4 md:mt-0 mt-6 mb-4  md:max-w-64 hover:bg-blue-800 flex items-center justify-center rounded-md"

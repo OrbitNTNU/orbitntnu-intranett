@@ -34,10 +34,10 @@ const ShortAnnouncements = ({announcements}: Props) => {
                     <p className="text-xl overflow-auto">{ann.announcement.announcement}</p>
                     <p className="text-gray-800">{ann.member.firstName + " " + ann.member.lastName}</p>
                     <Link href={"/blog/" + ann.announcement.announcementID}>
-                        <p className="flex flex-row gap-2 hover:gap-3 duration-100 ease-in -mt-4">
+                        <div className="flex flex-row gap-2 hover:gap-3 duration-100 ease-in -mt-4">
                             Show post
                             <Icons name="ArrowCircleRight"/>
-                        </p>
+                        </div>
                     </Link>
                 </div>
             ))}
