@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ShortcutLink } from '@/interfaces/ShortcutLink';
 import { useSession } from 'next-auth/react';
+import Icons from './Icons';
 
 interface DropdownProps {
     shortcuts: ShortcutLink[];
@@ -40,36 +41,30 @@ const Dropdown: React.FC<DropdownProps> = ({ shortcuts, handleLogout, handleLogi
 
     return (
         <div className="ml-10 relative group" ref={dropdownRef}>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6 cursor-pointer"
-                onClick={toggleDropdown}
-            >
-                {isOpen ? (
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                )}
-            </svg>
+            <button onClick={toggleDropdown}>
+                {isOpen ?
+                    <Icons name="Cross" /> : <Icons name="Dropdown" />
+                }
+            </button>
             {/* Dropdown content */}
             <div className={`absolute right-0 mt-4 w-48 bg-gray-600 rounded-md shadow-lg ${isOpen ? 'block' : 'hidden'}`}>
                 {shortcuts.map((shortcut, index) => (
-                    <a key={index} href={shortcut.url} className="block px-4 py-2 text-sm text-white hover:bg-blue-500 hover:text-white">
+                    <a
+                        key={index}
+                        href={shortcut.url}
+                        className={`block px-4 py-2 text-sm text-white hover:bg-blue-500 hover:text-white ${index === 0 ? 'rounded-t-md' : ''}`}
+                    >
                         <h3>{shortcut.header}</h3>
                         <p className="text-xs text-subtext">{shortcut.description}</p>
                     </a>
                 ))}
 
                 {session ? (
-                    <button key={"logOut"} onClick={handleLogout} className="w-full items-left block px-4 py-2 text-sm hover:bg-red-500 hover:text-white">
+                    <button key={"logOut"} onClick={handleLogout} className="rounded-b-md w-full items-left block px-4 py-2 text-sm hover:bg-red-500 hover:text-white">
                         <h3 className="font-semibold">{"Log out"}</h3>
                     </button>
                 ) : (
-                    <button key={"logOut"} onClick={handleLogin} className="w-full items-left block px-4 py-2 text-sm hover:bg-green-500 hover:text-white">
+                    <button key={"logOut"} onClick={handleLogin} className="rounded-b-md w-full items-left block px-4 py-2 text-sm hover:bg-green-500 hover:text-white">
                         <h3 className="font-semibold">{"Log out"}</h3>
                     </button>
                 )}

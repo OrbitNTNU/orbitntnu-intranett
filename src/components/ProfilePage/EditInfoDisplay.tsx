@@ -70,6 +70,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                         className='rounded-md md:ml-4 text-black'
                         style={{
                             '--PhoneInputCountryFlag-height': '1.0em', // Adjust the size as needed
+                            borderRadius: '0.25em', // Add rounded corners to the outer div
                             // Add other custom styles here if needed
                         }}
                         placeholder="Enter phone number"

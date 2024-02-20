@@ -13,7 +13,6 @@ export const announcementsRouter = createTRPCRouter({
 
     const annAndMember: AnnAndMember[] = [];
 
-
     for (const ann of latestAnnouncements) {
       const writer = await ctx.db.member.findUnique({
         where: {

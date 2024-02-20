@@ -1,4 +1,4 @@
-import type { Event as MyEvent } from "@/interfaces/Event";;
+import type { Member, Event as MyEvent } from "@prisma/client";;
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import type { Formats } from 'react-big-calendar';
 import moment from 'moment';
@@ -6,6 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'moment-timezone';
 import { setContrast } from './Colors';
 import { useState, useEffect } from 'react';
+import type { EventType } from "@prisma/client";
 
 export const hashString = (str: string) => {
     let hash = 0;
@@ -26,59 +27,58 @@ interface ParsedEvent {
     end: Date;
     allDay: boolean;
     details: MyEvent;
+    type: EventType;
 }
 
-function parseEventItems(eventItems: MyEvent[], indexes: Record<string, number>): ParsedEvent[] {
+function parseEventItems(eventItems: { event: MyEvent, author: Member }[], indexes: Record<string, number>): ParsedEvent[] {
     const events: ParsedEvent[] = [];
-  
+
     eventItems.map((eventItem) => {
-      // Update the year to 2024 for start and end properties
-      const startYear2024 = new Date(eventItem.startTime);
-      startYear2024.setFullYear(2024);
-  
-      const endYear2024 = new Date(eventItem.endTime);
-      endYear2024.setFullYear(2024);
-  
-      const parsedEvent = {
-        id: indexes[eventItem.type] ?? 0,
-        title: eventItem.name,
-        start: startYear2024,
-        end: endYear2024,
-        allDay: false,
-        details: eventItem
-      };
-  
-      events.push(parsedEvent);
+        // Update the year to 2024 for start and end properties
+        const startYear2024 = new Date(eventItem.event.startTime);
+
+        const endYear2024 = new Date(eventItem.event.endTime);
+
+        const parsedEvent = {
+            id: indexes[eventItem.event.type] ?? 0,
+            title: eventItem.event.name,
+            start: startYear2024,
+            end: endYear2024,
+            allDay: false,
+            details: eventItem.event,
+            type: eventItem.event.type
+        };
+
+        events.push(parsedEvent);
     });
-  
+
     return events;
-  }
+}
 
 interface CalendarDisplayProps {
     indexes: Record<string, number>;
-    courseColors: Record<string, string>; // Replace with your actual type
-    eventItems: MyEvent[];
+    eventColors: Record<number, string>;
+    eventItems: { event: MyEvent, author: Member }[];
 }
 
 const CalendarDisplay: React.FC<CalendarDisplayProps> = ({
     indexes,
-    courseColors,
+    eventColors,
     eventItems,
 }) => {
-
     const [parsedEvents, setParsedEvents] = useState<ParsedEvent[]>([]);
 
     useEffect(() => {
         // Assuming you have some logic to asynchronously load parsed events
         // Replace the following placeholder code with your actual data loading logic
         const loadParsedEvents = () => {
-          // Simulate loading parsed events
-          const events = parseEventItems(eventItems, indexes);
-          setParsedEvents(events);
+            // Simulate loading parsed events
+            const events = parseEventItems(eventItems, indexes);
+            setParsedEvents(events);
         };
-    
+
         void loadParsedEvents();
-      }, [eventItems, indexes]);
+    }, [eventItems, indexes]);
 
     const timezone = moment.tz.guess();
     moment.tz.setDefault(timezone);
@@ -98,9 +98,10 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({
     workWeekEnd.setHours(workWeekEnd.getHours() - parseInt(timeZoneOffset.split(":")[0] ?? "0"));
 
     const eventPropGetter = (event: ParsedEvent) => {
-        const courseCode = event.title?.split('-')[0]?.trim();
-        if (courseCode) {
-            const backgroundColor = courseColors[indexes[courseCode]!];
+        const eventCode = event.type;
+
+        if (eventCode) {
+            const backgroundColor = eventColors[indexes[eventCode]!];
 
             // Check if backgroundColor is defined before calling setContrast
             const textColor = backgroundColor ? setContrast(backgroundColor) : '';
@@ -135,14 +136,13 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({
     const handleSelectEvent = (event: ParsedEvent) => {
         // Add your logic to show more details of the selected event
         const title = event.title;
-        console.log(event.start)
         const eventDetails = [title].filter(Boolean).join('\n\n');
         alert(eventDetails)
     };
 
     return (
-        <div className='flex-column flex-row flex-shrink mt-2 mb-2 justify-center'>
-            <div className="w-full h-[60vh] lg:w-[80%] lg:mx-auto">
+        <div className='flex-column flex-row flex-shrink justify-center'>
+            <div className="w-full h-[100%] md:h-[800px] md:w-[100%] lg:mx-auto">
                 <style>
                     {`
           .rbc-allday-cell {
@@ -155,7 +155,7 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({
                 </style>
                 <Calendar
                     formats={formats}
-                    defaultView='work_week'
+                    defaultView='week'
                     defaultDate={defaultDate}
                     localizer={localizer}
                     events={parsedEvents}

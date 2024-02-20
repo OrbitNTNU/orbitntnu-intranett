@@ -23,13 +23,8 @@ const mockShortcuts: ShortcutLink[] = [
     },
     {
         header: 'Announcements',
-        description: 'Announcements from Board',
+        description: 'Announcements from Orbit',
         url: '/announcements',
-    },
-    {
-        header: 'Blog',
-        description: 'What is Orbit up to lately?',
-        url: '/blog',
     },
     {
         header: 'Legacy page',
@@ -45,6 +40,11 @@ const mockShortcuts: ShortcutLink[] = [
         header: 'Link tree',
         description: 'Find a useful link',
         url: '/links',
+    },
+    {
+        header: 'Board Feedback',
+        description: 'Give feedback to the board',
+        url: 'https://docs.google.com/forms/d/e/1FAIpQLSd_EKTsfqqxvPbNl_N8NFASLRZIN_t80nSxuUVTwb-xbcoGmw/viewform?usp=sf_link',
     }
 ]
 
