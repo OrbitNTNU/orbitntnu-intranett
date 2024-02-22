@@ -1,6 +1,7 @@
 import type { Member, Team, TeamHistory } from '@prisma/client';
 import { useSession } from 'next-auth/react';
-import { useRouter, type NextRouter } from 'next/router';
+import { useRouter } from 'next/router';
+import MemberInfo from '../General/MemberInfo';
 
 interface SearchResultsProps {
   members: Member[];
@@ -17,10 +18,10 @@ export const getTeamName = (teamID: number, teams: Team[]) => {
 export const getCurrentTeam = (teamHistories: TeamHistory[], member: Member, teams: Team[]) => {
   const currentTeam = teamHistories.find(
     (team) =>
-    team.memberID === member.memberID &&
+      team.memberID === member.memberID &&
       (team.endYear === undefined || team.endYear === null)
   );
-  
+
   return currentTeam ? getTeamName(currentTeam?.teamID, teams) : "N/A";
 };
 
@@ -35,39 +36,52 @@ export const getRole = (member: Member, teamHistories: TeamHistory[]) => {
       (team.endYear === undefined || team.endYear === null)
   );
 
-  if(currentTeam && currentTeam.teamID == 1) {
-    return currentTeam.cPosition ? capitalizeFirstLetter(currentTeam.cPosition.toLowerCase()) : "N/A";
+  if (!currentTeam) {
+    return "Unknown Team"
   }
 
-  return currentTeam?.priviledges ? capitalizeFirstLetter(currentTeam.priviledges.toLowerCase()) : "N/A";
+  if (currentTeam && currentTeam.teamID == 1) {
+    return currentTeam.cPosition;
+  }
+
+  return capitalizeFirstLetter(currentTeam.priviledges.toLowerCase())
 };
 
 const SearchResults = ({ members, teamHistories, teams }: SearchResultsProps) => {
   const router = useRouter();
   const session = useSession();
 
-  const handleBoxClick = (member: Member, router: NextRouter) => {
+  const handleBoxClick = (member: Member) => {
     void router.push(session.data?.user.email === member.orbitMail ? "profile/me" : `/profile/${member.memberID}`)
   };
 
+  // Sort members alphabetically by first name
+  const sortedMembers = members.filter(member => teamHistories.some(history => history.memberID === member.memberID) && member.activeStatus).sort((a, b) => a.firstName.localeCompare(b.firstName));
+
   return (
-    <div className="flex items-center justify-center">
-      <div className="flex flex-wrap justify-center">
-        {members.sort((a, b) => a.firstName.localeCompare(b.firstName)).map((member) => (
-          <div
-            key={member.memberID}
-            className="rounded-lg w-[270px] mb-6 bg-blue-600 hover:bg-blue-800 p-10 mx-3 cursor-pointer"
-            onClick={() => handleBoxClick(member, router)}
-          >
-            <h3 className='font-bold'>{member.firstName} {member.lastName}</h3>
-            <p className='text-subtext'>{member.orbitMail}</p>
-            <p className='text-subtext'>{getCurrentTeam(teamHistories, member, teams) + ", " + getRole(member, teamHistories)}</p>
-            <p className='text-subtext'>Active Status: {member.activeStatus ? 'Active' : 'Inactive'}</p>
-          </div>
-        ))}
+    <>
+      <div className="flex items-center flex-col justify-center">
+        <div className="flex flex-wrap justify-center">
+          {sortedMembers.map((member) => (
+            <MemberInfo key={member.memberID} member={member} teams={teams} teamHistories={teamHistories} onClick={() => handleBoxClick(member)}/>
+          ))}
+        </div>
       </div>
-    </div>
+      <div className="flex items-center flex-col justify-center">
+        {members.filter(member => !member.activeStatus).length > 0 && (
+          <div>
+            <h2 className='mt-10'>Inactive members / missing key data:</h2>
+            <div className="flex flex-wrap justify-center">
+              {members.filter(member => !member.activeStatus).map((member) => (
+                <MemberInfo key={member.memberID} member={member} teams={teams} teamHistories={teamHistories} onClick={() => handleBoxClick(member)}/>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
+
 
 export default SearchResults;

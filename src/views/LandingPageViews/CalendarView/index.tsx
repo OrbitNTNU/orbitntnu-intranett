@@ -26,7 +26,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ combinedInfo }) => {
     return (
         <div className="w-full">
             <Link href={"/calendar"}>
-                <h2 className="flex font-bold items-center text-5xl mb-4">
+                <h2 className="flex font-bold items-center text-5xl mb-4 gap-4">
                     Calendar
                     <Icons name="Arrow45Up" />
                 </h2>

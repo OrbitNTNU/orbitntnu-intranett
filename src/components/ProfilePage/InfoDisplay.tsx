@@ -49,7 +49,7 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member }) => {
 
 const renderValue = (value: string | number | boolean | Date | null, key: string) => {
     // Exclude rendering for specified properties
-    if (key === 'memberID' || key === 'userId' || key === 'slackToken' || key === 'orbitMail') {
+    if (key === 'memberID' || key === 'userId' || key === 'slackToken' || key === 'orbitMail' || key === 'activeStatus') {
         return 'excluded'; // Or any other value indicating exclusion
     }
 
