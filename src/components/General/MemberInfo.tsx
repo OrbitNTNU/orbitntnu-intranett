@@ -31,7 +31,7 @@ const MemberInfo = ({ member, onClick, teams, teamHistories, icon1, icon1Click, 
     return (
         <div
             key={member.memberID}
-            className={`rounded-lg w-[270px] flex flex-col overflow-x-auto mb-6 ${backgroundColorClass} ${hoverColorClass} p-3 mx-3`}
+            className={`rounded-lg w-[270px] flex flex-col overflow-x-auto mb-6 ${backgroundColorClass} ${hoverColorClass} p-3 mx-3 ${onClick ? 'cursor-pointer' : 'cursor-hover'}`}
             onClick={onClick ? () => onClick(member) : undefined}
         >
             {icon1 !== undefined && icon1Click !== undefined ? (
