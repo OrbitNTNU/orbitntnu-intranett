@@ -3,7 +3,7 @@ import BreakLine from "@/components/General/Breakline";
 const Welcome = () => {
     return (
         <div>
-            <h2 className="flex justify-center font-bold text-5xl my-2">
+            <h2 className="flex font-bold text-5xl myt-2">
                 Welcome!
             </h2>
             <h1 className="justify-center font text-xl text-align-left my-10">
