@@ -136,18 +136,18 @@ model Member {
 }
 
 model TeamHistory {
-  memberID    Int
+  teamHistoryID           Int            @id @default(autoincrement())
+  memberID       Int
   teamID      Int
-  startYear   Int                    @db.Year
+  startYear   Int                     @db.Year
   startSem    SemType
-  endYear     Int?                   @db.Year
+  endYear     Int?                    @db.Year
   endSem      SemType?
-  priviledges Priviledge             @default(MEMBER)
+  priviledges TeamHistory_priviledges @default(MEMBER)
   cPosition   TeamHistory_cPosition?
-  member      Member                 @relation(fields: [memberID], references: [memberID])
-  team        Team                   @relation(fields: [teamID], references: [teamID])
+  member      Member                  @relation(fields: [memberID], references: [memberID])
+  team        Team                    @relation(fields: [teamID], references: [teamID])
 
-  @@id([memberID, teamID, startYear, startSem])
   @@index([teamID], map: "TeamHistory_teamID_fkey")
 }
 
@@ -187,12 +187,6 @@ model Event {
   @@index([memberID], map: "Event_memberID_fkey")
 }
 
-enum Priviledge {
-  MEMBER
-  BOARD
-  LEADER
-}
-
 enum EventType {
   SOCIAL
   WORK
@@ -202,6 +196,13 @@ enum EventType {
 enum SemType {
   FALL
   SPRING
+}
+
+enum TeamHistory_priviledges {
+  MEMBER
+  BOARD
+  LEADER
+  MENTOR
 }
 
 enum TeamHistory_cPosition {
@@ -216,4 +217,5 @@ enum TeamHistory_cPosition {
   PM_FS1_5 @map("PM_FS1.5")
   PM_FS2
   PM_BS
+  NTNU_REP
 }

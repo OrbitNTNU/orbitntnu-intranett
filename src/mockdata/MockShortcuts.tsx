@@ -37,14 +37,19 @@ const mockShortcuts: ShortcutLink[] = [
         url: '/memegallery',
     },
     {
-        header: 'Link tree',
-        description: 'Find a useful link',
-        url: '/links',
-    },
-    {
         header: 'Board Feedback',
         description: 'Give feedback to the board',
         url: 'https://docs.google.com/forms/d/e/1FAIpQLSd_EKTsfqqxvPbNl_N8NFASLRZIN_t80nSxuUVTwb-xbcoGmw/viewform?usp=sf_link',
+    },
+    {
+        header: 'Orbit Teams',
+        description: 'Explore the teams in Orbit',
+        url: '/team/teamlist',
+    },
+    {
+        header: 'Your team',
+        description: 'See your own team',
+        url: '/team/find',
     }
 ]
 

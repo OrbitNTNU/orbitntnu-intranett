@@ -46,15 +46,6 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                         onChange={(e) => handleChange(e.target.value)}
                     />
                 );
-            case 'activeStatus':
-                return (
-                    <input
-                        className='md:ml-2 w-4'
-                        type='checkbox'
-                        checked={editedMember[label]}
-                        onChange={() => handleChange(!editedMember[label])}
-                    />
-                );
             case 'birthday':
                 return (
                     <input
@@ -125,13 +116,13 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
 
 const renderValue = (value: string | number | boolean | Date | null, key: string) => {
     // Exclude rendering for specified properties
-    if (key === 'memberID' || key === 'userId' || key === 'slackToken' || key === 'orbitMail') {
+    if (key === 'memberID' || key === 'userId' || key === 'slackToken' || key === 'orbitMail' || key === 'activeStatus') {
         return 'excluded'; // Or any other value indicating exclusion
     }
     if (value instanceof Date) {
         return value.toLocaleDateString(); // or any other format you prefer
     } else {
-        return value !== null ? value.toString() : 'unknown';
+        return value ? value.toString() : 'unknown';
     }
 };
 

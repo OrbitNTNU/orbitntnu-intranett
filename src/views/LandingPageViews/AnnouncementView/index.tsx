@@ -20,7 +20,7 @@ const ShortAnnouncements = ({announcements}: Props) => {
     return (
         <section>
             <Link href="/announcements" className="flex flex-row">
-                <h2 className="flex items-center mb-4 font-bold text-5xl">
+                <h2 className="flex items-center mb-4 font-bold text-5xl gap-4">
                     Latest announcements
                     <Icons name="Arrow45Up"/>
                 </h2>
