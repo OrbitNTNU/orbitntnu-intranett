@@ -15,6 +15,7 @@ import { ZodError } from "zod";
 
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
+import { TeamHistory_priviledges } from "@prisma/client";
 
 /**
  * 1. CONTEXT
@@ -129,3 +130,53 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+
+/** Reusable middleware that enforces user is board or leader before running the procedure. */
+const enforceUserIsTLOrBoard = t.middleware(async ({ ctx, next }) => {
+
+  if (!ctx.session?.user.email) {
+    throw new TRPCError({ code: "UNAUTHORIZED" }); // User is not logged in
+  }
+
+  const clientMember = await ctx.db.member.findUnique({
+    where: {
+      orbitMail: ctx.session.user.email,
+    }
+  });
+
+  if (!clientMember) {
+    throw new TRPCError({ code: "UNAUTHORIZED" }); // User does not exist in the database
+  }
+
+  const clientCurrentTeamHistory = await ctx.db.teamHistory.findFirst({
+    where: {
+      memberID: clientMember?.memberID,
+      endSem: null,
+    }
+  });
+
+  if (!(
+    clientCurrentTeamHistory?.priviledges == TeamHistory_priviledges.BOARD ||
+    clientCurrentTeamHistory?.priviledges == TeamHistory_priviledges.LEADER
+  )) {
+    throw new TRPCError({ code: "UNAUTHORIZED" }); // User is not board or leader
+  }
+
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
+
+/**
+ * TeamLead procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to users who are team leaders or board, use this. It verifies
+ * that the member in the database connected to the logged in mail is either board or leader.
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const TeamLeadProcedure = t.procedure.use(enforceUserIsTLOrBoard);
