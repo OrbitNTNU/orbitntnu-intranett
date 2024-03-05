@@ -38,7 +38,7 @@ const Announcements = () => {
             }>
             <p className="text-gray-800">{formatDateTime(ann.announcement.postTime)}</p>
             <p className="text-xl overflow-auto">{ann.announcement.announcement}</p>
-            <p className="text-gray-800">{ann.member.firstName + " " + ann.member.lastName}</p>
+            <p className="text-gray-800">{ann.member.name}</p>
             <Link href={"/blog/" + ann.announcement.announcementID}>
               <p className="flex flex-row gap-2 hover:gap-3 duration-100 ease-in -mt-4">
                 Show post

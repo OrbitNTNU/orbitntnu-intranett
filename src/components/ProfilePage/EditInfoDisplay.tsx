@@ -11,7 +11,6 @@ interface InfoDisplayProps {
 
 const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) => {
     const [editedMember, setEditedMember] = useState<Member>(member);
-
     // Function to get the input element based on type
     const getInputElement = (label: string) => {
         const handleChange = (newValue: string | boolean | Date | number | undefined) => {
@@ -32,9 +31,9 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
         };
 
         switch (label) {
-            case 'firstName':
-            case 'lastName':
+            case 'name':
             case 'ntnuMail':
+            case 'personalMail':
             case 'fieldOfStudy':
             case 'nationalities':
             case 'additionalComments':

@@ -36,7 +36,7 @@ const MemberInfo = ({ member, onClick, teams, teamHistories, icon1, icon1Click, 
         >
             {icon1 !== undefined && icon1Click !== undefined ? (
                 <div className="flex flex-row justify-between">
-                    <h3 className='font-bold'>{member.firstName} {member.lastName}</h3>
+                    <h3 className='font-bold'>{member.name}</h3>
                     <button
                         className={`rounded-lg ${icon1 === "Cross" || icon1 === "Arrow45Up" ? "hover:bg-red-500" : "hover:bg-green-500"} p-0.5`}
                         onClick={() => icon1Click()}
@@ -45,7 +45,7 @@ const MemberInfo = ({ member, onClick, teams, teamHistories, icon1, icon1Click, 
                     </button>
                 </div>
             ) :
-                <h3 className='font-bold'>{member.firstName} {member.lastName}</h3>
+                <h3 className='font-bold'>{member.name}</h3>
             }
 
             <hr className="border my-2" />

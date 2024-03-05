@@ -17,7 +17,9 @@ const Profile = () => {
 
     const handleRedirect = () => {
         void router.push("/profile/edit")
-    }
+    }   
+
+    console.log(session.data?.user)
 
     const fetchData = async () => {
         if (session.data?.user.email) {

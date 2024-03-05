@@ -34,8 +34,7 @@ export const membersRouter = createTRPCRouter({
 
     createMember: publicProcedure
         .input(z.object({
-            firstName: z.string(),
-            lastName: z.string(),
+            name: z.string(),
             activeStatus: z.boolean(),
             fieldOfStudy: z.string().nullable(),
             ntnuMail: z.string().nullable(),
@@ -44,7 +43,8 @@ export const membersRouter = createTRPCRouter({
             yearOfStudy: z.number().nullable(),
             birthday: z.date().nullable(),
             nationalities: z.string().nullable(),
-            additionalComments: z.string().nullable()
+            additionalComments: z.string().nullable(),
+            personalMail: z.string().nullable(),
         })
         )
         .mutation(async (opts) => {
@@ -71,8 +71,7 @@ export const membersRouter = createTRPCRouter({
 
     updateMemberInformation: publicProcedure
         .input(z.object({
-            firstName: z.string(),
-            lastName: z.string(),
+            name: z.string(),
             activeStatus: z.boolean(),
             fieldOfStudy: z.string().nullable(),
             ntnuMail: z.string().nullable(),
@@ -81,7 +80,8 @@ export const membersRouter = createTRPCRouter({
             yearOfStudy: z.number().nullable(),
             birthday: z.date().nullable(),
             nationalities: z.string().nullable(),
-            additionalComments: z.string().nullable()
+            additionalComments: z.string().nullable(),
+            personalMail: z.string().nullable(),
         })
         )
         .mutation(async (opts) => {

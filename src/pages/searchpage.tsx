@@ -24,7 +24,7 @@ export default function SearchPage() {
     // Filter members based on the name attribute (case-insensitive)
     const filteredResults = members
       .filter((member) =>
-        member.firstName.toLowerCase().includes(query.toLowerCase()) || member.lastName.toLowerCase().includes(query.toLowerCase()) 
+        member.name.toLowerCase().includes(query.toLowerCase())
       );
     setSearchResults(filteredResults);
   };
