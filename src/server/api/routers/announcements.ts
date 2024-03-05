@@ -1,4 +1,4 @@
-import type { AnnAndMember } from "@/pages";
+import type { AnnAndMember } from "@/views/LandingPageViews/AnnouncementView";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const announcementsRouter = createTRPCRouter({
