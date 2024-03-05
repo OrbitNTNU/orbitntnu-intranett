@@ -22,14 +22,10 @@ const EditProfile = () => {
                 if (response.data) {
                     setMember(response.data);
                 } else {
-                    const sessionName = session.data.user.name;
-                    const nameParts = sessionName?.split(' ') ?? [];
-                    const firstName = nameParts.slice(0, -1).join(' ');
-                    const lastName = nameParts[nameParts.length - 1] ?? "";
+                    const sessionName = session.data.user.name ?? "Unknown";
 
                     const tempMember = {
-                        firstName: firstName,
-                        lastName: lastName,
+                        name: sessionName,
                         activeStatus: true,
                         fieldOfStudy: null,
                         ntnuMail: null,
@@ -40,7 +36,8 @@ const EditProfile = () => {
                         nationalities: null,
                         additionalComments: null,
                         slackToken: null,
-                        userId: null
+                        userId: null,
+                        personalMail: null
                     };
 
                     await newMemberQuery.mutateAsync(tempMember);
@@ -91,7 +88,7 @@ const EditProfile = () => {
         return (
             <Layout>
                 <ul>
-                    <h1>{member.firstName} {member.lastName}</h1>
+                    <h1>{member.name}</h1>
                     <div className='text-xl'>{member.orbitMail}</div>
                 </ul>
                 <BreakLine />

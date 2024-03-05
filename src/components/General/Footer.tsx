@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <footer>
       <div className="bg-gradient-to-b from-[#010332] to-[#29011C] p-8 mt-8">
-        <div className="relative max-w-4xl m-auto">
+        <div className="max-w-4xl m-auto">
           <Link href="/">
             <Image
               src={logoWhite.src}
@@ -37,7 +37,7 @@ const Footer = () => {
         </div>
 
         <BreakLine />
-        <div className="relative max-w-4xl m-auto">
+        <div className="max-w-4xl m-auto">
           <div className=" flex flex-wrap items-center justify-center">
             {mockShortcuts.map((link) => (
               <Link key={link.header} href={link.url} className="ml-2 mr-2 mb-2 hover:text-yellow-500">

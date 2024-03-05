@@ -15,7 +15,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ member, edit, handleRedirect 
         <Layout>
             <div className='md:flex justify-between items-center'>
                 <ul>
-                    <h1>{member.firstName} {member.lastName}</h1>
+                    <h1>{member.name}</h1>
                     <div className='text-xl'>{member.orbitMail}</div>
                 </ul>
                 {edit && (

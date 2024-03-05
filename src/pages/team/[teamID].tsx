@@ -5,7 +5,7 @@ import MemberInfo from "@/components/General/MemberInfo";
 import SearchBar from "@/components/General/SearchBar";
 import Layout from "@/templates/Layout";
 import { api } from "@/utils/api";
-import type { Team, TeamHistory, Member } from "@prisma/client";
+import { type Team, type TeamHistory, type Member, TeamHistory_cPosition } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -37,7 +37,7 @@ const TeamsPage = () => {
     // Function to handle removing a member
     const handleRemoveMember = (member: Member) => {
         // Display a confirmation dialog
-        const isSure = window.confirm(`Are you sure you want to remove ${member.firstName} ${member.lastName} from this team?`);
+        const isSure = window.confirm(`Are you sure you want to remove ${member.name} from this team?`);
 
         // If user confirms, call the API to remove the member
         if (isSure) {
@@ -56,9 +56,15 @@ const TeamsPage = () => {
                 console.error("currentTeamHistory is not of the correct type or not found");
             }
 
+            const allTeamHistoriesForMember: TeamHistory[] | undefined = teamHistories.filter((history): history is TeamHistory =>
+                history?.memberID === member.memberID &&
+                history?.endSem === null &&
+                history?.endYear === null
+            );
 
             // Function to check if there is any team history entry with the same MemberID where endSem and endYear are both null
-            const isMemberActive = teamHistories.some(history => history.memberID === member.memberID && history.endSem === null && history.endYear === null);
+            const isMemberActive = allTeamHistoriesForMember?.length > 1;
+            console.log(isMemberActive);
 
             if (!isMemberActive) {
                 // Update the member to inactive if no active team history entry exists
@@ -72,20 +78,42 @@ const TeamsPage = () => {
 
     const handleAddMember = (member: Member) => {
         // Display a confirmation dialog
-        const isSure = window.confirm(`Are you sure you want to add ${member.firstName} ${member.lastName} to this team?`);
-
+        const isSure = window.confirm(`Are you sure you want to add ${member.name} to this team?`);
         // If user confirms, call the API to remove the member
         if (isSure) {
-            void createTeamHistoriesQuery.mutateAsync({
-                priviledges: "MEMBER",
-                memberID: member.memberID,
-                teamID: Number(teamID),
-            })
-
-            void updateMemberQuery.mutateAsync({
-                ...member,
-                activeStatus: true
-            });
+            if (Number(teamID) === 1) {
+                // Prompt the user to select a CPosition
+                const optionsString = Object.keys(TeamHistory_cPosition).join('\n');
+                const cPosition = prompt(`Select type C Position for ${member.name} from the following options:\n${optionsString}`) as TeamHistory_cPosition;
+                // Check if the user has entered a CPosition
+                if (Object.keys(TeamHistory_cPosition).includes(cPosition)) {
+                    void createTeamHistoriesQuery.mutateAsync({
+                        priviledges: "MEMBER",
+                        memberID: member.memberID,
+                        teamID: Number(teamID),
+                        cPosition: cPosition // Assign the selected CPosition
+                    });
+                
+                    void updateMemberQuery.mutateAsync({
+                        ...member,
+                        activeStatus: true
+                    });
+                } else {
+                    prompt('Please type a C position exactly as shown');
+                }
+            } else {
+                void createTeamHistoriesQuery.mutateAsync({
+                    priviledges: "MEMBER",
+                    memberID: member.memberID,
+                    teamID: Number(teamID),
+                    cPosition: null,
+                })
+    
+                void updateMemberQuery.mutateAsync({
+                    ...member,
+                    activeStatus: true
+                });
+            }
         }
     }
 
@@ -95,13 +123,13 @@ const TeamsPage = () => {
 
     const handleChangeTL = (members: Member[], currentTeamLeader: Member) => {
         // Prompt the user to select a member from the provided array of members
-        const selectedMember = window.prompt(`Choose the member you wish to promote as the new team leader:\n${members.map(member => `${member.firstName} ${member.lastName}`).join('\n')}`);
+        const selectedMember = window.prompt(`Choose the member you wish to promote as the new team leader:\n${members.map(member => `${member.name}`).join('\n')}`);
 
         // Find the selected member object from the array based on the user's input
-        const newTeamLeader = members.find(member => `${member.firstName} ${member.lastName}` === selectedMember);
+        const newTeamLeader = members.find(member => `${member.name}` === selectedMember);
 
         // Check if a member is selected and the user confirms the action
-        if (newTeamLeader && window.confirm(`Are you sure you want to change the team leader to ${newTeamLeader.firstName} ${newTeamLeader.lastName}?`)) {
+        if (newTeamLeader && window.confirm(`Are you sure you want to change the team leader to ${newTeamLeader.name}?`)) {
 
             const oldTLHistory: TeamHistory | undefined = teamHistories.find((history): history is TeamHistory =>
                 history?.memberID === currentTeamLeader.memberID &&
@@ -135,18 +163,20 @@ const TeamsPage = () => {
                         priviledges: "LEADER",
                         memberID: newTeamLeader.memberID,
                         teamID: Number(teamID),
+                        cPosition: null,
                     })
 
                     void createTeamHistoriesQuery.mutateAsync({
                         priviledges: "MEMBER",
                         memberID: currentTeamLeader.memberID,
                         teamID: Number(teamID),
+                        cPosition: null,
                     })
                 }
                 void router.push("/team/" + String(teamID));
 
                 // Notify the user about the successful update
-                alert(`Successfully updated the team leader to ${newTeamLeader.firstName} ${newTeamLeader.lastName}`);
+                alert(`Successfully updated the team leader to ${newTeamLeader.name}`);
             } catch (error) {
                 console.error('Error occurred while updating the team leader:', error);
                 alert('Failed to update the team leader. Please try again later.');
@@ -160,7 +190,7 @@ const TeamsPage = () => {
     const filteredMembers = members.filter(member => {
         // Convert searchQuery and member names to lowercase for case-insensitive search
         const searchValue = searchQuery.toLowerCase();
-        const fullName = `${member.firstName} ${member.lastName}`.toLowerCase();
+        const fullName = `${member.name}`.toLowerCase();
 
 
         const isInTeam = teamHistories.filter(history => {
