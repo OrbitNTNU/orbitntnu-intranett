@@ -19,8 +19,6 @@ const Profile = () => {
         void router.push("/profile/edit")
     }   
 
-    console.log(session.data?.user)
-
     const fetchData = async () => {
         if (session.data?.user.email) {
             try {
