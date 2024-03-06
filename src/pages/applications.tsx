@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Layout from "@/templates/Layout"
-import { ApplicantCards } from "@/views/ApplicationViews/ApplicantCards";
 import ApplicantPopUp, { AppType } from "@/views/ApplicantPopUp";
 import { api } from "@/utils/api";
 import { type Application, type ApplyForTeam } from "@prisma/client";
 import BreakLine from "@/components/General/Breakline";
+import ApplicationColumn from "@/views/ApplicationViews/ApplicationColumn";
 
 export interface AppAndTeams {
     applicant: Application,
@@ -86,53 +86,44 @@ const Applications = () => {
             <h1>Applications</h1>
             <BreakLine/>
 
-            <div className="flex flex-row gap-16">
+            <div className="flex flex-row justify-between gap-4 my-16">
+
+                {allUnhandled &&
+                <ApplicationColumn
+                    title="Unhandled"
+                    applications={allUnhandled}
+                    setPopup={applicantPopUp}
+                    appType={AppType.UNHANDLED}
+                />
+                }
 
 
+                {interviewApps &&
+                <ApplicationColumn
+                    title="For interview"
+                    applications={interviewApps}
+                    setPopup={applicantPopUp}
+                    appType={AppType.INTERVIEW}
+                />
+                }
 
-                <div className="flex flex-col ml-6">
-                    <h2 className="font-medium">
-                        Unhandled
-                    </h2>
-                    <ApplicantCards
-                        setPopup={applicantPopUp}
-                        applicants={allUnhandled ? allUnhandled : []}
-                        appType={AppType.UNHANDLED}
-                    />
-                </div>
+                {acceptedApps &&
+                <ApplicationColumn
+                    title="Accepted"
+                    applications={acceptedApps}
+                    setPopup={applicantPopUp}
+                    appType={AppType.ACCEPTED}
+                />
+                }
 
-                <div className="flex flex-col ml-6">
-                    <h2 className="font-medium">
-                        For interview
-                    </h2>
-                    <ApplicantCards
-                        setPopup={applicantPopUp}
-                        applicants={interviewApps ? interviewApps : []}
-                        appType={AppType.INTERVIEW}
-                    />
-                </div>
-
-                <div className="flex flex-col ml-6">
-                    <h2 className="font-medium">
-                        Accepted
-                    </h2>
-                    <ApplicantCards
-                        setPopup={applicantPopUp}
-                        applicants={acceptedApps ? acceptedApps : []}
-                        appType={AppType.ACCEPTED}
-                        />
-                </div>
-
-                <div className="flex flex-col ml-6">
-                    <h2 className="font-medium">
-                        Dropped
-                    </h2>
-                    <ApplicantCards
-                        setPopup={applicantPopUp}
-                        applicants={dismissedApps ? dismissedApps : []}
-                        appType={AppType.DISMISSED}
-                        />
-                </div>
+                {dismissedApps &&
+                <ApplicationColumn
+                    title="Dismissed"
+                    applications={dismissedApps}
+                    setPopup={applicantPopUp}
+                    appType={AppType.DISMISSED}
+                />
+                }
 
             </div>
         </Layout>
