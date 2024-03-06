@@ -361,6 +361,63 @@ export const applicationsRouter = createTRPCRouter({
     }),
 
 
+    dismiss: teamLeadProcedure
+        .input(z.object ({appID: z.number()}))
+        .mutation(async (opts) => {
+
+        // find client member
+        const clientMail = opts.ctx.session?.user.email;
+        const clientMember = clientMail ? await opts.ctx.db.member.findUnique({
+            where: {
+                orbitMail: clientMail,
+            }
+        }) : null;
+
+        // find client teamHistory
+        const clientTeamHistory = clientMember ? await opts.ctx.db.teamHistory.findFirst({
+            where: {
+                memberID: clientMember.memberID,
+                endSem: null,
+            }
+        }) : null;
+
+        if (clientTeamHistory == null) return false;
+
+        await opts.ctx.db.applyForTeam.update({
+            where: {
+                applicationID_teamID: {
+                    applicationID: opts.input.appID,
+                    teamID: clientTeamHistory.teamID,
+                }
+            },
+            data: {
+                interested: false,
+            }
+        });
+
+        const allInterestedTeams = await opts.ctx.db.applyForTeam.findMany({
+            where: {
+                applicationID: opts.input.appID,
+                interested: true,
+            }
+        });
+
+        if (!Array.isArray(allInterestedTeams) || allInterestedTeams.length == 0) {
+            // Applicant is not wanted by any teams
+            await opts.ctx.db.application.update({
+                where: {
+                    applicationID: opts.input.appID,
+                },
+                data: {
+                    rejectTime: new Date(),
+                },
+            });
+        };
+
+        return true;
+    }),
+
+
     /**
      * ALL METHODS UNDER HERE ARE TEMPORARY
      * 
@@ -390,5 +447,44 @@ export const applicationsRouter = createTRPCRouter({
                 accepted: false,
             }
         });
+    }),
+
+
+    unDismiss: teamLeadProcedure
+        .input(z.object ({appID: z.number()}))
+        .mutation(async (opts) => {
+
+        // find client member
+        const clientMail = opts.ctx.session?.user.email;
+        const clientMember = clientMail ? await opts.ctx.db.member.findUnique({
+            where: {
+                orbitMail: clientMail,
+            }
+        }) : null;
+
+        // find client teamHistory
+        const clientTeamHistory = clientMember ? await opts.ctx.db.teamHistory.findFirst({
+            where: {
+                memberID: clientMember.memberID,
+                endSem: null,
+                priviledges: TeamHistory_priviledges.LEADER,
+            }
+        }) : null;
+
+        if (clientTeamHistory == null) return false;
+
+        await opts.ctx.db.applyForTeam.update({
+            where: {
+                applicationID_teamID: {
+                    applicationID: opts.input.appID,
+                    teamID: clientTeamHistory.teamID,
+                }
+            },
+            data: {
+                interested: true,
+            }
+        });
+
+        return true;
     }),
 });

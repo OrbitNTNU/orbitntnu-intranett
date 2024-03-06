@@ -89,6 +89,25 @@ const ApplicantPopUp = ({app, appType, closePopUpFunction}: PopUp) => {
         unAcceptRouter.mutate({appID});
     }
 
+
+    /** DISMISS APPLICANT */
+    const dismissRouter = api.applications.dismiss.useMutation();
+    function dismiss (app: Application) {
+        const confirmDismissal: boolean = window.confirm("Are you sure you want to dismiss " + app.name);
+        if (confirmDismissal) {
+            dismissRouter.mutate({appID: app.applicationID});
+        }
+    }
+
+    /**
+     * UNDISMISS APPLICANT
+     * (To be deleted later. Present for easy testing)
+     */
+    const unDismissRouter = api.applications.unDismiss.useMutation();
+    function undismiss (appID: number) {
+        unDismissRouter.mutate({appID});
+    }
+
     return (
         <div className="fixed inset-0 flex justify-center items-center text-black">
             <div onClick={() => closePopUpFunction()} className="absolute w-full h-full bg-black opacity-40"></div>
@@ -170,7 +189,7 @@ const ApplicantPopUp = ({app, appType, closePopUpFunction}: PopUp) => {
                             }
                             {appType !== AppType.DISMISSED && appType !== AppType.ACCEPTED &&
                                 <>
-                                    <PopupButton onClick={() => alert("Unimplemented")}>
+                                    <PopupButton onClick={() => dismiss(app.applicant)}>
                                         Dismiss
                                     </PopupButton>
                                     <PopupButton onClick={() => handleAccept(app.applicant.applicationID)}>
@@ -184,7 +203,7 @@ const ApplicantPopUp = ({app, appType, closePopUpFunction}: PopUp) => {
                                 </PopupButton>
                             }
                             {appType == AppType.DISMISSED &&
-                                <PopupButton onClick={() => alert("Unimplemented")}>
+                                <PopupButton onClick={() => undismiss(app.applicant.applicationID)}>
                                     Undismiss
                                 </PopupButton>
                             }
