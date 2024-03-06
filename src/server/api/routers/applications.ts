@@ -279,4 +279,60 @@ export const applicationsRouter = createTRPCRouter({
 
         return clientTeamHistory?.teamID;
     }),
+
+
+    /**
+     * MUTATION METHODS
+     */
+
+
+    postInterview: teamLeadProcedure.input(z.object ({appID: z.number()})).mutation(async (opts) => {
+
+        const allInterviews = await opts.ctx.db.interview.findMany();
+        for (const int of allInterviews) {
+            if (int.applicationID == opts.input.appID) {
+                return "Det finnes allerede et intervju for denne applicanten.";
+            }
+        }
+
+        const clientMail = opts.ctx.session?.user.email;
+        const clientMember = clientMail ? await opts.ctx.db.member.findUnique({
+            where: {
+                orbitMail: clientMail,
+            },
+        }) : null;
+
+        if (clientMember == null) {
+            return "Finner ikke medlemmet";
+        };
+
+        const newInterview: Interview = {
+            interviewerID: clientMember.memberID,
+            applicationID: opts.input.appID,
+            room: "null",
+            time: new Date(),
+        };
+
+        const interview = await opts.ctx.db.interview.create({
+            data: newInterview,
+        });
+        return interview;
+    }),
+
+
+    /**
+     * ALL METHODS UNDER HERE ARE TEMPORARY
+     * 
+     * THEY EXIST TO MAKE TESTING EASIER
+    */
+
+
+    deleteInterview: teamLeadProcedure.input(z.object ({appID: z.number()})).mutation(async (opts) => {
+        const delInterview = opts.ctx.db.interview.delete({
+            where: {
+                applicationID: opts.input.appID,
+            }
+        });
+        return delInterview;
+    }),
 });
