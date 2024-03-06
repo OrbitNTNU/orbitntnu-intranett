@@ -1,15 +1,15 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, teamLeadProcedure } from "../trpc";
 import { db } from "@/server/db";
 
 export const teamHistoriesRouter = createTRPCRouter({
-    getTeamHistories: publicProcedure.query(async ({ ctx }) => {
+    getTeamHistories: protectedProcedure.query(async ({ ctx }) => {
         const teamHistories = await ctx.db.teamHistory.findMany()
         return teamHistories;
     }
     ),
 
-    terminateTeamHistory: publicProcedure
+    terminateTeamHistory: teamLeadProcedure
         .input(z.object({
             teamHistoryID: z.number(),
         })
@@ -49,7 +49,7 @@ export const teamHistoriesRouter = createTRPCRouter({
             return null;
         }),
 
-    createTeamHistory: publicProcedure
+    createTeamHistory: teamLeadProcedure
         .input(z.object({
             priviledges: z.enum(["MEMBER", "LEADER", "BOARD", "MENTOR"]),
             memberID: z.number(),

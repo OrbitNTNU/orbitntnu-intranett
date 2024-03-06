@@ -1,8 +1,8 @@
 import type { AnnAndMember } from "@/views/LandingPageViews/AnnouncementView";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const announcementsRouter = createTRPCRouter({
-  getLatestAnnouncements: publicProcedure.query(async ({ ctx }) => {
+  getLatestAnnouncements: protectedProcedure.query(async ({ ctx }) => {
     const announcements = await ctx.db.announcement.findMany();
 
     const sortedAnnouncements = announcements.sort((a,b) => a.postTime < b.postTime ? 1 : -1)
@@ -31,7 +31,7 @@ export const announcementsRouter = createTRPCRouter({
     return annAndMember;
   }),
 
-  getAllPosts: publicProcedure.query(async ({ ctx }) => {
+  getAllPosts: protectedProcedure.query(async ({ ctx }) => {
     const allPosts = await ctx.db.announcement.findMany();
     return allPosts;
   })

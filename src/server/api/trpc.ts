@@ -179,7 +179,7 @@ const enforceUserIsTLOrBoard = t.middleware(async ({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const TeamLeadProcedure = t.procedure.use(enforceUserIsTLOrBoard);
+export const teamLeadProcedure = t.procedure.use(enforceUserIsTLOrBoard);
 
 
 /** Reusable middleware that enforces user is board or leader before running the procedure. */
@@ -228,4 +228,4 @@ const enforceUserIsBoard = t.middleware(async ({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const BoardProcedure = t.procedure.use(enforceUserIsBoard);
+export const boardProcedure = t.procedure.use(enforceUserIsBoard);
