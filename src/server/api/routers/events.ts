@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, teamLeadProcedure } from "../trpc";
 
 export const eventsRouter = createTRPCRouter({
-  getEvents: publicProcedure.query(async ({ ctx }) => {
+  getEvents: protectedProcedure.query(async ({ ctx }) => {
     const events = await ctx.db.event.findMany();
 
     const eventsAndAuthors = [];
@@ -25,4 +25,6 @@ export const eventsRouter = createTRPCRouter({
 
     return eventsAndAuthors;
   }),
+
+  createEvents: teamLeadProcedure
 });

@@ -1,14 +1,14 @@
-import { createTRPCRouter, publicProcedure } from "../trpc"
+import { createTRPCRouter, protectedProcedure } from "../trpc"
 import { z } from "zod";
 import { db } from "@/server/db";
 
 export const membersRouter = createTRPCRouter({
-    getMembers: publicProcedure.query(async ({ ctx }) => {
+    getMembers: protectedProcedure.query(async ({ ctx }) => {
         const members = await ctx.db.member.findMany();
         return members;
     }),
 
-    getMemberById: publicProcedure.input(z.number()).query(async (opts) => {
+    getMemberById: protectedProcedure.input(z.number()).query(async (opts) => {
         if (!opts.input) {
             throw new Error("Input is missing.");
         }
@@ -24,7 +24,7 @@ export const membersRouter = createTRPCRouter({
         return member;
     }),
 
-    getMemberByOrbitMail: publicProcedure.input(z.string()).query(async (opts) => {
+    getMemberByOrbitMail: protectedProcedure.input(z.string()).query(async (opts) => {
         const member = await opts.ctx.db.member.findFirst({
             where: { orbitMail: opts.input },
         });
@@ -32,7 +32,7 @@ export const membersRouter = createTRPCRouter({
         return member;
     }),
 
-    createMember: publicProcedure
+    createMember: protectedProcedure
         .input(z.object({
             name: z.string(),
             activeStatus: z.boolean(),
@@ -69,7 +69,7 @@ export const membersRouter = createTRPCRouter({
             return foundMember;
         }),
 
-    updateMemberInformation: publicProcedure
+    updateMemberInformation: protectedProcedure
         .input(z.object({
             name: z.string(),
             activeStatus: z.boolean(),
