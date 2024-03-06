@@ -1,12 +1,24 @@
-interface ILayout {
-  children: React.ReactNode;
+import type { ReactNode } from 'react';
+import Navbar from "@/components/General/Navbar";
+import Footer from "@/components/General/Footer";
+
+interface LayoutProps {
+  children: ReactNode;
 }
 
-const Layout = ({ children }: ILayout) => {
+const Layout = ({ children }: LayoutProps) => {
   return (
-    <main className="flex min-h-screen w-full flex-col items-center justify-center">
-      <div className="w-1/2">{children}</div>
-    </main>
+    <>
+    <Navbar />
+    <div className="min-h-screen flex flex-col mt-10">
+      <main className="flex w-full flex-col items-center mb-10">
+        <div className="md:w-2/3 w-full p-4 md:p-0">
+          {children}
+        </div>
+      </main>
+    </div>
+    <Footer />
+    </>
   );
 };
 

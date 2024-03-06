@@ -1,23 +1,29 @@
+import { useEffect } from 'react';
+import { SessionProvider, getSession } from 'next-auth/react';
+import type { AppType } from 'next/app';
+import { api } from '@/utils/api';
+import '@/styles/globals.css';
 import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
-import { type AppType } from "next/app";
+import { useRouter } from 'next/router';
 
-import { api } from "@/utils/api";
+const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => {
+  
+  const router = useRouter();
 
-import "@/styles/globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { useRouter } from "next/router";
+  useEffect(() => {
+    const fetchSession = async () => {
+      const mysession = await getSession();
+      if(!mysession) {
+        void router.push("/login")
+      }
+    };
 
-const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}) => {
+    void fetchSession();
+  }, []);
+
   return (
     <SessionProvider session={session}>
-      <Header />
       <Component {...pageProps} />
-      <Footer />
     </SessionProvider>
   );
 };

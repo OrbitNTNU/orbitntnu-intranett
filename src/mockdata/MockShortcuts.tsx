@@ -1,10 +1,10 @@
-import { ShortcutLink } from "@/interfaces/ShortcutLink"
+import type { ShortcutLink } from "@/interfaces/ShortcutLink"
 
 const mockShortcuts: ShortcutLink[] = [
     {
         header: 'Your profile',
         description: 'Check out your profile',
-        url: '/profile'
+        url: '/profile/me'
     },
     {
         header: 'Contact HR',
@@ -23,13 +23,8 @@ const mockShortcuts: ShortcutLink[] = [
     },
     {
         header: 'Announcements',
-        description: 'Announcements from Board',
+        description: 'Announcements from Orbit',
         url: '/announcements',
-    },
-    {
-        header: 'Blog',
-        description: 'What is Orbit up to lately?',
-        url: '/blog',
     },
     {
         header: 'Legacy page',
@@ -42,9 +37,19 @@ const mockShortcuts: ShortcutLink[] = [
         url: '/memegallery',
     },
     {
-        header: 'Link tree',
-        description: 'Find a useful link',
-        url: '/links',
+        header: 'Board Feedback',
+        description: 'Give feedback to the board',
+        url: 'https://docs.google.com/forms/d/e/1FAIpQLSd_EKTsfqqxvPbNl_N8NFASLRZIN_t80nSxuUVTwb-xbcoGmw/viewform?usp=sf_link',
+    },
+    {
+        header: 'Orbit Teams',
+        description: 'Explore the teams in Orbit',
+        url: '/team/teamlist',
+    },
+    {
+        header: 'Your team',
+        description: 'See your own team',
+        url: '/team/find',
     }
 ]
 

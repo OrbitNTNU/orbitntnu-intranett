@@ -7,15 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([name])
-}
-
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -47,12 +38,13 @@ model Session {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
+  name          String?
   accounts      Account[]
   sessions      Session[]
+  member        Member   @relation(fields: [email], references: [orbitMail])
 }
 
 model VerificationToken {
@@ -78,7 +70,6 @@ model Application {
   lastName      String
   rejectTime    DateTime?      @db.Time(0)
   teams         ApplyForTeam[]
-  inInterestOf  InterestedIn[]
   interviews    Interview?
 }
 
@@ -86,6 +77,7 @@ model ApplyForTeam {
   applicationID Int
   teamID        Int
   priority      Int
+  interested    Boolean     @default(true)
   application   Application @relation(fields: [applicationID], references: [applicationID])
   team          Team        @relation(fields: [teamID], references: [teamID])
 
@@ -104,16 +96,6 @@ model Interview {
   @@id([interviewerID, applicationID])
 }
 
-model InterestedIn {
-  memberID      Int
-  applicationID Int
-  application   Application @relation(fields: [applicationID], references: [applicationID])
-  member        Member      @relation(fields: [memberID], references: [memberID])
-
-  @@id([memberID, applicationID])
-  @@index([applicationID], map: "InterestedIn_applicationID_fkey")
-}
-
 model Team {
   teamID       Int            @id @default(autoincrement())
   teamName     String
@@ -123,40 +105,42 @@ model Team {
 
 model Member {
   memberID           Int            @id @default(autoincrement())
-  firstName          String
-  lastName           String
+  name               String
   activeStatus       Boolean        @default(true)
-  fieldOfStudy       String
+  fieldOfStudy       String?
   birthday           DateTime?      @db.Date
-  phoneNumber        String         @unique
-  ntnuMail           String         @unique
-  backupMail         String?
+  phoneNumber        String?        @unique
+  ntnuMail           String?        @unique
+  orbitMail          String         @unique(map: "orbitMail_UNIQUE")
   nationalities      String?
   yearOfStudy        Int?
   additionalComments String?        @db.Text
-  googleToken        String        @unique
   slackToken         String?
+  userId             String?        @unique
+  personalMail       String?
   anouncements       Announcement[]
   events             Event[]
-  interestedIn       InterestedIn[]
   interviews         Interview[]
   memes              Meme[]
   team               TeamHistory[]
+  user               User?          
 }
 
 model TeamHistory {
-  memberID    Int
-  teamID      Int
-  startYear   Int        @db.Year
-  startSem    Semester
-  endYear     Int?       @db.Year
-  endSem      Semester?
-  priviledges Priviledge @default(MEMBER)
-  member      Member     @relation(fields: [memberID], references: [memberID])
-  team        Team       @relation(fields: [teamID], references: [teamID])
+  teamHistoryID Int                     @id @default(autoincrement())
+  memberID      Int
+  teamID        Int
+  startYear     Int                     @db.Year
+  startSem      SemType
+  endYear       Int?                    @db.Year
+  endSem        SemType?
+  priviledges   TeamHistory_priviledges @default(MEMBER)
+  cPosition     TeamHistory_cPosition?
+  member        Member                  @relation(fields: [memberID], references: [memberID])
+  team          Team                    @relation(fields: [teamID], references: [teamID])
 
-  @@id([memberID, teamID, startYear, startSem])
   @@index([teamID], map: "TeamHistory_teamID_fkey")
+  @@index([memberID], map: "TeamHistory_memberID_fkey")
 }
 
 model Meme {
@@ -195,19 +179,35 @@ model Event {
   @@index([memberID], map: "Event_memberID_fkey")
 }
 
-enum Priviledge {
-  MEMBER
-  BOARD
-  LEADER
-}
-
-enum Semester {
-  FALL
-  SRING
-}
-
 enum EventType {
   SOCIAL
   WORK
   PRIORITY
+}
+
+enum SemType {
+  FALL
+  SPRING
+}
+
+enum TeamHistory_cPosition {
+  CEO
+  COO
+  CTO
+  CFO
+  CMO
+  CIO
+  CHRO
+  PM_FS1
+  PM_FS1_5 @map("PM_FS1.5")
+  PM_FS2
+  PM_BS
+  NTNU_REP
+}
+
+enum TeamHistory_priviledges {
+  MEMBER
+  BOARD
+  LEADER
+  MENTOR
 }
