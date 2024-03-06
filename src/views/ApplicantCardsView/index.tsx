@@ -1,33 +1,22 @@
 import React from "react";
-import Applicant from "@/interfaces/Applicant";
 import ApplicantCard from "@/components/ApplicationPage/ApplicantCard";
+import type { AppAndTeams, PopupFunc } from "@/pages/applications";
+import type { AppType } from "@/views/ApplicantPopUp";
 
 interface ApplicantsCards {
-    onClickFunction: any,
-    applicants: Application[]
+    setPopup: ({app, appType}: PopupFunc) => void,
+    applicants: AppAndTeams[],
+    appType: AppType,
 }
 
-export const ApplicantCards = ({onClickFunction, applicants}: ApplicantsCards) => {
+export const ApplicantCards = ({setPopup, applicants, appType}: ApplicantsCards) => {
     return (
-        <div className="w-full">
-            {applicants ? applicants.map((applicant) => (
-                <div onClick={() => onClickFunction(applicant)} className="cursor-pointer">
+        <div className="w-full flex flex-row flex-wrap gap-4">
+            {applicants ? applicants.map((app) => (
+                <div key={app.applicant.applicationID} onClick={() => setPopup({app, appType})} className="w-[300px] cursor-pointer">
                     <ApplicantCard
-                        applicationID={applicant.applicationID}
-                        firstName={applicant.firstName}
-                        lastName={applicant.lastName}
-                        fieldOfStudy={applicant.fieldOfStudy}
-                        yearOfStudy={applicant.yearOfStudy}
-                        ntnuUsername={applicant.ntnuUsername}
-                        email={applicant.email}
-                        phoneNumber={applicant.phoneNumber}
-                        experience={applicant.experience}
-                        aboutYou={applicant.aboutYou}
-                        accepted={applicant.accepted}
-                        keep={applicant.keep}
-                        rejectTime={applicant.rejectTime}
-                        teams={applicant.teams}
-                        inInterestOf={applicant.inInterestOf}                        
+                        applicant={app.applicant}
+                        teams={app.teams}
                     />
                 </div>
             ))
