@@ -6,17 +6,11 @@ import Button from "@/components/General/Button";
 import Icons from "@/components/General/Icons";
 import Layout from "@/templates/Layout";
 import { api } from "@/utils/api";
-import type { Announcement, Member } from "@prisma/client";
 import Link from "next/link";
-
-export interface AnnAndMember {
-  announcement: Announcement,
-  member: Member,
-}
 
 const Announcements = () => {
   const announcementsData = api.announcements.getLatestAnnouncements.useQuery();
-  const announcements = announcementsData.data as AnnAndMember[];
+  const announcements = announcementsData.data!;
 
   return (
     <Layout>
