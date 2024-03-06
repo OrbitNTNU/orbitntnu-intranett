@@ -11,7 +11,7 @@ interface ApplicantsCards {
 
 export const ApplicantCards = ({setPopup, applicants, appType}: ApplicantsCards) => {
     return (
-        <div className="w-full flex flex-row flex-wrap gap-4">
+        <div className="w-full flex flex-col items-center gap-4">
             {applicants ? applicants.map((app) => (
                 <div key={app.applicant.applicationID} onClick={() => setPopup({app, appType})} className="w-[300px] cursor-pointer">
                     <ApplicantCard
