@@ -57,13 +57,6 @@ const ApplicantPopUp = ({app, appType, closePopUpFunction}: PopUp) => {
     // For enumerating the team priority list
     let num = 0;
 
-
-    /** SET UP INTERVIEW */
-    const newInterview = api.applications.postInterview.useMutation();
-    function setInterview (appID: number) {
-        newInterview.mutate({appID});
-    }
-
     return (
         <div className="fixed inset-0 flex justify-center items-center text-black">
             <div onClick={() => closePopUpFunction()} className="absolute w-full h-full bg-black opacity-40"></div>
@@ -139,7 +132,7 @@ const ApplicantPopUp = ({app, appType, closePopUpFunction}: PopUp) => {
                     {app && clientTeamID == app?.teams[0]?.teamID ?
                         <section className="flex flex-col justify-center text-3xl ">
                             {appType == AppType.UNHANDLED && 
-                                <PopupButton onClick={() => setInterview(app.applicant.applicationID)}>
+                                <PopupButton onClick={() => alert("Unimplemented")}>
                                     Interview
                                 </PopupButton>
                             }
