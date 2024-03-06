@@ -320,6 +320,47 @@ export const applicationsRouter = createTRPCRouter({
     }),
 
 
+    postAcceptApplication: teamLeadProcedure.input(z.object ({appID: z.number()})).mutation(async (opts) => {
+
+        // client info
+        const clientMember = opts.ctx.session.user.member;
+        const clientTeamHistory = await opts.ctx.db.teamHistory.findFirst({
+            where: {
+                memberID: clientMember.memberID,
+                endSem: null,
+            }
+        });
+        if (clientTeamHistory == null) return false;
+
+        // check if client is applicants current first priority
+        // I.e., check if client is allowed to accept applicant
+        const applyForTeams = await opts.ctx.db.applyForTeam.findMany({
+            where: {
+                applicationID: opts.input.appID,
+            }
+        });
+        const sortedApplyForTeams = applyForTeams.sort((a,b) => (a.priority - b.priority))
+        for (const team of sortedApplyForTeams) {
+            if (team.teamID == clientTeamHistory.teamID && team.interested) {
+                break;
+            } else if (team.interested) {
+                return false;
+            }
+        }
+
+        // Accept applicant
+        await opts.ctx.db.application.update({
+            where: {
+                applicationID: opts.input.appID,
+            },
+            data: {
+                accepted: true,
+            },
+        });
+        return true;
+    }),
+
+
     /**
      * ALL METHODS UNDER HERE ARE TEMPORARY
      * 
@@ -334,5 +375,20 @@ export const applicationsRouter = createTRPCRouter({
             }
         });
         return delInterview;
+    }),
+
+
+    unAccept: teamLeadProcedure
+        .input(z.object ({appID: z.number()}))
+        .mutation(async (opts) => {
+        
+        await opts.ctx.db.application.update({
+            where: {
+                applicationID: opts.input.appID,
+            },
+            data: {
+                accepted: false,
+            }
+        });
     }),
 });

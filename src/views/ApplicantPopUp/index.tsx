@@ -73,6 +73,22 @@ const ApplicantPopUp = ({app, appType, closePopUpFunction}: PopUp) => {
         deleteInterview.mutate({appID});
     }
 
+
+    /** ACCEPT APPLICANT */
+    const accept = api.applications.postAcceptApplication.useMutation();
+    function handleAccept (appID: number) {
+        accept.mutate({appID});
+    };
+
+    /**
+     * UNACCEPT APPLICANT
+     * (To be deleted later. Present for easy testing)
+    */
+    const unAcceptRouter = api.applications.unAccept.useMutation();
+    function unaccept (appID: number) {
+        unAcceptRouter.mutate({appID});
+    }
+
     return (
         <div className="fixed inset-0 flex justify-center items-center text-black">
             <div onClick={() => closePopUpFunction()} className="absolute w-full h-full bg-black opacity-40"></div>
@@ -157,7 +173,7 @@ const ApplicantPopUp = ({app, appType, closePopUpFunction}: PopUp) => {
                                     <PopupButton onClick={() => alert("Unimplemented")}>
                                         Dismiss
                                     </PopupButton>
-                                    <PopupButton onClick={() => alert("Unimplemented")}>
+                                    <PopupButton onClick={() => handleAccept(app.applicant.applicationID)}>
                                         Accept
                                     </PopupButton>
                                 </>
@@ -173,7 +189,7 @@ const ApplicantPopUp = ({app, appType, closePopUpFunction}: PopUp) => {
                                 </PopupButton>
                             }
                             {appType == AppType.ACCEPTED &&
-                                <PopupButton onClick={() => alert("Unimplemented")}>
+                                <PopupButton onClick={() => unaccept(app.applicant.applicationID)}>
                                     Unaccept
                                 </PopupButton>
                             }
