@@ -97,6 +97,7 @@ const Applications = () => {
                 />
                 }
 
+                <div className="border-r border-gray-500" />
 
                 {interviewApps &&
                 <ApplicationColumn
@@ -107,6 +108,8 @@ const Applications = () => {
                 />
                 }
 
+                <div className="border-r border-gray-500" />
+
                 {acceptedApps &&
                 <ApplicationColumn
                     title="Accepted"
@@ -115,6 +118,8 @@ const Applications = () => {
                     appType={AppType.ACCEPTED}
                 />
                 }
+                
+                <div className="border-r border-gray-500" />
 
                 {dismissedApps &&
                 <ApplicationColumn

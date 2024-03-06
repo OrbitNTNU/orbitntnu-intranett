@@ -10,10 +10,10 @@ const ApplicantCard = ({applicant, teams}: AppAndTeams) => {
     return (
         <div className={`
             ${clientTeamID == teams[0]?.teamID ?
-                "bg-secondaryColorTwo hover:bg-[#211932]" :
-                "bg-[#494149] hover:bg-[#443b44]"
+                "bg-[#98A5AB] text-black" :
+                "bg-[#68757B] text-gray-800"
             }
-            rounded-lg my-4 p-4
+            rounded-lg p-4
             border border-transparent hover:border-black
         `}>
             <p className="text-lg font-bold">

@@ -12,10 +12,11 @@ interface ColumnProps {
 
 const ApplicationColumn = ({title, applications, setPopup, appType}: ColumnProps) => {
     return (
-        <div className="flex flex-col items-center w-[24%]">
+        <div className="flex flex-col items-center w-[25%]">
             <h2 className="font-medium">
                 {title}
             </h2>
+            <hr className="border-1 border-gray-500 w-[80%]"/>
             <ApplicantCards
                 setPopup={setPopup}
                 applicants={applications}
