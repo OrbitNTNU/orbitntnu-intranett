@@ -93,7 +93,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
         <div>
             <h2>Member information:</h2>
             <ul className='list-disc mb-4 text-xl'>
-                {Object.entries(editedMember).map(([key, value]) => {
+                {Object.entries(editedMember).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)).map(([key, value]) => {
                     const renderValueString = renderValue(value, key);
                     if (renderValueString === 'excluded') {
                         return null;
