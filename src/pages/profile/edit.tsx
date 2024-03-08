@@ -15,45 +15,6 @@ const EditProfile = () => {
     const getMemberQuery = api.members.getMemberByOrbitMail.useQuery(session.data?.user.email ?? "");
     const newMemberQuery = api.members.createMember.useMutation();
 
-    const fetchData = async () => {
-        if (session.data?.user.email) {
-            try {
-                const response = await getMemberQuery.refetch();
-                if (response.data) {
-                    setMember(response.data);
-                } else {
-                    const sessionName = session.data.user.name ?? "Unknown";
-
-                    const tempMember = {
-                        name: sessionName,
-                        activeStatus: true,
-                        fieldOfStudy: null,
-                        ntnuMail: null,
-                        orbitMail: session.data.user.email,
-                        phoneNumber: null,
-                        yearOfStudy: null,
-                        birthday: null,
-                        nationalities: null,
-                        additionalComments: null,
-                        slackToken: null,
-                        userId: null,
-                        personalMail: null
-                    };
-
-                    await newMemberQuery.mutateAsync(tempMember);
-                    const response = await getMemberQuery.refetch();
-                    if(response.data) {
-                        setMember(response.data);
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching member:', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-    };
-
     const mutation = api.members.updateMemberInformation.useMutation();
     const router = useRouter();
 
@@ -71,8 +32,47 @@ const EditProfile = () => {
     }
 
     useEffect(() => {
+        const fetchData = async () => {
+            if (session.data?.user.email) {
+                try {
+                    const response = await getMemberQuery.refetch();
+                    if (response.data) {
+                        setMember(response.data);
+                    } else {
+                        const sessionName = session.data.user.name ?? "Unknown";
+    
+                        const tempMember = {
+                            name: sessionName,
+                            activeStatus: true,
+                            fieldOfStudy: null,
+                            ntnuMail: null,
+                            orbitMail: session.data.user.email,
+                            phoneNumber: null,
+                            yearOfStudy: null,
+                            birthday: null,
+                            nationalities: null,
+                            additionalComments: null,
+                            slackToken: null,
+                            userId: null,
+                            personalMail: null
+                        };
+    
+                        await newMemberQuery.mutateAsync(tempMember);
+                        const response = await getMemberQuery.refetch();
+                        if(response.data) {
+                            setMember(response.data);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching member:', error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
         void fetchData();
-    }, [session]);
+    }, [getMemberQuery, newMemberQuery, session]);
 
     if (loading) {
         return (

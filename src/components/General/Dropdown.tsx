@@ -22,13 +22,12 @@ const Dropdown: React.FC<DropdownProps> = ({ shortcuts, handleLogout, handleLogi
         setIsOpen(false);
     };
 
-    const handleClickOutside = (event: MouseEvent) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-            closeDropdown();
-        }
-    };
-
     useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                closeDropdown();
+            }
+        };
         // Attach the event listener when the component mounts
         document.addEventListener('click', handleClickOutside);
 

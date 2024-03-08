@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, teamLeadProcedure } from "../trpc";
+import type { Member, Event } from "@prisma/client";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const eventsRouter = createTRPCRouter({
   getEvents: protectedProcedure.query(async ({ ctx }) => {
@@ -23,8 +23,6 @@ export const eventsRouter = createTRPCRouter({
       }
     }
 
-    return eventsAndAuthors;
+    return eventsAndAuthors as { event: Event; author: Member }[];
   }),
-
-  createEvents: teamLeadProcedure
 });

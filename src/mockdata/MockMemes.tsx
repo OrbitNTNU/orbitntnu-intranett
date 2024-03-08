@@ -1,4 +1,4 @@
-import { MemeInfo } from "@/interfaces/MemeInfo";
+import type { MemeInfo } from "@/interfaces/MemeInfo";
 import burningHouse from '@/mockdata/burning-house.png';
 
 const mockMemes: MemeInfo[] = [

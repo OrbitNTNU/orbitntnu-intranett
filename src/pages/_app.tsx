@@ -19,7 +19,7 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
     };
 
     void fetchSession();
-  }, []);
+  }, [router]);
 
   return (
     <SessionProvider session={session}>

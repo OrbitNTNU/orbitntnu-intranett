@@ -19,24 +19,24 @@ const Profile = () => {
         void router.push("/profile/edit")
     }   
 
-    const fetchData = async () => {
-        if (session.data?.user.email) {
-            try {
-                const response = await query.refetch();
-                if (response.data) {
-                    setMember(response.data);
-                }
-            } catch (error) {
-                console.error('Error fetching member:', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-    };
-
     useEffect(() => {
+        const fetchData = async () => {
+            if (session.data?.user.email) {
+                try {
+                    const response = await query.refetch();
+                    if (response.data) {
+                        setMember(response.data);
+                    }
+                } catch (error) {
+                    console.error('Error fetching member:', error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
         void fetchData();
-    }, [session]);
+    }, [query, session]);
 
     if (loading) {
         return (

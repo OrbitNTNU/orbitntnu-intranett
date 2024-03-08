@@ -1,4 +1,4 @@
-import { type AppAndTeams } from "@/pages/applications";
+import type { AppAndTeams } from "@/pages/applications";
 import { api } from "@/utils/api";
 import React from "react";
 
