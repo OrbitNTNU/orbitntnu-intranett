@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import SearchResults from '@/components/ProfilePage/SearchResults';
 import { api } from '@/utils/api';
 import type { Member } from '@prisma/client';
@@ -12,7 +12,7 @@ export default function SearchPage() {
   const [searchResults, setSearchResults] = useState<Member[]>([]); // Initialize searchResults with an empty array
 
   const membersData = api.members.getMembers.useQuery();
-  const members = membersData.data ?? [];
+  const members = useMemo(() => membersData.data ?? [], [membersData.data]);
 
   const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
   const teamHistories = teamHistoriesData.data ?? [];
