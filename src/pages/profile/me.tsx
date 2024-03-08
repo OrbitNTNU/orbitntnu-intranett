@@ -36,7 +36,7 @@ const Profile = () => {
         };
 
         void fetchData();
-    }, [query, session]);
+    }, [session]);
 
     if (loading) {
         return (
