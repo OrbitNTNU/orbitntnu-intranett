@@ -8,18 +8,18 @@ import { useRouter } from 'next/router';
 
 const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => {
   
-  // const router = useRouter();
+  const router = useRouter();
 
-  // useEffect(() => {
-  //   const fetchSession = async () => {
-  //     const mysession = await getSession();
-  //     if(!mysession) {
-  //       void router.push("/login")
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchSession = async () => {
+      const mysession = await getSession();
+      if(!mysession) {
+        void router.push("/login")
+      }
+    };
 
-  //   void fetchSession();
-  // }, []);
+    void fetchSession();
+  }, []);
 
   return (
     <SessionProvider session={session}>
