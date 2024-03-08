@@ -90,6 +90,9 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                                 {program.studyprogcode}
                             </option>
                         ))}
+                        <option className="text-xs" key={"other"} value={"Other"}>
+                            {"Other"}
+                        </option>
                     </select>
                 );
             case 'birthday':
