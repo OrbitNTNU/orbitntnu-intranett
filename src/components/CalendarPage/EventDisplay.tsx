@@ -52,7 +52,7 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
                     {formattedStartTime} - {formattedEndTime}
                 </p>
                 <hr className="border my-1" />
-                <p className="mt-1 overflow-auto">
+                <p className="mt-1 overflow-auto h-[100px]">
                     {eventCombo.event.description}
                 </p>
             </div>

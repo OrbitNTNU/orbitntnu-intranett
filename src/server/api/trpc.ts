@@ -16,6 +16,7 @@ import { ZodError } from "zod";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 import { TeamHistory_priviledges } from "@prisma/client";
+import { useRouter } from "next/router";
 
 /**
  * 1. CONTEXT
@@ -180,7 +181,6 @@ const enforceUserIsTLOrBoard = t.middleware(async ({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const teamLeadProcedure = t.procedure.use(enforceUserIsTLOrBoard);
-
 
 /** Reusable middleware that enforces user is board or leader before running the procedure. */
 const enforceUserIsBoard = t.middleware(async ({ ctx, next }) => {

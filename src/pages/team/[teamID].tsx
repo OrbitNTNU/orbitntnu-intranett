@@ -237,7 +237,7 @@ const TeamsPage = () => {
         )
     };
 
-    const sessionMember = members.find(member => member.orbitMail === session.data?.user.email);
+    const sessionMember = session.data?.user.member as Member;
 
     if (sessionMember) {
         const isLeaderOrBoard = teamHistories.find((history): history is TeamHistory =>
