@@ -13,13 +13,13 @@ const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { s
   useEffect(() => {
     const fetchSession = async () => {
       const mysession = await getSession();
-      if(!mysession?.user) {
+      if(!mysession) {
         void router.push("/login")
       }
     };
 
     void fetchSession();
-  }, [router]);
+  }, []);
 
   return (
     <SessionProvider session={session}>
