@@ -67,7 +67,7 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord }) => {
                                     <span className='text-blue-400'>{" (" + record.history.startSem.toLowerCase()}</span>
                                     <span className='text-blue-400'>{" " + record.history.startYear}</span>
                                     {record.history.endSem ?
-                                        (<span className='text-blue-400'>{" - " + record.history.endSem.toLowerCase() + ", " + record.history.endYear + ")"}</span>)
+                                        (<span className='text-blue-400'>{" - " + record.history.endSem.toLowerCase() + " " + record.history.endYear + ")"}</span>)
                                         :
                                         (<span className='text-blue-400'> - present)</span>)
                                     }
