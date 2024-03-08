@@ -46,14 +46,14 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord }) => {
             )}
             {teamsRecord.length !== 0 && (
                 <>
-                    <h2 className='mt-10'>Team information:</h2>
+                    <h2>Team information:</h2>
                     {teamsRecord
                         .sort((recordA, recordB) => {
                             // Extract startYear from each record
                             const startYearA = recordA.history.startYear;
                             const startYearB = recordB.history.startYear;
                             // If startSem is equal, compare startYear
-                            return startYearA - startYearB;
+                            return startYearB - startYearA;
                         })
                         .map((record) => (
                             <Link key={record.history.teamHistoryID} href={"/team/" + record.history.teamID}>
@@ -67,7 +67,7 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord }) => {
                                     <span className='text-blue-400'>{" (" + record.history.startSem.toLowerCase()}</span>
                                     <span className='text-blue-400'>{" " + record.history.startYear}</span>
                                     {record.history.endSem ?
-                                        (<span className='text-blue-400'>{" - " + record.history.endSem + ", " + record.history.endYear + ")"}</span>)
+                                        (<span className='text-blue-400'>{" - " + record.history.endSem.toLowerCase() + ", " + record.history.endYear + ")"}</span>)
                                         :
                                         (<span className='text-blue-400'> - present)</span>)
                                     }
