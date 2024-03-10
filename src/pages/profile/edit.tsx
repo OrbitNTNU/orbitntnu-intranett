@@ -72,7 +72,7 @@ const EditProfile = () => {
         };
 
         void fetchData();
-    }, [getMemberQuery, newMemberQuery, session]);
+    }, []);
 
     if (loading) {
         return (

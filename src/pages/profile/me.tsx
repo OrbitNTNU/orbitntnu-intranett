@@ -8,10 +8,9 @@ import { useState, useEffect } from 'react';
 
 const Profile = () => {
     const session = useSession();
-    const [member, setMember] = useState<Member | null>(null);
-    const [loading, setLoading] = useState(true);
 
     const query = api.members.getMemberByOrbitMail.useQuery(session.data?.user.email ?? "");
+    const member = query.data ?? null;
 
     const router = useRouter();
 
@@ -19,46 +18,18 @@ const Profile = () => {
         void router.push("/profile/edit")
     }   
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (session.data?.user.email) {
-                try {
-                    const response = await query.refetch();
-                    if (response.data) {
-                        setMember(response.data);
-                    }
-                } catch (error) {
-                    console.error('Error fetching member:', error);
-                } finally {
-                    setLoading(false);
-                }
-            }
-        };
-
-        void fetchData();
-    }, [query, session]);
-
-    if (loading) {
+    if (!member) {
+        // Handle the case where the member is not found
         return (
             <Layout>
-                <div className="flex justify-center">
-                    <p>Loading ...</p>
-                </div>
+                <p>Loading ...</p>
             </Layout>
         );
     }
 
-    if (member) {
-        return (
-            <ProfileView member={member} edit={true} handleRedirect={handleRedirect}/>
-        );
-    }
-
     return (
-        <div>
-            Error
-        </div>
-    )
+        <ProfileView member={member} edit={true} handleRedirect={handleRedirect} />
+    );
 };
 
 export default Profile;
