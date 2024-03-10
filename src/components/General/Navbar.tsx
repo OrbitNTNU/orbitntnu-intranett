@@ -4,7 +4,6 @@ import Image from "next/image";
 import Dropdown from './Dropdown'; // Adjust the import path based on your project structure
 import mockShortcuts from '@/mockdata/MockShortcuts';
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useMedia } from 'react-use';
 import Icons from './Icons';
 
 const Navbar = () => {

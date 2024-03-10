@@ -1,109 +1,138 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "@/templates/Layout"
-import MockApplicants from "@/mockdata/MockApplicants";
-import { ApplicantCards } from "@/views/ApplicantCardsView/index";
-import { Application } from "@/interfaces/Application";
-import ApplicantPopUp from "@/views/ApplicantPopUp";
-import { Interview } from "@/interfaces/Interview";
+import ApplicantPopUp, { AppType } from "@/views/ApplicantPopUp";
 import { api } from "@/utils/api";
-import { useSession } from "next-auth/react";
+import { type Application, type ApplyForTeam } from "@prisma/client";
+import BreakLine from "@/components/General/Breakline";
+import ApplicationColumn from "@/views/ApplicationViews/ApplicationColumn";
 
-const appications = () => {
+export interface AppAndTeams {
+    applicant: Application,
+    teams: ApplyForTeam[],
+}
 
-    // const [fakeConflicts, setConflicts] = useState();
+export interface PopupFunc {
+    app: AppAndTeams,
+    appType: AppType,
+}
 
-    // const updateAll = () => {
-    //     const fakeConflictData = api.applications.fakeGetConflicts.useQuery();
-    //     const fakeConflicts = fakeConflictData.data || [];
-    //     setConflicts(fakeConflicts ? fakeConflicts : []);
-    // }
+const Applications = () => {
 
-    const session = useSession();
-    const googleToken = session.data?.user.id;
-    // console.log("\nGoogle token: " + googleToken)
+    const allUnhandledApps = api.applications.getUnhandledApps.useQuery();
+    const allUnhandled = allUnhandledApps.data;
 
-    const conflictsData = googleToken ? api.applications.getConflictApplicants.useQuery(googleToken) : undefined;
-    const conflicts = conflictsData ? conflictsData.data || [] : [];
+    const interviewAppsData = api.applications.getInterviewApps.useQuery();
+    const interviewApps = interviewAppsData.data;
 
-    const interviewData = googleToken ? api.applications.getInterviewApplications.useQuery(googleToken) : undefined;
-    // console.log("Interview data: " + interviewData)
-    const interviews = interviewData ? interviewData.data || [] : [];
+    const acceptedAppsData = api.applications.getAccepted.useQuery();
+    const acceptedApps = acceptedAppsData.data;
 
-    // Without googleToken
-    const fakeUnhandledData = api.applications.fakeGetUnhandled.useQuery();
-    const fakeUnhandled = fakeUnhandledData.data || [];
+    const dismissedAppsData = api.applications.getDismissed.useQuery();
+    const dismissedApps = dismissedAppsData.data;
 
-    const fakeInterestedInData = api.applications.fakeGetInterested.useQuery();
-    const fakeInterestedIn = fakeInterestedInData.data || [];
+    // States for the popup
+    const [popupDisplay, setPopupDisplay] = useState<boolean>(false);
+    const [popupApplicant, setPopupApplicant] = useState<Application | null>(null);
+    const [popupAppTeams, setPopupAppTeams] = useState<ApplyForTeam[] | null>(null);
+    const [popupAppAndTeams, setAppAndTeams] = useState<AppAndTeams | null>(null);
+    const [popupAppType, setPopupAppType] = useState<AppType | null>(null);
+    const [openPopup, setOpenPopup] = useState<boolean>(false);
 
-    const fakeConflictData = api.applications.fakeGetConflicts.useQuery();
-    const fakeConflicts = fakeConflictData.data || [];
+    // Setting the info for the popup
+    function applicantPopUp ({app, appType}: PopupFunc) {
+        setPopupApplicant(app.applicant);
+        setPopupAppTeams(app.teams);
+        setPopupAppType(appType);
+        setOpenPopup(true);
+    };
+    
+    // Async setting info for popup
+    useEffect(() => {
+        if (popupApplicant !== null && popupAppTeams !== null) {
+            setAppAndTeams({ applicant: popupApplicant, teams: popupAppTeams });
+        }
+    }, [popupApplicant, popupAppTeams]);
+    
+    // Async opening popup
+    useEffect(() => {
+        if (openPopup)
+            setPopupDisplay(true);
+    }, [openPopup]);
 
-    const fakeInterviewData = api.applications.fakeGetInterviews.useQuery();
-    const fakeInterviews = fakeInterviewData.data || [];
-
-    const fakeAcceptedData = api.applications.getAccepted.useQuery();
-    const fakeAccepted = fakeAcceptedData.data || [];
-
-    const allApplicationData = api.applications.getAllApplications.useQuery();
-    const allApplications = allApplicationData.data || [];
-
-
-    const [popupDisplay, setPopupDisplay] = useState({display: 'none'});
-    const [popupApplicant, setPupupApplicant] = useState<Application | null>(null);
-
-    function applicantPopUp (applicant: Application) {
-        setPopupDisplay({display: 'block'});
-        setPupupApplicant(applicant);
-    }
+    // Initialise popupDisplay=false on refresh
+    useEffect(() => {
+        setPopupDisplay(false);
+    }, []);
 
     function closeApplicantPopUp () {
-        setPopupDisplay({display: 'none'});
+        setPopupDisplay(false);
+        setOpenPopup(false);
     }
+
 
     return (
         <Layout>
-            <div style={popupDisplay}>
-                <ApplicantPopUp applicant={popupApplicant} closePopUpFunction={closeApplicantPopUp}/>
-            </div>
-            <div className="flex flex-row flex-wrap justify-center gap-8">
-                <div className="flex flex-col items-center w-[300px]">
-                    <h2 className="font-medium">
-                        Unhandled
-                    </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={fakeUnhandled}/>
+
+            {popupDisplay &&
+                <div>
+                    <ApplicantPopUp
+                        app={popupAppAndTeams}
+                        appType={popupAppType}
+                        closePopUpFunction={closeApplicantPopUp}
+                    />
                 </div>
-                <div className="border-r-2 border-secondaryColorTwo"/>
-                <div className="flex flex-col items-center w-[300px]">
-                    <h2 className="font-medium">
-                        Conflict
-                    </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={fakeConflicts}/>
-                </div>
-                <div className="border-r-2 border-secondaryColorTwo"/>
-                <div className="flex flex-col items-center w-[300px]">
-                    <h2 className="font-medium">
-                        For interview
-                    </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={fakeInterviews}/>
-                </div>
-            </div>
-            <div className="flex flex-col justify-center pt-20">
-                <div className="flex flex-col items-center w-[300px]">
-                    <h2 className="font-medium">
-                        Accepted
-                    </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={fakeAccepted}/>
-                </div>
-                <div className="flex flex-col items-center w-[300px]">
-                    <h2 className="font-medium">
-                        Dropped
-                    </h2>
-                    <ApplicantCards onClickFunction={applicantPopUp} applicants={[]}/>
-                </div>
+            }
+
+            <h1>Applications</h1>
+            <BreakLine/>
+
+            <div className="flex flex-row justify-between gap-4 my-16">
+
+                {allUnhandled &&
+                <ApplicationColumn
+                    title="Unhandled"
+                    applications={allUnhandled}
+                    setPopup={applicantPopUp}
+                    appType={AppType.UNHANDLED}
+                />
+                }
+
+                <div className="border-r border-gray-500" />
+
+                {interviewApps &&
+                <ApplicationColumn
+                    title="For interview"
+                    applications={interviewApps}
+                    setPopup={applicantPopUp}
+                    appType={AppType.INTERVIEW}
+                />
+                }
+
+                <div className="border-r border-gray-500" />
+
+                {acceptedApps &&
+                <ApplicationColumn
+                    title="Accepted"
+                    applications={acceptedApps}
+                    setPopup={applicantPopUp}
+                    appType={AppType.ACCEPTED}
+                />
+                }
+                
+                <div className="border-r border-gray-500" />
+
+                {dismissedApps &&
+                <ApplicationColumn
+                    title="Dismissed"
+                    applications={dismissedApps}
+                    setPopup={applicantPopUp}
+                    appType={AppType.DISMISSED}
+                />
+                }
+
             </div>
         </Layout>
     )
 }
 
-export default appications;
+export default Applications;

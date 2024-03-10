@@ -1,94 +1,223 @@
-import { Application } from "@/interfaces/Application"
+import { type AppAndTeams } from "@/pages/applications";
 import { api } from "@/utils/api";
+import PopupButton from "./PopupButton";
+import PopupInfoSection from "./PopupInfoSection";
+import { type Application, type ApplyForTeam } from "@prisma/client";
+import Icons from "@/components/General/Icons";
 
 interface PopUp {
-    applicant: Application | null,
-    closePopUpFunction: any
+    app: AppAndTeams | null,
+    appType: AppType | null,
+    closePopUpFunction: () => void,
 }
 
-const ApplicantPopUp = ({applicant, closePopUpFunction}: PopUp) => {
+export enum AppType {
+    UNHANDLED,
+    INTERVIEW,
+    ACCEPTED,
+    DISMISSED,
+}
 
-    const accept = api.applications.postAcceptApplication.useMutation();
-    const unAccept = api.applications.postUnAcceptApplication.useMutation();
-
-    const handleAccept = async (applicant: Application) => {
-        if (applicant.accepted) {
-            unAccept.mutate(applicant.applicationID);
-        } else {
-            accept.mutate(applicant.applicationID);
+const ApplicantPopUp = ({app, appType, closePopUpFunction}: PopUp) => {
+    
+    // Find client team
+    const teamIdData = api.applications.clientTeamID.useQuery();
+    const clientTeamID = teamIdData.data;
+    
+    // Map teamID to team names
+    const teams = api.applications.teamIDAndNames.useQuery();
+    const teamNamesData = teams.data;
+    const teamNames: Record<number, string> = {};
+    if (teamNamesData !== undefined) {
+        for (const teamName of teamNamesData) {
+            teamNames[teamName.teamID] = teamName.teamName;
         };
     };
 
+    // Find interview if it exists
+    let interview = null;
+    if (app && appType == AppType.INTERVIEW) {
+        const findInt = api.applications.findInterview.useQuery({appID: app.applicant.applicationID});
+        interview = findInt.data;
+    }
+
+    // Strike team name if not interested anymore
+    interface interest {
+        team: ApplyForTeam,
+        text: string,
+    }
+    function checkInterest ({team, text}: interest) {
+        if (team.interested) {
+            return text;
+        } else {
+            return text.split("").map(char => char + '\u0336').join("");
+        }
+    }
+    
+    // For enumerating the team priority list
+    let num = 0;
+
+
+    /** SET UP INTERVIEW */
+    const newInterview = api.applications.postInterview.useMutation();
+    function setInterview (appID: number) {
+        newInterview.mutate({appID});
+    }
+
+    /**
+     * DELETE INTERVIEW
+     * (To be deleted later. Present for easy testing)
+     */
+    const deleteInterview = api.applications.deleteInterview.useMutation();
+    function delInterview (appID: number) {
+        deleteInterview.mutate({appID});
+    }
+
+
+    /** ACCEPT APPLICANT */
+    const accept = api.applications.postAcceptApplication.useMutation();
+    function handleAccept (appID: number) {
+        accept.mutate({appID});
+    };
+
+    /**
+     * UNACCEPT APPLICANT
+     * (To be deleted later. Present for easy testing)
+    */
+    const unAcceptRouter = api.applications.unAccept.useMutation();
+    function unaccept (appID: number) {
+        unAcceptRouter.mutate({appID});
+    }
+
+
+    /** DISMISS APPLICANT */
+    const dismissRouter = api.applications.dismiss.useMutation();
+    function dismiss (app: Application) {
+        const confirmDismissal: boolean = window.confirm("Are you sure you want to dismiss " + app.name);
+        if (confirmDismissal) {
+            dismissRouter.mutate({appID: app.applicationID});
+        }
+    }
+
+    /**
+     * UNDISMISS APPLICANT
+     * (To be deleted later. Present for easy testing)
+     */
+    const unDismissRouter = api.applications.unDismiss.useMutation();
+    function undismiss (appID: number) {
+        unDismissRouter.mutate({appID});
+    }
+
     return (
-        <div className="fixed inset-0 flex justify-center items-center">
+        <div className="fixed inset-0 flex justify-center items-center text-black">
             <div onClick={() => closePopUpFunction()} className="absolute w-full h-full bg-black opacity-40"></div>
-            <div className="relative w-[90%] h-[90%] bg-secondaryColorTwo flex flex-col rounded-lg justify-center">
+            <div className="relative w-[90%] h-[90%] bg-[#FDF4E3] flex flex-col rounded-lg justify-center items-center">
                 <button onClick={() => closePopUpFunction()}
-                className="flex align-middle justify-center w-[45px] h-[45px] text-4xl font-medium absolute top-2 right-4 md:top-4 md:right-8 rounded-lg hover:bg-[#372F48]">
-                    x
+                    className="absolute flex justify-center w-[45px] h-[45px] text-4xl font-medium top-2 right-4 md:top-4 md:right-8 rounded-lg hover:bg-[#EDE4D3]"
+                >
+                    <Icons name="Cross"/>
                 </button>
 
                 {/* PopUp content */}
-                <div className="flex md:flex-row flex-wrap justify-around w-[90%] h-[85%]">
+                <div className="flex md:flex-row flex-wrap justify-around h-[85%] w-full">
 
                     {/* Info about applicant */}
-                    <div className="mx-10 w-[60%] h-full overflow-x-auto">
+                    {app && 
+                    <section className="mx-10 max-w-[60%] h-full flex flex-col gap-8 overflow-x-auto">
                         <h2 className="font-medium">
-                            {applicant ? applicant.firstName + " " + applicant.lastName : false}
+                            {app ? app.applicant.name : false}
                         </h2>
-                        <p className="ml-4">
-                            {applicant ? applicant.fieldOfStudy : false}, {applicant ? applicant.yearOfStudy : false}. year
-                        </p>
-                        <div>
-                            <p className="font-bold pt-4">
-                                Experience
-                            </p>
-                            <p className="ml-4">
-                                {applicant ? applicant.experience : false}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="font-bold pt-4">
-                                About me
-                            </p>
-                            <p className="ml-4">
-                                {applicant ? applicant.aboutYou : false}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="font-bold pt-4">
-                                Contact information
-                            </p>
-                            <div className="ml-4">
-                                <p>
-                                    {applicant ? applicant.email : false}
-                                </p>
-                                <p>
-                                    {applicant ? applicant.phoneNumber : false}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                        <PopupInfoSection
+                            title="Study"
+                            info={app.applicant.fieldOfStudy + ", " + app.applicant.yearOfStudy + ". year"}
+                        />
+                        <PopupInfoSection
+                            title="Experience"
+                            info={app.applicant.experience}
+                        />
+                        <PopupInfoSection
+                            title="About me"
+                            info={app.applicant.aboutYou}
+                        />
+                        <PopupInfoSection
+                            title="Contact information"
+                            info={app.applicant.email + "\n" + app.applicant.phoneNumber}
+                        />
+                        {teamNames &&
+                        <PopupInfoSection
+                            title="Priorities"
+                            info={app.teams.map(team => {
+                                num += 1;
+                                return checkInterest({
+                                    team: team,
+                                    text: num + ". " + teamNames[team.teamID]
+                                });
+                            }).join("\n")}
+                        />
+                        }
+                    </section>
+                    }
 
-                    <div className="border-r-2 h-full border-primaryColor"></div>
+                    {/* Info about interview */}
+                    {interview &&
+                        <section className="flex flex-col gap-8">
+                            <h2 className="font-medium">Interview info</h2>
+                            <PopupInfoSection
+                                title="Room"
+                                info={interview.room}
+                            />
+                            <PopupInfoSection
+                                title="Date"
+                                info={interview.time.toDateString()}
+                            />
+                            <PopupInfoSection
+                                title="Time"
+                                info={interview.time.toLocaleTimeString()}
+                            />
+                        </section>
+                    }
+
+                    {/* <div className="border-r-2 h-full border-primaryColor"></div> */}
 
                     {/* Functionality */}
-                    <div className="flex flex-col justify-center text-center text-3xl">
-                        <button className="m-4 p-6 rounded-lg bg-primaryColor hover:bg-[#120b21]">
-                            Interview
-                        </button>
-                        <button className="m-4 p-6 rounded-lg bg-primaryColor hover:bg-[#120b21]">
-                            Dismiss
-                        </button>
-                        <button 
-                            onClick={() => applicant ? handleAccept(applicant) : false}
-                            className={`m-4 p-6 rounded-lg hover:bg-[#120b21] ${applicant?.accepted ? "bg-[#0a0416]" : "bg-primaryColor"}`}>
-                                {applicant?.accepted ?
-                                "Accepted"
-                                :
-                                "Accept"}
-                        </button>
-                    </div>
+                    {app && clientTeamID == app?.teams[0]?.teamID ?
+                        <section className="flex flex-col justify-center text-3xl ">
+                            {appType == AppType.UNHANDLED && 
+                                <PopupButton onClick={() => setInterview(app.applicant.applicationID)}>
+                                    Interview
+                                </PopupButton>
+                            }
+                            {appType !== AppType.DISMISSED && appType !== AppType.ACCEPTED &&
+                                <>
+                                    <PopupButton onClick={() => dismiss(app.applicant)}>
+                                        Dismiss
+                                    </PopupButton>
+                                    <PopupButton onClick={() => handleAccept(app.applicant.applicationID)}>
+                                        Accept
+                                    </PopupButton>
+                                </>
+                            }
+                            {appType == AppType.INTERVIEW &&
+                                <PopupButton onClick={() => delInterview(app.applicant.applicationID)}>
+                                    Delete interview
+                                </PopupButton>
+                            }
+                            {appType == AppType.DISMISSED &&
+                                <PopupButton onClick={() => undismiss(app.applicant.applicationID)}>
+                                    Undismiss
+                                </PopupButton>
+                            }
+                            {appType == AppType.ACCEPTED &&
+                                <PopupButton onClick={() => unaccept(app.applicant.applicationID)}>
+                                    Unaccept
+                                </PopupButton>
+                            }
+                        </section>
+                        :
+                        <p className="flex flex-col justify-center max-w-[30%] text-center text-wrap text-2xl">
+                            {"You don't have access to this applicant."}
+                        </p>
+                    }
 
                 </div>
 

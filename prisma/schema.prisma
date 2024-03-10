@@ -39,12 +39,12 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
-  emailVerified DateTime?
   image         String?
   name          String?
+  emailVerified DateTime?
   accounts      Account[]
   sessions      Session[]
-  member        Member   @relation(fields: [email], references: [orbitMail])
+  member        Member    @relation(fields: [email], references: [orbitMail])
 }
 
 model VerificationToken {
@@ -65,9 +65,8 @@ model Application {
   experience    String         @db.Text
   aboutYou      String         @db.Text
   accepted      Boolean
-  firstName     String
+  name          String
   keep          Boolean
-  lastName      String
   rejectTime    DateTime?      @db.Time(0)
   teams         ApplyForTeam[]
   interviews    Interview?
@@ -105,7 +104,6 @@ model Team {
 
 model Member {
   memberID           Int            @id @default(autoincrement())
-  name               String
   activeStatus       Boolean        @default(true)
   fieldOfStudy       String?
   birthday           DateTime?      @db.Date
@@ -118,12 +116,13 @@ model Member {
   slackToken         String?
   userId             String?        @unique
   personalMail       String?
+  name               String
   anouncements       Announcement[]
   events             Event[]
   interviews         Interview[]
   memes              Meme[]
   team               TeamHistory[]
-  user               User?          
+  user               User?
 }
 
 model TeamHistory {

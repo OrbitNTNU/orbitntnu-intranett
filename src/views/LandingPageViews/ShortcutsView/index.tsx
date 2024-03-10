@@ -1,4 +1,3 @@
-import BreakLine from "@/components/General/Breakline";
 import { Shortcut } from "@/components/HomePage/Shortcut";
 import mockShortcuts from "@/mockdata/MockShortcuts";
 

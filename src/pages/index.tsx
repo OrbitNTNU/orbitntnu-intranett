@@ -36,7 +36,7 @@ const Home = () => {
       // Cleanup function to set isMounted to false when the component unmounts
       isMounted = false;
     };
-  }, []); // Empty dependency array since we're not using any external dependencies
+  }, [query]); // Empty dependency array since we're not using any external dependencies
 
   return (
     <Layout>
