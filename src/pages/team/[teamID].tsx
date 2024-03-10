@@ -165,13 +165,6 @@ const TeamsPage = () => {
                         teamID: Number(teamID),
                         cPosition: null,
                     })
-
-                    void createTeamHistoriesQuery.mutateAsync({
-                        priviledges: "MEMBER",
-                        memberID: currentTeamLeader.memberID,
-                        teamID: Number(teamID),
-                        cPosition: null,
-                    })
                 }
                 void router.push("/team/" + String(teamID));
 
