@@ -113,7 +113,7 @@ model Member {
   nationalities      String?
   yearOfStudy        Int?
   additionalComments String?        @db.Text
-  slackToken         String?
+  slackID            String?
   userId             String?        @unique
   personalMail       String?
   name               String
