@@ -7,20 +7,18 @@ import { type Session } from "next-auth";
 import { useRouter } from 'next/router';
 
 const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => {
-  
-  const router = useRouter();
 
-  useEffect(() => {
-    const fetchSession = async () => {
-      const mysession = await getSession();
+  // const router = useRouter();
 
-      if (router.pathname !== '/login' && !mysession) {
-        void router.push("/login")
-      }
-    };
+  // const fetchSession = async () => {
+  //   const mysession = await getSession();
 
-    void fetchSession();
-  }, []);
+  //   if (router.pathname !== '/login' && !mysession) {
+  //     void router.push("/login")
+  //   }
+  // };
+
+  // void fetchSession();
 
   return (
     <SessionProvider session={session}>
