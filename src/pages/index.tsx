@@ -17,9 +17,11 @@ const Home = () => {
       <div className="space-y-10 md:space-y-20 lg:space-y-30"> {/* Adjust the space as needed */}
       <Welcome></Welcome>
       <Shortcuts />
-      <ShortAnnouncements announcements={announcements}/>
       {eventsCombo && (
         <CalendarView combinedInfo={eventsCombo} />
+      )}
+      {announcements && (
+        <ShortAnnouncements announcements={announcements}/>
       )}
       </div>
     </Layout>

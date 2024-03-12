@@ -4,7 +4,7 @@ import 'react-phone-number-input/style.css';
 import PhoneInput from 'react-phone-number-input';
 import type { Member } from '@prisma/client';
 import { api } from '@/utils/api';
-import { Program } from '@/server/api/routers/studyPrograms';
+import type { Program } from '@/server/api/routers/studyPrograms';
 
 interface InfoDisplayProps {
     member: Member;
@@ -14,12 +14,11 @@ interface InfoDisplayProps {
 const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) => {
     const [editedMember, setEditedMember] = useState<Member>(member);
     const [programs, setPrograms] = useState<Program[]>([]);
-    const [selectedStudyProgram, setSelectedStudyProgram] = useState<string>(member.fieldOfStudy);
+    const [selectedStudyProgram, setSelectedStudyProgram] = useState<string | null>(member.fieldOfStudy);
 
     // Use useQuery directly within the functional component
     const query = api.programs.getPrograms.useQuery();
 
-    // useEffect to handle side effects
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -69,7 +68,6 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
             case 'ntnuMail':
             case 'personalMail':
             case 'nationalities':
-            case 'additionalComments':
                 return (
                     <input
                         className='md:ml-2 rounded-md text-black px-2'
@@ -101,13 +99,11 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                         className='md:ml-2 text-black rounded-md px-2'
                         type='date'
                         defaultValue={
-                            editedMember[label] &&
-                                editedMember[label] instanceof Date &&  // Check if input is an instance of Date
-                                !isNaN(editedMember[label].getTime())  // Check if input is a valid Date object
+                            editedMember[label] instanceof Date &&  // Check if input is an instance of Date
+                                !isNaN(editedMember[label].getTime()) &&  // Check if input is a valid Date object
+                                !isNaN(editedMember[label].getDate()) // Check if the date part is valid
                                 ? new Date(editedMember[label]).toISOString().split('T')[0]
-                                : editedMember[label] // Return the value if it's not null
-                                    ? new Date(String(editedMember[label])).toISOString().split('T')[0] // Convert to Date if it's not null
-                                    : ''
+                                : ''
                         }
                         onChange={(e) => handleChange(e.target.value)}
                     />
@@ -175,7 +171,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
 
 const renderValue = (value: string | number | boolean | Date | null, key: string) => {
     // Exclude rendering for specified properties
-    if (key === 'memberID' || key === 'userId' || key === 'additionalComments' || key === 'slackToken' || key === 'orbitMail' || key === 'activeStatus') {
+    if (key === 'memberID' || key === 'userId' || key === 'additionalComments' || key === 'slackID' || key === 'orbitMail' || key === 'activeStatus') {
         return 'excluded'; // Or any other value indicating exclusion
     }
     if (value instanceof Date) {

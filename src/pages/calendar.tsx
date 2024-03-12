@@ -9,6 +9,7 @@ import BreakLine from "@/components/General/Breakline";
 import Button from "@/components/General/Button";
 import { useSession } from "next-auth/react";
 import Icons from "@/components/General/Icons";
+import CreateEventDisplay from "@/components/CalendarPage/CreateEventDisplay";
 
 interface EventListProps {
     events: { event: Event, author: Member }[];
@@ -33,6 +34,7 @@ const EventList: React.FC<EventListProps> = ({ events, generatedIndexes, eventCo
 const CalendarPage = () => {
     const [eventCombos, setEventCombos] = useState<{ event: Event, author: Member }[]>([]);
     const [ownEventCombos, setOwnEventCombos] = useState<{ event: Event, author: Member }[]>([]);
+    const [edit, setEdit] = useState<boolean>(false);
 
     const session = useSession();
 
@@ -73,10 +75,6 @@ const CalendarPage = () => {
 
     const eventColors = generateColor(eventCombos.length);
 
-    const addEvent = () => {
-        console.log("Add event")
-    }
-
     const generatedIndexes = { WORK: 0, PRIORITY: 1, SOCIAL: 2 };
 
     const sessionMember = session.data?.user.member as Member;
@@ -103,11 +101,17 @@ const CalendarPage = () => {
                 </ul>
                 {isLeaderOrBoard && (
                     <div className="md:mt-0 mt-4">
-                        <Button label={'Add an event'} onClick={addEvent} icon="Create" />
+                        <Button label={edit ? 'Exit event maker' : 'Add an event'} onClick={() => setEdit(!edit)} icon={edit ? "Cross" : "Create"} />
                     </div>
                 )}
             </div>
             <BreakLine />
+            {edit && (
+                <>
+                    <CreateEventDisplay/>
+                    <BreakLine />
+                </>
+            )}
             <CalendarDisplay indexes={generatedIndexes} eventColors={eventColors} eventItems={eventCombos} />
 
             <>
@@ -143,78 +147,6 @@ const CalendarPage = () => {
                     eventColors={eventColors}
                 />
             </>
-            <div className="min-w-[400px] h-[235px] max-w-[500px] flex flex-col rounded-lg md:mt-0 mt-6 mb-4 p-4 bg-green-500">
-                <div>
-                    <h3 className="text-xl font-bold flex flex-row justify-between items-center">
-                        <p>eventCombo.event.name</p>
-                        <div className="flex flex-row items-center gap-2">
-                            <Icons name="Location" />
-                            <p className="ml-auto">eventCombo.event.location</p>
-                        </div>
-                    </h3>
-                    <p className="mt-1">
-                        formattedStartTime - formattedEndTime
-                    </p>
-                    <hr className="border my-1" />
-                    <p className="mt-1 overflow-auto h-[100px]">
-                        eventCombo.event.description
-                        adsdasd
-                        adsasdas
-                        dsa
-                        adsasdasdas
-                        das
-                        dsads
-                        adsasdasdas
-                        asd
-                        das
-                        das
-                        das
-                        das
-                        das
-                        hg
-                        hfg
-                        fdasdas
-                        adsasdassadasd
-
-                        das
-                        dfd
-                        fdfd
-                        fd
-                        fgfs
-                        ghhfg
-                        hfgh
-                        fetchingfgh
-                        fetchingfghfgh
-                        fgh
-                        fg
-                        hf
-                        hf
-                        ghd
-                        ghfg
-                        jtd
-                        rqwereqwfdsfdsf
-
-                        fdasd
-                        daasdas
-                        ddasdasd
-                        ddasdasddas
-                        adsasdasdas
-                        ddasdasddasdas
-                        ddasdasddasads
-                        daasdasda
-                    </p>
-                </div>
-                <div className="mt-auto">
-                    <div className="flex flex-row gap-2">
-                        <Icons name="User" />
-                        <p>
-                            eventCombo.author.name
-                            ", " + eventCombo.event.type
-                        </p>
-
-                    </div>
-                </div>
-            </div>
         </Layout>
     );
 };
