@@ -4,14 +4,15 @@ import { useRouter } from 'next/router';
 import { api } from '@/utils/api';
 import { type Session } from 'next-auth';
 import '@/styles/globals.css';
+import { useState } from 'react';
 
 const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => {
   const router = useRouter();
-  const [isSessionLoaded, setIsSessionLoaded] = useState(false);
+  const [isSessionLoaded, setIsSessionLoaded] = useState<boolean>(false);
 
   const fetchSession = async () => {
     const mysession = await getSession();
-
+    setIsSessionLoaded(true);
     if (router.pathname !== '/login' && !mysession) {
       void router.push("/login")
     }
