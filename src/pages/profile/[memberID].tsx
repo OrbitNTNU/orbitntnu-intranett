@@ -11,6 +11,12 @@ const ProfilePage = () => {
     const selectedMember = api.members.getMemberById.useQuery(Number(memberID));
     const member = selectedMember.data ?? null;
 
+    const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
+    const teamHistories = teamHistoriesData.data ?? [];
+
+    const teamsData = api.teams.getTeams.useQuery();
+    const teams = teamsData.data ?? [];
+
     if (!member) {
         // Handle the case where the member is not found
         return (
@@ -21,7 +27,7 @@ const ProfilePage = () => {
     }
 
     return (
-        <ProfileView member={member} edit={false}/>
+        <ProfileView member={member} edit={false} teamHistories={teamHistories} teams={teams}/>
     );
 };
 

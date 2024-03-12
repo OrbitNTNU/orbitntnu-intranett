@@ -61,7 +61,7 @@ const CalendarPage = () => {
             // Cleanup function to set isMounted to false when the component unmounts
             isMounted = false;
         };
-    }, [allEventsQuery, session.data?.user.email]); // Empty dependency array since we're not using any external dependencies
+    }, []); // Empty dependency array since we're not using any external dependencies
 
     const eventTypes: string[] = [];
 

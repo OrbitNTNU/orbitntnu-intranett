@@ -15,6 +15,12 @@ const Profile = () => {
 
     const router = useRouter();
 
+    const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
+    const teamHistories = teamHistoriesData.data ?? [];
+
+    const teamsData = api.teams.getTeams.useQuery();
+    const teams = teamsData.data ?? [];
+
     const handleRedirect = () => {
         void router.push("/profile/edit")
     }   
@@ -36,7 +42,7 @@ const Profile = () => {
         };
 
         void fetchData();
-    }, [query, session]);
+    }, [session]);
 
     if (loading) {
         return (
@@ -50,7 +56,7 @@ const Profile = () => {
 
     if (member) {
         return (
-            <ProfileView member={member} edit={true} handleRedirect={handleRedirect}/>
+            <ProfileView member={member} edit={true} teamHistories={teamHistories} teams={teams} handleRedirect={handleRedirect}/>
         );
     }
 
