@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { SessionProvider, getSession } from 'next-auth/react';
 import type { AppType } from 'next/app';
 import { api } from '@/utils/api';
@@ -7,18 +6,17 @@ import { type Session } from "next-auth";
 import { useRouter } from 'next/router';
 
 const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => {
+  const router = useRouter();
 
-  // const router = useRouter();
+  const fetchSession = async () => {
+    const mysession = await getSession();
 
-  // const fetchSession = async () => {
-  //   const mysession = await getSession();
+    if (router.pathname !== '/login' && !mysession) {
+      void router.push("/login")
+    }
+  };
 
-  //   if (router.pathname !== '/login' && !mysession) {
-  //     void router.push("/login")
-  //   }
-  // };
-
-  // void fetchSession();
+  void fetchSession();
 
   return (
     <SessionProvider session={session}>
