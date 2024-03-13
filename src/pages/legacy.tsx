@@ -55,6 +55,7 @@ const Legacy = () => {
         filterMembers();
     }, [selectedYear, selectedSemester]);
 
+    // Filter selected members by team
     function filterByTeam(teamID: number) {
         const filteredMembers = selectedMembers
             .filter((value) => (value.teamHistories.map((team) => (team.teamID))
@@ -73,10 +74,12 @@ const Legacy = () => {
 
     return (
         <Layout>
+
             <h1>Legacy</h1>
             <BreakLine/>
 
 
+            {allMembers ?
             <section className="flex flex-col gap-8">
 
                 {/* Selection */}
@@ -116,12 +119,15 @@ const Legacy = () => {
 
                 {/* Results */}
                 <section className="flex flex-col gap-12">
+
                     {/* Display each team */}
                     {Object.entries(teamNames).filter(([key, value]) => (filterByTeam(Number(key)).length > 0 && (selectedTeam == "All" || value == selectedTeam))).map(([key, value]) => (
                         <div key={key}>
                             <div>
                                 <h2 className="font-bold">{value}</h2>
                                 <div className="flex flex-row flex-wrap gap-2 ml-4 max-w-[500px] font-light">
+
+                                    {/* Display each member */}
                                     {filterByTeam(Number(key)).map((value) => (
                                         <div key={value.member.memberID} className="w-full">
                                             <Link href={"/profile/" + value.member.memberID} className="flex flex-row items-center justify-between rounded-md p-2 w-full gap-4 hover:font-normal">
@@ -138,13 +144,18 @@ const Legacy = () => {
                                         </div>
                                     ))
                                     }
+
                                 </div>
                             </div>
                         </div>
                     ))}
+                    
                 </section>
 
             </section>
+            :
+            <h2>Loading...</h2>
+            }
 
 
         </Layout>
