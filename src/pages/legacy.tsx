@@ -128,7 +128,7 @@ const Legacy = () => {
                     {/* Display each team */}
                     {Object.entries(teamNames).filter(([key, value]) => (filterByTeam(Number(key)).length > 0 && (selectedTeam == allTeams || value == selectedTeam))).map(([key, value]) => (
                         <div key={key}>
-                            <h2 className="font-bold">{value}</h2>
+                            <Link href={"/team/" + key} className="text-3xl hover:font-semibold">{value}</Link>
                             <div className="flex flex-col gap-2 ml-4 max-w-[500px] font-light">
 
                                 {/* Display each member */}
