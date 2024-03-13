@@ -85,15 +85,15 @@ const Legacy = () => {
             {!allMembers ?
             <h2>Loading...</h2>
             :
-            <section className="flex flex-col gap-8">
+            <section className="flex flex-col gap-20">
 
                 {/* Selection */}
-                <section className="flex flex-row flex-wrap gap-12">
-                    <h2 className="font-bold text-4xl">Find members from</h2>
+                <section className="flex flex-row flex-wrap gap-6">
+                    <h2 className="font-bold text-4xl">Select period:</h2>
                     <div className="flex flex-row flex-wrap gap-4 text-black text-xl">
                         <select
                             defaultValue={thisYear}
-                            className="rounded-md px-4"
+                            className="rounded-md px-4 grow py-2"
                             onChange={(e) => setSelectedYear(Number(e.target.value))}
                         >
                             {availableYears.map((year) => (
@@ -102,7 +102,7 @@ const Legacy = () => {
                         </select>
                         <select
                             defaultValue={thisSem}
-                            className="rounded-md px-4"
+                            className="rounded-md px-4 grow py-2"
                             onChange={(e) => setSelectedSemester(SemType[e.target.value as keyof typeof SemType])}
                         >
                             {availableSemesters.map((sem) => (
@@ -111,7 +111,7 @@ const Legacy = () => {
                         </select>
                         <select
                             defaultValue={allTeams}
-                            className="rounded-md px-4"
+                            className="rounded-md px-4 grow py-2"
                             onChange={(e) => setSelectedTeam(e.target.value)}
                         >
                             <option key={allTeams}>{allTeams}</option>
@@ -129,21 +129,22 @@ const Legacy = () => {
                     {Object.entries(teamNames).filter(([key, value]) => (filterByTeam(Number(key)).length > 0 && (selectedTeam == allTeams || value == selectedTeam))).map(([key, value]) => (
                         <div key={key}>
                             <Link href={"/team/" + key} className="text-3xl hover:font-semibold">{value}</Link>
-                            <div className="flex flex-col gap-2 ml-4 max-w-[500px] font-light">
+                            <div className="flex flex-col gap-3 ml-4 max-w-[500px] font-light">
 
                                 {/* Display each member */}
                                 {filterByTeam(Number(key)).map((value) => (
-                                    <div key={value.member.memberID} className="w-full">
-                                        <Link href={"/profile/" + value.member.memberID} className="flex flex-row items-center justify-between rounded-md p-2 w-full gap-4 hover:font-normal">
-                                            <p className="text-xl">{value.member.name}</p>
-                                            <div className="text-right">
-                                                {value.teamHistories.filter((team) => (team.teamID == Number(key))).map((team) => (
-                                                    <p key={team.teamHistoryID}>{team.cPosition ? team.cPosition : team.priviledges}</p>
-                                                ))}
-                                            </div>
-                                        </Link>
-                                        <div className="border-b border-gray-500"/>
-                                    </div>
+                                    <Link
+                                        href={"/profile/" + value.member.memberID}
+                                        key={value.member.memberID}
+                                        className="flex flex-row items-center justify-between border-b border-gray-500 p-2 w-full gap-4 hover:font-normal"
+                                    >
+                                        <p className="text-xl">{value.member.name}</p>
+                                        <div className="text-right">
+                                            {value.teamHistories.filter((team) => (team.teamID == Number(key))).map((team) => (
+                                                <p key={team.teamHistoryID}>{team.cPosition ? team.cPosition : team.priviledges}</p>
+                                            ))}
+                                        </div>
+                                    </Link>
                                 ))
                                 }
 
