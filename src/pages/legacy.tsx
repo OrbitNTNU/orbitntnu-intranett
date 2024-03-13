@@ -16,13 +16,23 @@ const Legacy = () => {
     const thisDate = new Date();
     const thisYear: number = thisDate.getFullYear();
     const thisSem: SemType = thisDate.getMonth() <= 5 ? SemType.SPRING : SemType.FALL;
-
+    
     const availableSemesters: string[] = [SemType.SPRING, SemType.FALL];
     const availableYears: number[] = [];
-
+    
     for (let year = 2019; year <= thisYear; year++) {
         availableYears.push(year);
     }
+
+    // Get all teams
+    const allTeams = "All teams";
+    const teamNamesData = api.applications.teamIDAndNames.useQuery().data;
+    const teamNames: Record<number, string> = {};
+    if (teamNamesData !== undefined) {
+        for (const teamName of teamNamesData) {
+            teamNames[teamName.teamID] = teamName.teamName;
+        };
+    };
 
     // Get all members
     const allMembers = api.legacy.getAllMembersAndTeamHistories.useQuery().data;
@@ -30,7 +40,7 @@ const Legacy = () => {
     const [selectedMembers, setSelectedMembers] = useState<MemberAndHistory[]>(allMembers ? allMembers : []);
     const [selectedYear, setSelectedYear] = useState<number>(thisYear);
     const [selectedSemester, setSelectedSemester] = useState<SemType>(thisSem);
-    const [selectedTeam, setSelectedTeam] = useState<string>("All");
+    const [selectedTeam, setSelectedTeam] = useState<string>(allTeams);
 
     // Filter by selected period
     function filterMembers () {
@@ -64,13 +74,6 @@ const Legacy = () => {
         return filteredMembers;
     }
 
-    const teamNamesData = api.applications.teamIDAndNames.useQuery().data;
-    const teamNames: Record<number, string> = {};
-    if (teamNamesData !== undefined) {
-        for (const teamName of teamNamesData) {
-            teamNames[teamName.teamID] = teamName.teamName;
-        };
-    };
 
     return (
         <Layout>
@@ -79,7 +82,9 @@ const Legacy = () => {
             <BreakLine/>
 
 
-            {allMembers ?
+            {!allMembers ?
+            <h2>Loading...</h2>
+            :
             <section className="flex flex-col gap-8">
 
                 {/* Selection */}
@@ -105,11 +110,11 @@ const Legacy = () => {
                             ))}
                         </select>
                         <select
-                            defaultValue={"All"}
+                            defaultValue={allTeams}
                             className="rounded-md px-4"
                             onChange={(e) => setSelectedTeam(e.target.value)}
                         >
-                            <option key="All">All</option>
+                            <option key={allTeams}>{allTeams}</option>
                             {Object.entries(teamNames).map(([key, value]) => (
                                 <option key={value}>{value}</option>
                             ))}
@@ -121,31 +126,27 @@ const Legacy = () => {
                 <section className="flex flex-col gap-12">
 
                     {/* Display each team */}
-                    {Object.entries(teamNames).filter(([key, value]) => (filterByTeam(Number(key)).length > 0 && (selectedTeam == "All" || value == selectedTeam))).map(([key, value]) => (
+                    {Object.entries(teamNames).filter(([key, value]) => (filterByTeam(Number(key)).length > 0 && (selectedTeam == allTeams || value == selectedTeam))).map(([key, value]) => (
                         <div key={key}>
-                            <div>
-                                <h2 className="font-bold">{value}</h2>
-                                <div className="flex flex-row flex-wrap gap-2 ml-4 max-w-[500px] font-light">
+                            <h2 className="font-bold">{value}</h2>
+                            <div className="flex flex-col gap-2 ml-4 max-w-[500px] font-light">
 
-                                    {/* Display each member */}
-                                    {filterByTeam(Number(key)).map((value) => (
-                                        <div key={value.member.memberID} className="w-full">
-                                            <Link href={"/profile/" + value.member.memberID} className="flex flex-row items-center justify-between rounded-md p-2 w-full gap-4 hover:font-normal">
-                                                <p className="text-xl">{value.member.name}</p>
-                                                <div className="text-right">
-                                                    {value.teamHistories.filter((team) => (team.teamID == Number(key))).map((team) => (
-                                                        <div key={team.teamHistoryID}>
-                                                            <p>{team.cPosition ? team.cPosition : team.priviledges}</p>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </Link>
-                                            <div className="border-b border-gray-500"/>
-                                        </div>
-                                    ))
-                                    }
+                                {/* Display each member */}
+                                {filterByTeam(Number(key)).map((value) => (
+                                    <div key={value.member.memberID} className="w-full">
+                                        <Link href={"/profile/" + value.member.memberID} className="flex flex-row items-center justify-between rounded-md p-2 w-full gap-4 hover:font-normal">
+                                            <p className="text-xl">{value.member.name}</p>
+                                            <div className="text-right">
+                                                {value.teamHistories.filter((team) => (team.teamID == Number(key))).map((team) => (
+                                                    <p key={team.teamHistoryID}>{team.cPosition ? team.cPosition : team.priviledges}</p>
+                                                ))}
+                                            </div>
+                                        </Link>
+                                        <div className="border-b border-gray-500"/>
+                                    </div>
+                                ))
+                                }
 
-                                </div>
                             </div>
                         </div>
                     ))}
@@ -153,8 +154,6 @@ const Legacy = () => {
                 </section>
 
             </section>
-            :
-            <h2>Loading...</h2>
             }
 
 
