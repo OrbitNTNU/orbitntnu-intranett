@@ -69,6 +69,21 @@ const mockShortcuts: ShortcutsProps[] = [
                 description: 'Give feedback to the board',
                 url: 'https://docs.google.com/forms/d/e/1FAIpQLSd_EKTsfqqxvPbNl_N8NFASLRZIN_t80nSxuUVTwb-xbcoGmw/viewform?usp=sf_link',
             },
+            {
+                header: 'Confluence',
+                description: 'Find documentation',
+                url: 'https://wiki.orbitntnu.com'
+            },
+            {
+                header: 'Vaultwarden',
+                description: 'Store yor passwords safely',
+                url: 'https://passwords.orbitntnu.com'
+            },
+            {
+                header: 'Orbit NTNU Website',
+                description: 'Check out Orbit\'s website',
+                url: 'https://orbitntnu.com'
+            },
         ]
     }
 ]
