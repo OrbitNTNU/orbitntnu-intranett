@@ -85,8 +85,6 @@ const CalendarPage = () => {
         );
     }
 
-    console.log(isLeaderOrBoard);
-
     const deleteEventQuery = api.events.deleteEvent.useMutation()
     const handleDeleteEvent = (eventID: number) => {
         const isConfirmed = window.confirm("Are you sure you want to delete this event?");
