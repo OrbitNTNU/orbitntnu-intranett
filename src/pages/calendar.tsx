@@ -15,16 +15,17 @@ interface EventListProps {
     events: { event: Event, author: Member }[];
     generatedIndexes: Record<string, number>;
     eventColors: Record<number, string>;
+    removable?: boolean;
 }
 
-const EventList: React.FC<EventListProps> = ({ events, generatedIndexes, eventColors }) => {
+const EventList: React.FC<EventListProps> = ({ events, generatedIndexes, eventColors, removable }) => {
     return (
         <div className="flex overflow-x-auto gap-6">
             {events.length === 0 ? (
                 <p>No events available</p>
             ) : (
                 events.map((combo) => (
-                    <EventDisplay key={combo.event.eventID} indexes={generatedIndexes} eventCombo={combo} eventColors={eventColors} />
+                    <EventDisplay key={combo.event.eventID} indexes={generatedIndexes} eventCombo={combo} eventColors={eventColors} removable={removable} />
                 ))
             )}
         </div>
@@ -41,17 +42,14 @@ const CalendarPage = () => {
     const allEventsQuery = api.events.getEvents.useQuery();
 
     useEffect(() => {
-        let isMounted = true;
-
         const fetchData = async () => {
             try {
                 const allEventsResponse = await allEventsQuery.refetch();
                 // Handle the response if needed
-                if (isMounted && allEventsResponse.data) {
+                if (allEventsResponse.data) {
                     setEventCombos(allEventsResponse.data);
-                    setOwnEventCombos(allEventsResponse.data.filter((eventCombo) => eventCombo.author.orbitMail === session.data?.user.email))
+                    setOwnEventCombos(allEventsResponse.data.filter((eventCombo) => eventCombo.author.memberID === session.data?.user.member.memberID))
                 }
-
             } catch (error) {
                 console.error('Error refetching study plan:', error);
             }
@@ -59,23 +57,19 @@ const CalendarPage = () => {
 
         void fetchData();
 
-        return () => {
-            // Cleanup function to set isMounted to false when the component unmounts
-            isMounted = false;
-        };
-    }, []); // Empty dependency array since we're not using any external dependencies
+        eventCombos.forEach((combo) => {
+            if (combo.event.type && !eventTypes.includes(combo.event.type)) {
+                eventTypes.push(combo.event.type);
+            }
+        });
+
+    }, [edit, session]); // Empty dependency array since we're not using any external dependencies
 
     const eventTypes: string[] = [];
 
-    eventCombos.forEach((combo) => {
-        if (combo.event.type && !eventTypes.includes(combo.event.type)) {
-            eventTypes.push(combo.event.type);
-        }
-    });
+    const eventColors = generateColor(4);
 
-    const eventColors = generateColor(eventCombos.length);
-
-    const generatedIndexes = { WORK: 0, PRIORITY: 1, SOCIAL: 2 };
+    const generatedIndexes = { WORK: 0, PRIORITY: 1, SOCIAL: 2, OTHER: 3 };
 
     const sessionMember = session.data?.user.member as Member;
     const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
@@ -108,21 +102,22 @@ const CalendarPage = () => {
             <BreakLine />
             {edit && (
                 <>
-                    <CreateEventDisplay/>
-                    <BreakLine />
+                <CreateEventDisplay toggleEdit={() => (setEdit(!edit))} />
+                <BreakLine />
                 </>
             )}
             <CalendarDisplay indexes={generatedIndexes} eventColors={eventColors} eventItems={eventCombos} />
-
             <>
                 <h2 className="mt-4">Your Created Events</h2>
                 <EventList
                     events={
                         ownEventCombos
                             .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime)))
+                            .filter(combo => new Date(combo.event.startTime) > new Date())
                     }
                     generatedIndexes={generatedIndexes}
                     eventColors={eventColors}
+                    removable={true}
                 />
 
                 <h2 className="mt-4">Upcoming Events</h2>

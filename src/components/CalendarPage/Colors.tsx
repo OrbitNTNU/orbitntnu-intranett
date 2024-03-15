@@ -3,7 +3,7 @@ export const generateColor = (numEvents: number): Record<number, string> => {
         'bg-red-400',
         'bg-indigo-500',
         'bg-sky-500',
-        'bg-teal-400',
+        'bg-teal-500',
         'bg-purple-400',
         'bg-orange-400',
         'bg-yellow-400',

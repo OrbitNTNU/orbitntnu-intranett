@@ -94,7 +94,7 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({
     workWeekStart.setHours(workWeekStart.getHours() + parseInt(timeZoneOffset.split(" ")[3]?.slice(3) ?? "0"));
 
     const workWeekEnd = new Date();
-    workWeekEnd.setHours(18, 0, 0, 0);
+    workWeekEnd.setHours(20, 0, 0, 0);
     workWeekEnd.setHours(workWeekEnd.getHours() + parseInt(timeZoneOffset.split(" ")[3]?.slice(3) ?? "0"));
 
     const eventPropGetter = (event: ParsedEvent) => {
