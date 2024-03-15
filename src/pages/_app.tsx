@@ -4,33 +4,35 @@ import { useRouter } from 'next/router';
 import { api } from '@/utils/api';
 import { type Session } from 'next-auth';
 import '@/styles/globals.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const MyApp: AppType<{ session: Session | null }> = ({ Component, pageProps: { session, ...pageProps } }) => {
   const router = useRouter();
   const [isSessionLoaded, setIsSessionLoaded] = useState<boolean>(false);
 
-  const fetchSession = async () => {
-    const mysession = await getSession();
-    setIsSessionLoaded(true);
-    if (router.pathname !== '/login' && !mysession) {
-      void router.push("/login")
-    }
-  };
+  useEffect(() => {
+    const fetchSession = async () => {
+      const mySession = await getSession();
+      setIsSessionLoaded(true);
+      if (!mySession && router.pathname !== '/login') {
+        void router.push("/login");
+      }
+    };
 
-  void fetchSession();
+    void fetchSession();
+  }, [router]);
 
-  // Render nothing until the session is loaded
-  if (!isSessionLoaded) {
-    return null;
+  // If session is loaded and user is authenticated, redirect to index
+  if (isSessionLoaded && session?.user) {
+    void router.push("/");
+    return null; // Optional: You can render a loading screen here if needed
   }
 
   return (
-    <SessionProvider session={pageProps.session}>
+    <SessionProvider session={session}>
       <Component {...pageProps} />
     </SessionProvider>
   );
 };
 
 export default api.withTRPC(MyApp);
-

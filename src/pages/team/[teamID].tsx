@@ -230,7 +230,7 @@ const TeamsPage = () => {
         )
     };
 
-    const sessionMember = session.data?.user.member as Member;
+    const sessionMember = session.data?.user.member;
 
     if (sessionMember) {
         const isLeaderOrBoard = teamHistories.find((history): history is TeamHistory =>

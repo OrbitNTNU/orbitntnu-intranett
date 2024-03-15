@@ -4,14 +4,13 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { Event_type, type Event } from "@prisma/client";
 import { formatDateTime } from "./EventDisplay";
-import { generateColor, setContrast } from "./Colors";
+import { generateColors, generateIndexes, setContrast } from "./Colors";
 import Button from "../General/Button";
 import { api } from "@/utils/api";
 
 interface CreateEventDisplayProps {
     toggleEdit: Dispatch<SetStateAction<boolean>>;
 }
-
 
 const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
     const session = useSession();
@@ -42,7 +41,7 @@ const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
         }
     }
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setCreatedEvent(prevState => ({
             ...prevState,
@@ -59,9 +58,9 @@ const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
         }
     };
 
-    const generatedIndexes = { WORK: 0, PRIORITY: 1, SOCIAL: 2, OTHER: 3 };
-    const eventColors = generateColor(4);
-
+    const generatedIndexes = generateIndexes();
+    const eventColors = generateColors();
+    
     const backgroundColor = eventColors[generatedIndexes[createdEvent.type]!];
     // Check if backgroundColor is defined before calling setContrast
     const textColor = backgroundColor ? setContrast(backgroundColor) : '';
@@ -112,7 +111,7 @@ const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
                                     name="type"
                                     className='text-black rounded-md p-2 w-[180px] h-[42px]'
                                     value={createdEvent.type}
-                                    onChange={handleInputChange}
+                                    onChange={(e) => handleInputChange(e)}
                                 >
                                     {Object.keys(Event_type).map((key) => (
                                         <option key={key} value={Event_type[key as keyof typeof Event_type]}>{Event_type[key as keyof typeof Event_type]}</option>
@@ -147,7 +146,7 @@ const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
                     <div className="mt-auto">
                         <div className="flex flex-row gap-2">
                             <Icons name="User" />
-                            {member.name}, {createdEvent.type}
+                            {member?.name}, {createdEvent.type}
                         </div>
                     </div>
                 </div>

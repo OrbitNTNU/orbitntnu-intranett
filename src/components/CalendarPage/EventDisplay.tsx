@@ -3,6 +3,7 @@ import { setContrast } from "./Colors";
 import Icons from "../General/Icons";
 import Link from "next/link";
 import { api } from "@/utils/api";
+import { useSession } from "next-auth/react";
 
 export const formatDateTime = (date: Date): string => {
     const options: Intl.DateTimeFormatOptions = {
@@ -22,10 +23,12 @@ interface EventDisplayProps {
     eventCombo: { event: Event, author: Member };
     eventColors: Record<string, string>;
     indexes: Record<string, number>;
-    removable?: boolean;
+    handleDeleteEvent?: (eventID: number) => void; // Define handleDeleteEvent in props
 }
 
-const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, indexes, removable }) => {
+const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, indexes, handleDeleteEvent }) => {
+    const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
+    const teamHistories = teamHistoriesData.data ?? [];
 
     const backgroundColor = eventColors[indexes[eventCombo.event.type]!];
 
@@ -37,10 +40,19 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
 
     const isCalendarPage = location.pathname === '/calendar';
 
-    const deleteEventQuery = api.events.deleteEvent.useMutation()
-    const handleDeleteEvent = (eventID: number) => {
-        deleteEventQuery.mutate({ eventID: eventID })
-    }
+    const session = useSession();
+    const sessionMember = session.data?.user.member;
+
+    const isLeaderOrBoard = !!(
+        sessionMember &&
+        teamHistories.find(
+            history =>
+                history?.memberID === sessionMember.memberID &&
+                history?.endSem === null &&
+                history?.endYear === null &&
+                history?.teamID === 1
+        )
+    );    
 
     return (
         <div
@@ -72,7 +84,7 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
                         {", " + eventCombo.event.type}
                     </div>
                 </Link>
-                {removable && (
+                {((sessionMember && sessionMember.memberID === eventCombo.author.memberID) || isLeaderOrBoard) && handleDeleteEvent && (
                     <button
                         className={`rounded-lg hover:bg-red-500 p-0.5`}
                         onClick={() => handleDeleteEvent(eventCombo.event.eventID)}

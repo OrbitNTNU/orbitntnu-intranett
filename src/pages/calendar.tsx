@@ -3,29 +3,28 @@ import Layout from "@/templates/Layout";
 import { api } from "@/utils/api";
 import { useEffect, useState } from "react";
 import type { Event, Member, TeamHistory } from "@prisma/client";
-import { generateColor } from "@/components/CalendarPage/Colors";
+import { generateColors, generateIndexes } from "@/components/CalendarPage/Colors";
 import EventDisplay from "@/components/CalendarPage/EventDisplay";
 import BreakLine from "@/components/General/Breakline";
 import Button from "@/components/General/Button";
 import { useSession } from "next-auth/react";
-import Icons from "@/components/General/Icons";
 import CreateEventDisplay from "@/components/CalendarPage/CreateEventDisplay";
 
 interface EventListProps {
     events: { event: Event, author: Member }[];
     generatedIndexes: Record<string, number>;
     eventColors: Record<number, string>;
-    removable?: boolean;
+    handleDeleteEvent: (eventID: number) => void; // Define handleDeleteEvent in props
 }
 
-const EventList: React.FC<EventListProps> = ({ events, generatedIndexes, eventColors, removable }) => {
+const EventList: React.FC<EventListProps> = ({ events, generatedIndexes, eventColors, handleDeleteEvent }) => {
     return (
         <div className="flex overflow-x-auto gap-6">
             {events.length === 0 ? (
                 <p>No events available</p>
             ) : (
                 events.map((combo) => (
-                    <EventDisplay key={combo.event.eventID} indexes={generatedIndexes} eventCombo={combo} eventColors={eventColors} removable={removable} />
+                    <EventDisplay key={combo.event.eventID} indexes={generatedIndexes} eventCombo={combo} eventColors={eventColors} handleDeleteEvent={handleDeleteEvent} />
                 ))
             )}
         </div>
@@ -63,15 +62,14 @@ const CalendarPage = () => {
             }
         });
 
-    }, [edit, session]); // Empty dependency array since we're not using any external dependencies
+    }, [edit]); // Empty dependency array since we're not using any external dependencies
 
     const eventTypes: string[] = [];
 
-    const eventColors = generateColor(4);
+    const eventColors = generateColors();
+    const generatedIndexes = generateIndexes();
 
-    const generatedIndexes = { WORK: 0, PRIORITY: 1, SOCIAL: 2, OTHER: 3 };
-
-    const sessionMember = session.data?.user.member as Member;
+    const sessionMember = session.data?.user.member;
     const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
     const teamHistories: TeamHistory[] = teamHistoriesData.data ?? [];
 
@@ -86,6 +84,18 @@ const CalendarPage = () => {
             (history?.priviledges === "LEADER" || history?.priviledges === "BOARD")
         );
     }
+
+    console.log(isLeaderOrBoard);
+
+    const deleteEventQuery = api.events.deleteEvent.useMutation()
+    const handleDeleteEvent = (eventID: number) => {
+        const isConfirmed = window.confirm("Are you sure you want to delete this event?");
+        if (isConfirmed) {
+            deleteEventQuery.mutate({ eventID: eventID });
+            setOwnEventCombos(prevEvents => prevEvents.filter(eventCombo => eventCombo.event.eventID !== eventID));
+            setEventCombos(prevEvents => prevEvents.filter(eventCombo => eventCombo.event.eventID !== eventID));
+        }
+    };
 
     return (
         <Layout>
@@ -102,22 +112,21 @@ const CalendarPage = () => {
             <BreakLine />
             {edit && (
                 <>
-                <CreateEventDisplay toggleEdit={() => (setEdit(!edit))} />
-                <BreakLine />
+                    <CreateEventDisplay toggleEdit={() => (setEdit(!edit))} />
+                    <BreakLine />
                 </>
             )}
             <CalendarDisplay indexes={generatedIndexes} eventColors={eventColors} eventItems={eventCombos} />
             <>
                 <h2 className="mt-4">Your Created Events</h2>
                 <EventList
-                    events={
-                        ownEventCombos
-                            .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime)))
-                            .filter(combo => new Date(combo.event.startTime) > new Date())
-                    }
+                    events={ownEventCombos
+                        .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime)))
+                        .filter(combo => new Date(combo.event.startTime) > new Date())
+                        .slice(0, 15)}
                     generatedIndexes={generatedIndexes}
                     eventColors={eventColors}
-                    removable={true}
+                    handleDeleteEvent={handleDeleteEvent}
                 />
 
                 <h2 className="mt-4">Upcoming Events</h2>
@@ -126,9 +135,10 @@ const CalendarPage = () => {
                         eventCombos
                             .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime)))
                             .filter(combo => new Date(combo.event.startTime) > new Date())
-                    }
+                            .slice(0, 15)}
                     generatedIndexes={generatedIndexes}
                     eventColors={eventColors}
+                    handleDeleteEvent={handleDeleteEvent}
                 />
 
                 <h2 className="mt-4">Passed Events:</h2>
@@ -137,9 +147,10 @@ const CalendarPage = () => {
                         eventCombos
                             .sort((a, b) => Number(new Date(b.event.startTime)) - Number(new Date(a.event.startTime)))
                             .filter(combo => new Date(combo.event.startTime) < new Date())
-                    }
+                            .slice(0, 15)}
                     generatedIndexes={generatedIndexes}
                     eventColors={eventColors}
+                    handleDeleteEvent={handleDeleteEvent}
                 />
             </>
         </Layout>

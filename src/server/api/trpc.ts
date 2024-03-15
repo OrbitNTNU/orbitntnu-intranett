@@ -16,7 +16,6 @@ import { ZodError } from "zod";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 import { TeamHistory_priviledges } from "@prisma/client";
-import { useRouter } from "next/router";
 
 /**
  * 1. CONTEXT
@@ -58,7 +57,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   // Get the session from the server using the getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
-
   return createInnerTRPCContext({
     session,
   });
@@ -112,6 +110,7 @@ export const publicProcedure = t.procedure;
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.session?.user) {
+   
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({

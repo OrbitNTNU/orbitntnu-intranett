@@ -6,7 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'moment-timezone';
 import { setContrast } from './Colors';
 import { useState, useEffect } from 'react';
-import type { EventType } from "@prisma/client";
+import type { Event_type } from "@prisma/client";
 
 export const hashString = (str: string) => {
     let hash = 0;
@@ -27,7 +27,7 @@ interface ParsedEvent {
     end: Date;
     allDay: boolean;
     details: MyEvent;
-    type: EventType;
+    type: Event_type;
 }
 
 function parseEventItems(eventItems: { event: MyEvent, author: Member }[], indexes: Record<string, number>): ParsedEvent[] {
