@@ -64,7 +64,6 @@ const TeamsPage = () => {
 
             // Function to check if there is any team history entry with the same MemberID where endSem and endYear are both null
             const isMemberActive = allTeamHistoriesForMember?.length > 1;
-            console.log(isMemberActive);
 
             if (!isMemberActive) {
                 // Update the member to inactive if no active team history entry exists
@@ -103,7 +102,7 @@ const TeamsPage = () => {
                 }
             } else {
                 void createTeamHistoriesQuery.mutateAsync({
-                    priviledges: "MEMBER",
+                    priviledges: Number(teamID) === 18 ? "MENTOR" : "MEMBER",
                     memberID: member.memberID,
                     teamID: Number(teamID),
                     cPosition: null,
