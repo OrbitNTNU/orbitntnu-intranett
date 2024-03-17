@@ -7,6 +7,7 @@ import { formatDateTime } from "./EventDisplay";
 import { generateColors, generateIndexes, setContrast } from "./Colors";
 import Button from "../General/Button";
 import { api } from "@/utils/api";
+import { start } from "repl";
 
 interface CreateEventDisplayProps {
     toggleEdit: Dispatch<SetStateAction<boolean>>;
@@ -31,13 +32,17 @@ const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
     const addEventQuery = api.events.createEvent.useMutation();
 
     async function handleAddEvent(event: Event, toggleEdit: (boolean: boolean) => void) {
-        try {
-            // Perform the mutation and wait for it to complete
-            await addEventQuery.mutateAsync(event);
-            toggleEdit(false);
-        } catch (error) {
-            // Handle any errors that occur during the mutation
-            console.error("Error adding event:", error);
+        if(event.name !== "" && event.description !== "" && event.location !== "" && event.startTime < event.endTime) {
+            try {
+                // Perform the mutation and wait for it to complete
+                await addEventQuery.mutateAsync(event);
+                toggleEdit(false);
+            } catch (error) {
+                // Handle any errors that occur during the mutation
+                console.error("Error adding event:", error);
+            }
+        } else {
+            window.alert("Wrong input, you must have a description, name, location, and end time must be after start time")
         }
     }
 
@@ -60,7 +65,7 @@ const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
 
     const generatedIndexes = generateIndexes();
     const eventColors = generateColors();
-    
+
     const backgroundColor = eventColors[generatedIndexes[createdEvent.type]!];
     // Check if backgroundColor is defined before calling setContrast
     const textColor = backgroundColor ? setContrast(backgroundColor) : '';
@@ -78,53 +83,51 @@ const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
     return (
         <div className="flex flex-col items-center">
             {/* Form */}
-            <div className="md:w-1/2 w-full">
-                <div className="flex flex-col justify-between h-full">
-                    <form className="flex flex-col gap-4 mr-4">
-                        <input type="text" name="name" placeholder="Event Name" value={createdEvent.name} onChange={handleInputChange} className="p-2 rounded-md text-black" />
-                        <input type="text" name="location" placeholder="Location" value={createdEvent.location} onChange={handleInputChange} className="p-2 rounded-md text-black" />
-                        <textarea name="description" placeholder="Description" value={createdEvent.description ?? ''} onChange={handleInputChange} className="p-2 rounded-md resize-none text-black"></textarea>
-                        <div className="flex flex-col lg:flex-row justify-between w-full">
-                            <div className="flex-col">
-                                <h3>Start Time:</h3>
-                                <input
-                                    name="startTime"
-                                    className='text-black rounded-md p-2 w-[180px]'
-                                    type='datetime-local'
-                                    value={adjustTime(createdEvent.startTime)}
-                                    onChange={(e) => handleDateTimeChange("startTime", e.target.value)}
-                                />
-                            </div>
-                            <div className="flex-col">
-                                <h3>End Time:</h3>
-                                <input
-                                    name="endTime"
-                                    className='text-black rounded-md p-2 w-[180px]'
-                                    type='datetime-local'
-                                    value={adjustTime(createdEvent.endTime)}
-                                    onChange={(e) => handleDateTimeChange("endTime", e.target.value)}
-                                />
-                            </div>
-                            <div className="flex-col">
-                                <h3>Event Type:</h3>
-                                <select
-                                    name="type"
-                                    className='text-black rounded-md p-2 w-[180px] h-[42px]'
-                                    value={createdEvent.type}
-                                    onChange={(e) => handleInputChange(e)}
-                                >
-                                    {Object.keys(Event_type).map((key) => (
-                                        <option key={key} value={Event_type[key as keyof typeof Event_type]}>{Event_type[key as keyof typeof Event_type]}</option>
-                                    ))}
-                                </select>
-                            </div>
+            <div className="w-full flex justify-center">
+                <form className="flex flex-col gap-4 md:w-2/3 w-full">
+                    <input type="text" name="name" placeholder="Event Name" value={createdEvent.name} onChange={handleInputChange} className="p-2 rounded-md text-black w-full" />
+                    <input type="text" name="location" placeholder="Location" value={createdEvent.location} onChange={handleInputChange} className="p-2 rounded-md text-black w-full" />
+                    <textarea name="description" placeholder="Description" value={createdEvent.description ?? ''} onChange={handleInputChange} className="p-2 rounded-md resize-none text-black w-full"></textarea>
+                    <div className="flex flex-col items-center md:flex-row md:flex-wrap justify-center gap-2">
+                        <div className="flex-col">
+                            <h3>Start Time:</h3>
+                            <input
+                                name="startTime"
+                                className='text-black rounded-md p-2 w-[180px]'
+                                type='datetime-local'
+                                value={adjustTime(createdEvent.startTime)}
+                                onChange={(e) => handleDateTimeChange("startTime", e.target.value)}
+                            />
                         </div>
-                    </form>
-                </div>
+                        <div className="flex-col">
+                            <h3>End Time:</h3>
+                            <input
+                                name="endTime"
+                                className='text-black rounded-md p-2 w-[180px]'
+                                type='datetime-local'
+                                value={adjustTime(createdEvent.endTime)}
+                                onChange={(e) => handleDateTimeChange("endTime", e.target.value)}
+                            />
+                        </div>
+                        <div className="flex-col">
+                            <h3>Event Type:</h3>
+                            <select
+                                name="type"
+                                className='text-black rounded-md p-2 w-[180px] h-[42px]'
+                                value={createdEvent.type}
+                                onChange={(e) => handleInputChange(e)}
+                            >
+                                {Object.keys(Event_type).map((key) => (
+                                    <option key={key} value={Event_type[key as keyof typeof Event_type]}>{Event_type[key as keyof typeof Event_type]}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div className="flex justify-center items-center w-full mt-10 flex-col">
                 <h2>Preview</h2>
-                <div className="flex flex-col justify-between min-w-[400px] h-[235px] w-[300px] md:w-[500px] p-4 bg-green-500 rounded-lg" style={{ backgroundColor: backgroundColor, color: textColor }}>
+                <div className="flex flex-col justify-between min-w-[350px] h-[235px] w-[300px] md:w-[500px] p-4 bg-green-500 rounded-lg" style={{ backgroundColor: backgroundColor, color: textColor }}>
                     <div>
                         <h3 className="text-xl font-bold flex flex-row justify-between items-center">
                             {createdEvent.name === "" ? "Event Name" : createdEvent.name}
@@ -151,7 +154,7 @@ const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
                     </div>
                 </div>
                 <div className="mt-4">
-                    <Button label={"Add to Calendar"} icon="Plus" onClick={() => void handleAddEvent(createdEvent, toggleEdit)}/>
+                    <Button label={"Add to Calendar"} icon="Plus" onClick={() => void handleAddEvent(createdEvent, toggleEdit)} />
                 </div>
             </div>
         </div>
