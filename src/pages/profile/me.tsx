@@ -1,15 +1,18 @@
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
 import ProfileView from '@/views/ProfileView';
+import type { Member } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const Profile = () => {
+    const [member, setMember] = useState<Member>();
+    const [loading, setLoading] = useState<boolean>(true);
+    
     const session = useSession();
 
     const query = api.members.getMemberByOrbitMail.useQuery(session.data?.user.email ?? "");
-    const member = query.data ?? null;
 
     const router = useRouter();
 
@@ -55,10 +58,6 @@ const Profile = () => {
             <ProfileView member={member} edit={true} teamHistories={teamHistories} teams={teams} handleRedirect={handleRedirect}/>
         );
     }
-
-    return (
-        <ProfileView member={member} edit={true} handleRedirect={handleRedirect} />
-    );
 };
 
 export default Profile;
