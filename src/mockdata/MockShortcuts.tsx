@@ -76,7 +76,7 @@ const mockShortcuts: ShortcutsProps[] = [
             },
             {
                 header: 'Vaultwarden',
-                description: 'Store yor passwords safely',
+                description: 'Store your passwords safely',
                 url: 'https://passwords.orbitntnu.com'
             },
             {
