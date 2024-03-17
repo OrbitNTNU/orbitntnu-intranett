@@ -6,7 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'moment-timezone';
 import { setContrast } from './Colors';
 import { useState, useEffect } from 'react';
-import type { EventType } from "@prisma/client";
+import type { Event_type } from "@prisma/client";
 
 export const hashString = (str: string) => {
     let hash = 0;
@@ -27,7 +27,7 @@ interface ParsedEvent {
     end: Date;
     allDay: boolean;
     details: MyEvent;
-    type: EventType;
+    type: Event_type;
 }
 
 function parseEventItems(eventItems: { event: MyEvent, author: Member }[], indexes: Record<string, number>): ParsedEvent[] {
@@ -94,7 +94,7 @@ const CalendarDisplay: React.FC<CalendarDisplayProps> = ({
     workWeekStart.setHours(workWeekStart.getHours() + parseInt(timeZoneOffset.split(" ")[3]?.slice(3) ?? "0"));
 
     const workWeekEnd = new Date();
-    workWeekEnd.setHours(18, 0, 0, 0);
+    workWeekEnd.setHours(20, 0, 0, 0);
     workWeekEnd.setHours(workWeekEnd.getHours() + parseInt(timeZoneOffset.split(" ")[3]?.slice(3) ?? "0"));
 
     const eventPropGetter = (event: ParsedEvent) => {

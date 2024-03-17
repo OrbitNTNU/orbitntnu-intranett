@@ -164,24 +164,18 @@ model Announcement {
 }
 
 model Event {
-  eventID        Int       @id @default(autoincrement())
+  eventID        Int        @id @default(autoincrement())
   name           String
   startTime      DateTime
-  description    String?   @db.Text
+  description    String?    @db.Text
   location       String
   memberID       Int
-  timeOfCreation DateTime  @default(now())
-  type           EventType
+  timeOfCreation DateTime   @default(now())
+  type           Event_type
   endTime        DateTime
-  member         Member    @relation(fields: [memberID], references: [memberID])
+  member         Member     @relation(fields: [memberID], references: [memberID])
 
   @@index([memberID], map: "Event_memberID_fkey")
-}
-
-enum EventType {
-  SOCIAL
-  WORK
-  PRIORITY
 }
 
 enum SemType {
@@ -209,4 +203,11 @@ enum TeamHistory_priviledges {
   BOARD
   LEADER
   MENTOR
+}
+
+enum Event_type {
+  SOCIAL
+  WORK
+  PRIORITY
+  OTHER
 }

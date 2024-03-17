@@ -1,6 +1,6 @@
 import CalendarDisplay from "@/components/CalendarPage/CalendarDisplay";
 import type { Event, Member } from "@prisma/client";
-import { generateColor } from "@/components/CalendarPage/Colors";
+import { generateColors, generateIndexes } from "@/components/CalendarPage/Colors";
 import Link from "next/link";
 import EventDisplay from "@/components/CalendarPage/EventDisplay";
 import router from "next/router";
@@ -19,9 +19,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ combinedInfo }) => {
         }
     });
 
-    const eventColors = generateColor(combinedInfo.length);
-
-    const generatedIndexes = { WORK: 0, PRIORITY: 1, SOCIAL: 2 };
+    const eventColors = generateColors();
+    const generatedIndexes = generateIndexes();
 
     return (
         <div className="w-full">
@@ -32,9 +31,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ combinedInfo }) => {
                 </h2>
             </Link>
             <div className="flex flex-row flex-wrap md:flex-nowrap m-6">
-                {combinedInfo.filter((combo) => new Date(combo.event.startTime) > new Date()).length !== 0 ? (
+                {combinedInfo.filter((combo) => new Date(combo.event.startTime) > new Date()).length >= 3 ? (
                     <>
-
                         <div className="md:w-2/3 w-full mr-0 md:mr-4">
                             <CalendarDisplay indexes={generatedIndexes} eventColors={eventColors} eventItems={combinedInfo} />
                         </div>

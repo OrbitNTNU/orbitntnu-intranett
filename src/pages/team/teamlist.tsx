@@ -13,7 +13,7 @@ const TeamListPage = () => {
         <Layout>
             <div className='items-center flex flex-row gap-6'>
                 <Link href="/">
-                    <Icons name="ArrowLeft_lg"/>
+                    <Icons name="ArrowLeft_lg" />
                 </Link>
                 <h1>Current Teams in Orbit</h1>
             </div>

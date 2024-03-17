@@ -1,9 +1,11 @@
-export const generateColor = (numEvents: number): Record<number, string> => {
+import { Event_type } from "@prisma/client";
+
+export const generateColors = (): Record<number, string> => {
     const tailwindColorClasses = [
         'bg-red-400',
         'bg-indigo-500',
         'bg-sky-500',
-        'bg-teal-400',
+        'bg-teal-500',
         'bg-purple-400',
         'bg-orange-400',
         'bg-yellow-400',
@@ -15,6 +17,8 @@ export const generateColor = (numEvents: number): Record<number, string> => {
 
     const resultColors: Record<number, string> = {};
     const usedColors = new Set<string>();
+
+    const numEvents = Object.keys(Event_type).length;
 
     for (let i = 0; i < numEvents; i++) {
         const titleIndex = i % tailwindColorClasses.length;
@@ -42,6 +46,11 @@ export const generateColor = (numEvents: number): Record<number, string> => {
 };
 
 const getRgbFromTailwindColor = (tailwindColorClass: string) => {
+    // Check if document is defined (for client-side rendering)
+    if (typeof document === 'undefined') {
+        return ""; // or handle the case where document is not available
+    }
+
     // Create a temporary div to apply the Tailwind class
     const tempDiv = document.createElement('div');
     tempDiv.className = tailwindColorClass;
@@ -78,4 +87,15 @@ export const setContrast = (color: string): string => {
     const textColour = brightness > 160 ? 'black' : 'white';
 
     return textColour;
+};
+
+type Indexes = Record<string, number>;
+
+export const generateIndexes = () => {
+    const indexes: Indexes = {};
+    // Loop through the keys of Event_type enum and assign index to each key
+    Object.keys(Event_type).forEach((key, index) => {
+        indexes[key] = index;
+    });
+    return indexes;
 };

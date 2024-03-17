@@ -11,7 +11,7 @@ export interface AnnAndMember {
 }
 
 interface Props {
-    announcements: AnnAndMember[] | undefined,
+    announcements: AnnAndMember[],
 }
 
 const ShortAnnouncements = ({announcements}: Props) => {
@@ -25,7 +25,7 @@ const ShortAnnouncements = ({announcements}: Props) => {
                     <Icons name="Arrow45Up"/>
                 </h2>
             </Link>
-            {announcements?.map(ann => (
+            {announcements.map(ann => (
                 <div
                     key={ann.announcement.announcementID}
                     className={`max-h-[400px] flex flex-col ${colors[announcements ? announcements?.indexOf(ann) : 0]} rounded-lg m-6 p-8 gap-6`
