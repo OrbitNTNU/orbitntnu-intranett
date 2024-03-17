@@ -7,7 +7,6 @@ import { formatDateTime } from "./EventDisplay";
 import { generateColors, generateIndexes, setContrast } from "./Colors";
 import Button from "../General/Button";
 import { api } from "@/utils/api";
-import { start } from "repl";
 
 interface CreateEventDisplayProps {
     toggleEdit: Dispatch<SetStateAction<boolean>>;
