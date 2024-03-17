@@ -100,9 +100,13 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                         type='date'
                         defaultValue={
                             editedMember[label] instanceof Date &&  // Check if input is an instance of Date
+                                editedMember[label] !== null &&  // Check if input is not null
+                                editedMember[label] !== undefined && 
+                                editedMember !== undefined ?  // Check if input is not undefined
                                 !isNaN(editedMember[label].getTime()) &&  // Check if input is a valid Date object
-                                !isNaN(editedMember[label].getDate()) // Check if the date part is valid
-                                ? new Date(editedMember[label]).toISOString().split('T')[0]
+                                    !isNaN(editedMember[label].getDate()) // Check if the date part is valid
+                                    ? new Date(editedMember[label]).toISOString().split('T')[0]
+                                    : ''
                                 : ''
                         }
                         onChange={(e) => handleChange(e.target.value)}
