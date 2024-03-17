@@ -13,7 +13,7 @@ export const Shortcuts = () => {
                 {/* Display each group of shortcuts */}
                 {mockShortcuts.map((shortcutGroup) => (
                     <div key={shortcutGroup.type}>
-                        <h2>{shortcutGroup.type}</h2>
+                        <h2 className="flex flex-row justify-center">{shortcutGroup.type}</h2>
                         <div className="flex flex-row flex-wrap justify-center">
                             {shortcutGroup.shortcuts.map((infoLink) => (
                                 <Shortcut key={infoLink.header} type={shortcutGroup.type} shortcut={infoLink}/>
