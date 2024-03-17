@@ -102,7 +102,7 @@ const TeamsPage = () => {
                 }
             } else {
                 void createTeamHistoriesQuery.mutateAsync({
-                    priviledges: "MEMBER",
+                    priviledges: Number(teamID) === 18 ? "MENTOR" : "MEMBER",
                     memberID: member.memberID,
                     teamID: Number(teamID),
                     cPosition: null,
