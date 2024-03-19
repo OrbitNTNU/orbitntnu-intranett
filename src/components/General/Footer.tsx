@@ -3,9 +3,11 @@ import Image from "next/image";
 import logoWhite from "../../../public/images/orbitblue.png";
 import mockShortcuts from "@/mockdata/MockShortcuts";
 import BreakLine from "./Breakline";
+import { findInternalShortcuts } from "./Navbar";
 
 const Footer = () => {
   const year = new Date().getFullYear();
+
 
   return (
     <footer>
@@ -39,7 +41,7 @@ const Footer = () => {
         <BreakLine />
         <div className="max-w-4xl m-auto">
           <div className=" flex flex-wrap items-center justify-center">
-            {mockShortcuts.map((link) => (
+            {findInternalShortcuts(mockShortcuts).map((link) => (
               <Link key={link.header} href={link.url} className="ml-2 mr-2 mb-2 hover:text-yellow-500">
                 {link.header}
               </Link>
