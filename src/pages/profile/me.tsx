@@ -1,3 +1,4 @@
+import { Loading } from '@/components/General/Loading';
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
 import ProfileView from '@/views/ProfileView';
@@ -22,7 +23,7 @@ const Profile = () => {
         // Handle the case where the member is not found
         return (
             <Layout>
-                <p>Loading ...</p>
+                <Loading/>
             </Layout>
         );
     }

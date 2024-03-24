@@ -44,7 +44,7 @@ const Home = () => {
       <Welcome></Welcome>
       <Shortcuts />
       <ShortAnnouncements announcements={announcements}/>
-      <CalendarView combinedInfo={eventsCombo} />
+      {/* <CalendarView combinedInfo={eventsCombo} /> */}
       </div>
     </Layout>
   );
