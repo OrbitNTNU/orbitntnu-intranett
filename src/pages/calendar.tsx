@@ -8,6 +8,7 @@ import EventDisplay from "@/components/CalendarPage/EventDisplay";
 import BreakLine from "@/components/General/Breakline";
 import Button from "@/components/General/Button";
 import { useSession } from "next-auth/react";
+import { Loading } from "@/components/General/Loading";
 
 interface EventListProps {
     events: { event: Event, author: Member }[];
@@ -32,6 +33,7 @@ const EventList: React.FC<EventListProps> = ({ events, generatedIndexes, eventCo
 const CalendarPage = () => {
     const [eventCombos, setEventCombos] = useState<{ event: Event, author: Member }[]>([]);
     const [ownEventCombos, setOwnEventCombos] = useState<{ event: Event, author: Member }[]>([]);
+    const [loading, setIsLoading] = useState<boolean>(true);
 
     const session = useSession();
 
@@ -47,6 +49,7 @@ const CalendarPage = () => {
                 if (isMounted && allEventsResponse.data) {
                     setEventCombos(allEventsResponse.data);
                     setOwnEventCombos(allEventsResponse.data.filter((eventCombo) => eventCombo.author.orbitMail === session.data?.user.email))
+                    setIsLoading(false);
                 }
 
             } catch (error) {
@@ -80,50 +83,56 @@ const CalendarPage = () => {
 
     return (
         <Layout>
-            <div className='md:flex justify-between items-center'>
-                <ul>
-                    <h1>Orbit Calendar</h1>
-                </ul>
-                <div className="md:mt-0 mt-4">
-                    <Button label={'Add an event'} onClick={addEvent} icon="Create" />
-                </div>
-            </div>
-            <BreakLine />
-            <CalendarDisplay indexes={generatedIndexes} eventColors={eventColors} eventItems={eventCombos} />
+            {loading ? (
+                <Loading/>
+            ) : (
+                <>
+                    <div className='md:flex justify-between items-center'>
+                        <ul>
+                            <h1>Orbit Calendar</h1>
+                        </ul>
+                        <div className="md:mt-0 mt-4">
+                            <Button label={'Add an event'} onClick={addEvent} icon="Create" />
+                        </div>
+                    </div>
+                    <BreakLine />
+                    <CalendarDisplay indexes={generatedIndexes} eventColors={eventColors} eventItems={eventCombos} />
 
-            <>
-                <h2 className="mt-4">Your Created Events</h2>
-                <EventList
-                    events={
-                        ownEventCombos
-                            .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime)))
-                    }
-                    generatedIndexes={generatedIndexes}
-                    eventColors={eventColors}
-                />
+                    <>
+                        <h2 className="mt-4">Your Created Events</h2>
+                        <EventList
+                            events={
+                                ownEventCombos
+                                    .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime)))
+                            }
+                            generatedIndexes={generatedIndexes}
+                            eventColors={eventColors}
+                        />
 
-                <h2 className="mt-4">Upcoming Events</h2>
-                <EventList
-                    events={
-                        eventCombos
-                            .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime)))
-                            .filter(combo => new Date(combo.event.startTime) > new Date())
-                    }
-                    generatedIndexes={generatedIndexes}
-                    eventColors={eventColors}
-                />
+                        <h2 className="mt-4">Upcoming Events</h2>
+                        <EventList
+                            events={
+                                eventCombos
+                                    .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime)))
+                                    .filter(combo => new Date(combo.event.startTime) > new Date())
+                            }
+                            generatedIndexes={generatedIndexes}
+                            eventColors={eventColors}
+                        />
 
-                <h2 className="mt-4">Passed Events:</h2>
-                <EventList
-                    events={
-                        eventCombos
-                            .sort((a, b) => Number(new Date(b.event.startTime)) - Number(new Date(a.event.startTime)))
-                            .filter(combo => new Date(combo.event.startTime) < new Date())
-                    }
-                    generatedIndexes={generatedIndexes}
-                    eventColors={eventColors}
-                />
-            </>
+                        <h2 className="mt-4">Passed Events:</h2>
+                        <EventList
+                            events={
+                                eventCombos
+                                    .sort((a, b) => Number(new Date(b.event.startTime)) - Number(new Date(a.event.startTime)))
+                                    .filter(combo => new Date(combo.event.startTime) < new Date())
+                            }
+                            generatedIndexes={generatedIndexes}
+                            eventColors={eventColors}
+                        />
+                    </>
+                </>
+            )}
         </Layout>
     );
 };

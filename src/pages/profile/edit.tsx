@@ -1,4 +1,5 @@
 import BreakLine from '@/components/General/Breakline';
+import { Loading } from '@/components/General/Loading';
 import EditInfoDisplay from '@/components/ProfilePage/EditInfoDisplay';
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
@@ -78,7 +79,7 @@ const EditProfile = () => {
         return (
             <Layout>
                 <div className="flex justify-center">
-                    <p>Loading ...</p>
+                    <Loading/>
                 </div>
             </Layout>
         );
