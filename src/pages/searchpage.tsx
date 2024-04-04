@@ -5,6 +5,7 @@ import type { Member } from '@prisma/client';
 import SearchBar from '@/components/General/SearchBar';
 import BreakLine from '@/components/General/Breakline';
 import Layout from '@/templates/Layout';
+import { Loading } from '@/components/General/Loading';
 
 export default function SearchPage() {
   const [loading, setLoading] = useState(true);
@@ -47,7 +48,7 @@ export default function SearchPage() {
     <Layout>
       <div>
         {loading ? (
-          <p>Loading...</p>
+          <Loading/>
         ) : (
           <div>
           <h1>Search for Orbiter</h1>

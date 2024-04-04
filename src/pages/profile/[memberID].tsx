@@ -4,6 +4,7 @@ import { api } from '@/utils/api';
 import { useRouter } from 'next/router';
 import ProfileView from '@/views/ProfileView';
 import { useSession } from 'next-auth/react';
+import { Loading } from '@/components/General/Loading';
 
 const ProfilePage = () => {
     const router = useRouter();
@@ -28,7 +29,7 @@ const ProfilePage = () => {
         // Handle the case where the member is not found
         return (
             <Layout>
-                <p>Loading ...</p>
+                <Loading/>
             </Layout>
         );
     }

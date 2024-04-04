@@ -98,6 +98,7 @@ model Interview {
 model Team {
   teamID       Int            @id @default(autoincrement())
   teamName     String
+  group        Team_group?
   applications ApplyForTeam[]
   members      TeamHistory[]
 }
@@ -158,6 +159,7 @@ model Announcement {
   postTime       DateTime
   memberID       Int
   announcement   String   @db.Text
+  title          String?
   member         Member   @relation(fields: [memberID], references: [memberID])
 
   @@index([memberID], map: "Announcement_memberID_fkey")

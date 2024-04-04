@@ -2,9 +2,16 @@ import Link from 'next/link';
 import logoWhite from "../../../public/images/orbitwhite.png";
 import Image from "next/image";
 import Dropdown from './Dropdown'; // Adjust the import path based on your project structure
-import mockShortcuts from '@/mockdata/MockShortcuts';
+import mockShortcuts, { ShortcutType, type ShortcutsProps } from '@/mockdata/MockShortcuts';
 import { signIn, signOut, useSession } from "next-auth/react";
 import Icons from './Icons';
+
+export function findInternalShortcuts (shortcuts: ShortcutsProps[]) {
+  for (const shortcutGroup of shortcuts) {
+    if (shortcutGroup.type == ShortcutType.INTERNAL) return shortcutGroup.shortcuts;
+  }
+  return [];
+}
 
 const Navbar = () => {
   const session = useSession();
@@ -45,7 +52,7 @@ const Navbar = () => {
             </button>
           )}
           <Dropdown
-            shortcuts={mockShortcuts}
+            shortcuts={findInternalShortcuts(mockShortcuts)}
             handleLogout={handleLogout}
             handleLogin={handleLogin}
           />

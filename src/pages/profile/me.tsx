@@ -1,3 +1,4 @@
+import { Loading } from '@/components/General/Loading';
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
 import ProfileView from '@/views/ProfileView';
@@ -48,7 +49,7 @@ const Profile = () => {
     if (loading) {
         return (
             <Layout>
-                <p>Loading ...</p>
+                <Loading/>
             </Layout>
         );
     }

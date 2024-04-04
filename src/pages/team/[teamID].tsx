@@ -1,6 +1,7 @@
 import BreakLine from "@/components/General/Breakline";
 import Button from "@/components/General/Button";
 import Icons from "@/components/General/Icons";
+import { Loading } from "@/components/General/Loading";
 import MemberInfo from "@/components/General/MemberInfo";
 import SearchBar from "@/components/General/SearchBar";
 import Layout from "@/templates/Layout";
@@ -224,7 +225,7 @@ const TeamsPage = () => {
     if (!router.isReady || teamID === "find") {
         return (
             <Layout>
-                <h2 className="flex flex-row items-center justify-center h-full">Thinking...</h2>
+                <Loading/>
             </Layout>
         )
     };
