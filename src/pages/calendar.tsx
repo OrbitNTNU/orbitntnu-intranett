@@ -8,7 +8,6 @@ import EventDisplay from "@/components/CalendarPage/EventDisplay";
 import BreakLine from "@/components/General/Breakline";
 import Button from "@/components/General/Button";
 import { useSession } from "next-auth/react";
-import { Loading } from "@/components/General/Loading";
 import CreateEventDisplay from "@/components/CalendarPage/CreateEventDisplay";
 
 interface EventListProps {
@@ -35,6 +34,7 @@ const EventList: React.FC<EventListProps> = ({ events, generatedIndexes, eventCo
 const CalendarPage = () => {
     const [eventCombos, setEventCombos] = useState<{ event: Event, author: Member }[]>([]);
     const [ownEventCombos, setOwnEventCombos] = useState<{ event: Event, author: Member }[]>([]);
+    const [edit, setEdit] = useState<boolean>(false);
 
     const session = useSession();
 
@@ -48,7 +48,6 @@ const CalendarPage = () => {
                 if (allEventsResponse.data) {
                     setEventCombos(allEventsResponse.data);
                     setOwnEventCombos(allEventsResponse.data.filter((eventCombo) => eventCombo.author.memberID === session.data?.user.member.memberID))
-                    setIsLoading(false);
                 }
             } catch (error) {
                 console.error('Error refetching study plan:', error);
@@ -134,9 +133,10 @@ const CalendarPage = () => {
                         eventCombos
                             .sort((a, b) => Number(new Date(a.event.startTime)) - Number(new Date(b.event.startTime)))
                             .filter(combo => new Date(combo.event.startTime) > new Date())
-                    }
+                            .slice(0, 15)}
                     generatedIndexes={generatedIndexes}
                     eventColors={eventColors}
+                    handleDeleteEvent={handleDeleteEvent}
                 />
 
                 <h2 className="mt-4">Passed Events:</h2>
@@ -145,9 +145,10 @@ const CalendarPage = () => {
                         eventCombos
                             .sort((a, b) => Number(new Date(b.event.startTime)) - Number(new Date(a.event.startTime)))
                             .filter(combo => new Date(combo.event.startTime) < new Date())
-                    }
+                            .slice(0, 15)}
                     generatedIndexes={generatedIndexes}
                     eventColors={eventColors}
+                    handleDeleteEvent={handleDeleteEvent}
                 />
             </>
         </Layout>
