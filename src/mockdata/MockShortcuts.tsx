@@ -84,6 +84,11 @@ const mockShortcuts: ShortcutsProps[] = [
                 description: 'Check out Orbit\'s website',
                 url: 'https://orbitntnu.com'
             },
+            {
+                header: 'Orbit Documentation',
+                description: 'View Documentation in Orbit',
+                url: 'https://docs.orbitntnu.com'
+            },
         ]
     }
 ]

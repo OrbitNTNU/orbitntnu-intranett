@@ -24,11 +24,14 @@ const TeamListPage = () => {
     const sortedGroupedTeams: Record<string, Team[]> = Object.keys(groupedTeams)
         .sort()
         .reduce((sortedAcc: Record<string, Team[]>, key) => {
-            // Sort teams within each group alphabetically by team name
-            const sortedTeams = groupedTeams[key].sort((a, b) => a.teamName.localeCompare(b.teamName));
-            sortedAcc[key] = sortedTeams;
+            // Check if groupedTeams[key] is defined before sorting
+            const sortedTeams = groupedTeams[key]?.sort((a, b) => a.teamName.localeCompare(b.teamName));
+            if (sortedTeams) {
+                sortedAcc[key] = sortedTeams;
+            }
             return sortedAcc;
         }, {});
+
 
     // Move the "OTHER" group to the end of the record
     if (sortedGroupedTeams.OTHER) {
