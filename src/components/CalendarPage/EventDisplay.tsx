@@ -84,7 +84,7 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
                         {", " + eventCombo.event.type}
                     </div>
                 </Link>
-                {((sessionMember && sessionMember.memberID === eventCombo.author.memberID) || isLeaderOrBoard) && handleDeleteEvent && (
+                {((sessionMember && sessionMember.memberID === eventCombo.author.memberID) ?? isLeaderOrBoard) && handleDeleteEvent && (
                     <button
                         className={`rounded-lg hover:bg-red-500 p-0.5`}
                         onClick={() => handleDeleteEvent(eventCombo.event.eventID)}
