@@ -28,7 +28,7 @@ const ShortAnnouncements = ({announcements}: Props) => {
             {announcements.map(ann => (
                 <div
                     key={ann.announcement.announcementID}
-                    className={`max-h-[400px] flex flex-col ${colors[announcements ? announcements?.indexOf(ann) : 0]} rounded-lg m-6 p-8 gap-6`
+                    className={`max-h-[400px] flex flex-col ${colors[announcements ? announcements?.indexOf(ann) : 0]} rounded-lg mb-6 p-8 gap-6`
                 }>
                     <p className="text-gray-800">{formatDateTime(ann.announcement.postTime)}</p>
                     <p className="text-xl overflow-auto">{ann.announcement.announcement}</p>
