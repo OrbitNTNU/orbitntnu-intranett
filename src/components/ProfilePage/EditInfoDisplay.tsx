@@ -57,6 +57,8 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                 setSelectedStudyProgram(String(parsedValue));
             }
 
+            console.log(parsedValue);
+
             setEditedMember(prevState => ({
                 ...prevState,
                 [label]: parsedValue
@@ -67,6 +69,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
             case 'name':
             case 'ntnuMail':
             case 'personalMail':
+            case 'linkedin':
             case 'nationalities':
                 return (
                     <input
@@ -134,6 +137,16 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                         type='number'
                         defaultValue={editedMember[label] ?? undefined}
                         onChange={(e) => handleChange(e.target.value)}
+                    />
+                );
+            case 'showPhoneNrOnWebsite':
+                return (
+                    <input
+                        className='md:ml-2 rounded-md text-black px-2 max-w-sm overflow-x-auto w-[25px]'
+                        type='checkbox'
+                        checked={editedMember[label] ?? false}
+                        onChange={(e) => handleChange(e.target.checked)}
+                        style={{ borderRadius: '0.375rem' }} // Apply rounded style directly to the input
                     />
                 );
             default:

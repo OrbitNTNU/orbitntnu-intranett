@@ -90,6 +90,8 @@ const renderValue = (value: string | number | boolean | Date | null, key: string
 
     if (value instanceof Date) {
         return value.toLocaleDateString();
+    } else if (typeof value === 'boolean') {
+        return value ?? value === null ? "True" : "False";
     } else {
         return value ?? value === 0 ? value.toString() : 'unknown';
     }
