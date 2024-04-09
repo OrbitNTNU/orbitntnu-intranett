@@ -57,7 +57,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   // Get the session from the server using the getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
-
   return createInnerTRPCContext({
     session,
   });
@@ -111,6 +110,7 @@ export const publicProcedure = t.procedure;
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.session?.user) {
+   
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
@@ -180,7 +180,6 @@ const enforceUserIsTLOrBoard = t.middleware(async ({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const teamLeadProcedure = t.procedure.use(enforceUserIsTLOrBoard);
-
 
 /** Reusable middleware that enforces user is board or leader before running the procedure. */
 const enforceUserIsBoard = t.middleware(async ({ ctx, next }) => {

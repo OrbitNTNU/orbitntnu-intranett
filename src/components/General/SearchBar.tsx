@@ -10,7 +10,7 @@ const SearchBar = ({ query, onChange }: SearchBarProps) => {
   return (
     <div className='my-10 flex items-center justify-center'>
       <input
-        className="rounded-md p-2 text-black w-1/4"
+        className="rounded-md p-2 text-black lg:w-1/3 w-5/6"
         type="text"
         placeholder="Search..."
         value={query}

@@ -1,6 +1,9 @@
 import type { Event, Member } from "@prisma/client";
 import { setContrast } from "./Colors";
 import Icons from "../General/Icons";
+import Link from "next/link";
+import { api } from "@/utils/api";
+import { useSession } from "next-auth/react";
 
 export const formatDateTime = (date: Date): string => {
     const options: Intl.DateTimeFormatOptions = {
@@ -20,9 +23,12 @@ interface EventDisplayProps {
     eventCombo: { event: Event, author: Member };
     eventColors: Record<string, string>;
     indexes: Record<string, number>;
+    handleDeleteEvent?: (eventID: number) => void; // Define handleDeleteEvent in props
 }
 
-const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, indexes }) => {
+const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, indexes, handleDeleteEvent }) => {
+    const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
+    const teamHistories = teamHistoriesData.data ?? [];
 
     const backgroundColor = eventColors[indexes[eventCombo.event.type]!];
 
@@ -33,6 +39,20 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
     const formattedEndTime = formatDateTime(eventCombo.event.endTime);
 
     const isCalendarPage = location.pathname === '/calendar';
+
+    const session = useSession();
+    const sessionMember = session.data?.user.member;
+
+    const isLeaderOrBoard = !!(
+        sessionMember &&
+        teamHistories.find(
+            history =>
+                history?.memberID === sessionMember.memberID &&
+                history?.endSem === null &&
+                history?.endYear === null &&
+                history?.teamID === 1
+        )
+    );    
 
     return (
         <div
@@ -52,20 +72,30 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
                     {formattedStartTime} - {formattedEndTime}
                 </p>
                 <hr className="border my-1" />
-                <p className="mt-1 overflow-auto">
+                <p className="mt-1 overflow-auto max-h-[100px]">
                     {eventCombo.event.description}
                 </p>
             </div>
-            <div className="mt-auto">
-                <div className="flex flex-row gap-2">
-                    <Icons name="User" />
-                    {eventCombo.author.name}
-                    {", " + eventCombo.event.type}
-                </div>
+            <div className="mt-auto flex flex-row justify-between items-center">
+                <Link href={"/profile/" + eventCombo.author.memberID}>
+                    <div className="flex flex-row gap-2">
+                        <Icons name="User" />
+                        {eventCombo.author.name}
+                        {", " + eventCombo.event.type}
+                    </div>
+                </Link>
+                {((sessionMember && sessionMember.memberID === eventCombo.author.memberID) || isLeaderOrBoard) && handleDeleteEvent && (
+                    <button
+                        className={`rounded-lg hover:bg-red-500 p-0.5`}
+                        onClick={() => handleDeleteEvent(eventCombo.event.eventID)}
+                    >
+                        <Icons name="Cross" />
+                    </button>
+                )}
             </div>
         </div>
     )
-    
+
 }
 
 export default EventDisplay;

@@ -104,40 +104,44 @@ model Team {
 }
 
 model Member {
-  memberID           Int            @id @default(autoincrement())
-  activeStatus       Boolean        @default(true)
-  fieldOfStudy       String?
-  birthday           DateTime?      @db.Date
-  phoneNumber        String?        @unique
-  ntnuMail           String?        @unique
-  orbitMail          String         @unique(map: "orbitMail_UNIQUE")
-  nationalities      String?
-  yearOfStudy        Int?
-  additionalComments String?        @db.Text
-  slackID            String?
-  userId             String?        @unique
-  personalMail       String?
-  name               String
-  anouncements       Announcement[]
-  events             Event[]
-  interviews         Interview[]
-  memes              Meme[]
-  team               TeamHistory[]
-  user               User?
+  memberID             Int            @id @default(autoincrement())
+  activeStatus         Boolean        @default(true)
+  fieldOfStudy         String?
+  birthday             DateTime?      @db.Date
+  phoneNumber          String?        @unique
+  ntnuMail             String?        @unique
+  orbitMail            String         @unique(map: "orbitMail_UNIQUE")
+  nationalities        String?
+  yearOfStudy          Int?
+  additionalComments   String?        @db.Text
+  slackID              String?
+  userId               String?        @unique
+  personalMail         String?
+  name                 String
+  linkedin             String?
+  showPhoneNrOnWebsite Boolean?
+  anouncements         Announcement[]
+  events               Event[]
+  interviews           Interview[]
+  memes                Meme[]
+  MemeLord             MemeLord?
+  team                 TeamHistory[]
+  user                 User?
 }
 
 model TeamHistory {
-  teamHistoryID Int                     @id @default(autoincrement())
-  memberID      Int
-  teamID        Int
-  startYear     Int                     @db.Year
-  startSem      SemType
-  endYear       Int?                    @db.Year
-  endSem        SemType?
-  priviledges   TeamHistory_priviledges @default(MEMBER)
-  cPosition     TeamHistory_cPosition?
-  member        Member                  @relation(fields: [memberID], references: [memberID])
-  team          Team                    @relation(fields: [teamID], references: [teamID])
+  teamHistoryID   Int                     @id @default(autoincrement())
+  memberID        Int
+  teamID          Int
+  startYear       Int                     @db.Year
+  startSem        SemType
+  endYear         Int?                    @db.Year
+  endSem          SemType?
+  priviledges     TeamHistory_priviledges @default(MEMBER)
+  cPosition       TeamHistory_cPosition?
+  decorativeTitle String?
+  member          Member                  @relation(fields: [memberID], references: [memberID])
+  team            Team                    @relation(fields: [teamID], references: [teamID])
 
   @@index([teamID], map: "TeamHistory_teamID_fkey")
   @@index([memberID], map: "TeamHistory_memberID_fkey")
@@ -145,10 +149,11 @@ model TeamHistory {
 
 model Meme {
   week     Int
-  year     Int    @db.Year
+  year     Int     @db.Year
   memberID Int
   meme     Bytes
-  member   Member @relation(fields: [memberID], references: [memberID])
+  title    String?
+  member   Member  @relation(fields: [memberID], references: [memberID])
 
   @@id([week, year])
   @@index([memberID], map: "Meme_memberID_fkey")
@@ -178,6 +183,11 @@ model Event {
   member         Member     @relation(fields: [memberID], references: [memberID])
 
   @@index([memberID], map: "Event_memberID_fkey")
+}
+
+model MemeLord {
+  memberID Int    @id
+  Member   Member @relation(fields: [memberID], references: [memberID])
 }
 
 enum SemType {
@@ -219,5 +229,7 @@ enum Team_group {
   TECHNICAL
   FINANCIAL
   ADMINISTRATIVE
+  MARKETING_AND_EVENT
+  MENTORS
   SUPPORT
 }

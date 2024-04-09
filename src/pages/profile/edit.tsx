@@ -55,7 +55,9 @@ const EditProfile = () => {
                             additionalComments: null,
                             slackToken: null,
                             userId: null,
-                            personalMail: null
+                            personalMail: null,
+                            showPhoneNrOnWebsite: null,
+                            linkedin: null,                            
                         };
     
                         await newMemberQuery.mutateAsync(tempMember);
@@ -89,7 +91,7 @@ const EditProfile = () => {
         return (
             <Layout>
                 <ul>
-                    <h1>{member.name}</h1>
+                    <h1>Edit your information</h1>
                     <div className='text-xl'>{member.orbitMail}</div>
                 </ul>
                 <BreakLine />

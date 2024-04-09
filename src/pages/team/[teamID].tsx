@@ -165,13 +165,6 @@ const TeamsPage = () => {
                         teamID: Number(teamID),
                         cPosition: null,
                     })
-
-                    void createTeamHistoriesQuery.mutateAsync({
-                        priviledges: "MEMBER",
-                        memberID: currentTeamLeader.memberID,
-                        teamID: Number(teamID),
-                        cPosition: null,
-                    })
                 }
                 void router.push("/team/" + String(teamID));
 
@@ -237,7 +230,7 @@ const TeamsPage = () => {
         )
     };
 
-    const sessionMember = members.find(member => member.orbitMail === session.data?.user.email);
+    const sessionMember = session.data?.user.member;
 
     if (sessionMember) {
         const isLeaderOrBoard = teamHistories.find((history): history is TeamHistory =>

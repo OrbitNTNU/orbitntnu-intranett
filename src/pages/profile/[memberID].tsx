@@ -3,6 +3,7 @@ import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
 import { useRouter } from 'next/router';
 import ProfileView from '@/views/ProfileView';
+import { useSession } from 'next-auth/react';
 import { Loading } from '@/components/General/Loading';
 
 const ProfilePage = () => {
@@ -11,6 +12,18 @@ const ProfilePage = () => {
 
     const selectedMember = api.members.getMemberById.useQuery(Number(memberID));
     const member = selectedMember.data ?? null;
+
+    const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
+    const teamHistories = teamHistoriesData.data ?? [];
+
+    const teamsData = api.teams.getTeams.useQuery();
+    const teams = teamsData.data ?? [];
+
+    const session = useSession();
+
+    if(member === session.data?.user.member) {
+        void router.push("/profile/me");
+    }
 
     if (!member) {
         // Handle the case where the member is not found
@@ -22,7 +35,7 @@ const ProfilePage = () => {
     }
 
     return (
-        <ProfileView member={member} edit={false}/>
+        <ProfileView member={member} edit={false} teamHistories={teamHistories} teams={teams}/>
     );
 };
 
