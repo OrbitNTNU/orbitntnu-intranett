@@ -43,15 +43,15 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
     const session = useSession();
     const sessionMember = session.data?.user.member;
 
-    const isLeaderOrBoard = !!(
-        sessionMember &&
+    const canDelete = !!(
+        (sessionMember &&
         teamHistories.find(
             history =>
                 history?.memberID === sessionMember.memberID &&
                 history?.endSem === null &&
                 history?.endYear === null &&
                 history?.teamID === 1
-        )
+        )) ?? (sessionMember && sessionMember.memberID === eventCombo.author.memberID)
     );    
 
     return (
@@ -84,7 +84,7 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
                         {", " + eventCombo.event.type}
                     </div>
                 </Link>
-                {((sessionMember && sessionMember.memberID === eventCombo.author.memberID) ?? isLeaderOrBoard) && handleDeleteEvent && (
+                {canDelete && handleDeleteEvent && (
                     <button
                         className={`rounded-lg hover:bg-red-500 p-0.5`}
                         onClick={() => handleDeleteEvent(eventCombo.event.eventID)}
