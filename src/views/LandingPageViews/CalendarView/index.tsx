@@ -30,7 +30,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ combinedInfo }) => {
                     <Icons name="Arrow45Up" />
                 </h2>
             </Link>
-            <div className="flex flex-row flex-wrap md:flex-nowrap m-6">
+            <div className="flex flex-row flex-wrap md:flex-nowrap">
                 {combinedInfo.filter((combo) => new Date(combo.event.startTime) > new Date()).length >= 3 ? (
                     <>
                         <div className="md:w-2/3 w-full mr-0 md:mr-4">
