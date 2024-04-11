@@ -5,14 +5,15 @@ import React from 'react';
 interface InfoDisplayProps {
     member: Member;
     teamsRecord: { teamName: string, history: TeamHistory }[];
+    isBoardOrTL: boolean;
 }
 
-const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord }) => {
+const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardOrTL }) => {
     const knownData: JSX.Element[] = [];
     const unknownData: JSX.Element[] = [];
     // Separate known and unknown data
     Object.entries(member).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)).forEach(([key, value]) => {
-        const renderValueString = renderValue(value, key);
+        const renderValueString = renderValue(value, key, isBoardOrTL);
         if (renderValueString !== "excluded") {
             if (renderValueString !== 'unknown') {
                 knownData.push(
@@ -32,11 +33,15 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord }) => {
 
     return (
         <div>
-            <h2>Member information:</h2>
-            <ul className='list-disc mb-4 text-xl'>
-                {knownData}
-            </ul>
-            {unknownData.length !== 0 && ( // Use logical AND operator to check if unknownData is not null or undefined
+            {knownData.length > 0 && (
+                <>
+                    <h2>Member information:</h2>
+                    <ul className='list-disc mb-4 text-xl'>
+                        {knownData}
+                    </ul>
+                </>
+            )}
+            {unknownData.length > 0 && (
                 <>
                     <h2>Unknown information:</h2>
                     <ul className='list-disc mb-4 text-xl'>
@@ -82,9 +87,23 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord }) => {
 
 };
 
-const renderValue = (value: string | number | boolean | Date | null, key: string) => {
+const renderValue = (value: string | number | boolean | Date | null, key: string, isBoardOrTL: boolean) => {
     // Exclude rendering for specified properties
-    if (key === 'memberID' || key === 'userId' || key === 'slackID' || key === 'additionalComments' || key === 'orbitMail' || key === 'activeStatus' || key === 'name') {
+    if (!isBoardOrTL && (key === 'memberID'
+        || key === 'slackID' || key === 'additionalComments'
+        || key === 'orbitMail' || key === 'activeStatus'
+        || key === 'showPhoneNrOnWebsite' || key === 'name'
+        || key === 'linkedin' || key === 'nationalities'
+        || key === 'personalMail')) {
+        return 'excluded'; // Or any other value indicating exclusion
+    }
+
+    if (isBoardOrTL && (key === 'memberID'
+        || key === 'slackID' || key === 'additionalComments'
+        || key === 'activeStatus'
+        || key === 'name'
+        || key === 'nationalities'
+        )) {
         return 'excluded'; // Or any other value indicating exclusion
     }
 

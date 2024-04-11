@@ -115,11 +115,10 @@ model Member {
   yearOfStudy          Int?
   additionalComments   String?        @db.Text
   slackID              String?
-  userId               String?        @unique
   personalMail         String?
   name                 String
   linkedin             String?
-  showPhoneNrOnWebsite Boolean?
+  showPhoneNrOnWebsite Boolean        @default(false)
   anouncements         Announcement[]
   events               Event[]
   interviews           Interview[]

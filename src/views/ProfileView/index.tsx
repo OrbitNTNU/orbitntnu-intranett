@@ -3,6 +3,7 @@ import Button from "@/components/General/Button";
 import InfoDisplay from "@/components/ProfilePage/InfoDisplay";
 import Layout from "@/templates/Layout";
 import type { Member, Team, TeamHistory } from "@prisma/client";
+import { useSession } from "next-auth/react";
 
 interface ProfileViewProps {
     member: Member;
@@ -14,6 +15,21 @@ interface ProfileViewProps {
 
 const ProfileView: React.FC<ProfileViewProps> = ({ member, edit, teamHistories, teams, handleRedirect }) => {
 
+    const session = useSession();
+
+    const sessionMember = session.data?.user.member;
+
+    const isBoardOrTL = teamHistories.some((history): history is TeamHistory =>
+            history?.memberID === sessionMember?.memberID &&
+            history?.endSem === null &&
+            history?.endYear === null &&
+            history?.teamID === 1
+        ) || teamHistories.some((history): history is TeamHistory =>
+        history?.memberID === sessionMember?.memberID &&
+        history?.endSem === null &&
+        history?.endYear === null &&
+        history?.priviledges === 'LEADER');
+    
     const teamsRecord = teamHistories.filter(teamHistory => teamHistory.memberID === member.memberID);
 
     // Create an empty array to store the resulting records
@@ -50,7 +66,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ member, edit, teamHistories, 
                 )}
             </div>
             <BreakLine />
-            <InfoDisplay member={member} teamsRecord={teamRecords} />
+            <InfoDisplay isBoardOrTL={isBoardOrTL} member={member} teamsRecord={teamRecords} />
         </Layout>
     );
 }

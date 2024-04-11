@@ -35,7 +35,7 @@ const mockShortcuts: ShortcutsProps[] = [
                 url: '/announcements',
             },
             {
-                header: 'Legacy page',
+                header: 'Time machine',
                 description: 'View earlier Orbit teams',
                 url: '/legacy',
             },
@@ -53,6 +53,11 @@ const mockShortcuts: ShortcutsProps[] = [
                 header: 'Your team',
                 description: 'See your own team',
                 url: '/team/find',
+            },
+            {
+                header: 'Insights',
+                description: 'View Orbit Statistics',
+                url: '/statistics',
             }
         ],
     },
