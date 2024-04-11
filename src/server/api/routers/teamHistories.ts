@@ -54,7 +54,7 @@ export const teamHistoriesRouter = createTRPCRouter({
             priviledges: z.enum(["MEMBER", "LEADER", "BOARD", "MENTOR"]),
             memberID: z.number(),
             teamID: z.number(),
-            cPosition: z.enum(["CEO", "COO", "CTO", "CFO", "CMO", "CIO", "CHRO", "PM_FS1", "PM_FS1_5", "PM_FS2", "PM_BS", "NTNU_REP"]).nullable()
+            cPosition: z.enum(["CEO", "COO", "CTO", "CFO", "CMO", "CIO", "CHRO", "PM_FS1", "PM_FS1_5", "PM_FS2", "PM_BS", "NTNU_REP" ,"PM_SS", "DCEO"]).nullable()
         })
         )
         .mutation(async (opts) => {
