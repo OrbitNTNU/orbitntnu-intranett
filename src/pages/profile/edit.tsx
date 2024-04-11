@@ -54,7 +54,6 @@ const EditProfile = () => {
                             nationalities: null,
                             additionalComments: null,
                             slackToken: null,
-                            userId: null,
                             personalMail: null,
                             showPhoneNrOnWebsite: null,
                             linkedin: null,                            
