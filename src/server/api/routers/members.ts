@@ -83,7 +83,7 @@ export const membersRouter = createTRPCRouter({
             additionalComments: z.string().nullable(),
             personalMail: z.string().nullable(),
             linkedin: z.string().nullable(),
-            showPhoneNrOnWebsite: z.boolean().nullable(),
+            showPhoneNrOnWebsite: z.boolean(),
         })
         )
         .mutation(async (opts) => {
