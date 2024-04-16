@@ -1,15 +1,22 @@
-import Layout from "@/templates/Layout";
+import Layout from '@/templates/Layout';
+import MemberDistribution from '@/components/StatisticsPage/TeamDistribution';
+import BreakLine from '@/components/General/Breakline';
+import TeamsGrowth from '@/components/StatisticsPage/TeamsGrowth';
+import Studies from '@/components/StatisticsPage/Studies';
+import Age from '@/components/StatisticsPage/Age';
 
-const Home = () => {
-  
-    return (
-      <Layout>
-        <div className="space-y-10 md:space-y-20 lg:space-y-30"> {/* Adjust the space as needed */}
-          hi
-        </div>
-      </Layout>
-    );
-  };
-  
-  export default Home;
-  
+const Statistics = () => {
+  return (
+    <Layout>
+        <MemberDistribution/>
+        <BreakLine/>
+        <TeamsGrowth/>
+        <BreakLine/>
+        <Studies/>
+        <BreakLine/>
+        <Age/>
+    </Layout>
+  );
+};
+
+export default Statistics;

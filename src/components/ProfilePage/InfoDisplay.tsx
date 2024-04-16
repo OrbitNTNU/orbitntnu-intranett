@@ -16,11 +16,20 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardO
         const renderValueString = renderValue(value, key, isBoardOrTL);
         if (renderValueString !== "excluded") {
             if (renderValueString !== 'unknown') {
-                knownData.push(
-                    <li key={key} className='flex flex-row mb-4'>
-                        <strong>{key}:</strong> <span className='text-blue-400 ml-2'>{renderValueString}</span>
-                    </li>
-                );
+                if(key === 'linkedin') {
+                    knownData.push(
+                        <li key={key} className='flex flex-row mb-4'>
+                            <strong>{key}:</strong> <Link target="_blank" className='text-blue-400 ml-2' href={renderValueString}>{renderValueString}</Link>
+                        </li>
+                    );
+                } else {
+                    knownData.push(
+                        <li key={key} className='flex flex-row mb-4'>
+                            <strong>{key}:</strong> <span className='text-blue-400 ml-2'>{renderValueString}</span>
+                        </li>
+                    );
+                }
+                
             } else {
                 unknownData.push(
                     <li key={key} className='flex flex-row mb-4'>

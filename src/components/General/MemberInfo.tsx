@@ -51,8 +51,11 @@ const MemberInfo = ({ member, onClick, teams, teamHistories, icon1, icon1Click, 
             <hr className="border my-2" />
             <p className='text-subtext overflow-auto'>{member.orbitMail}</p>
             <div className="mt-auto pt-4">
-                <p className='text-subtext items-bottom'>{getCurrentTeam(teamHistories, member, teams) + ", " + getRole(member, teamHistories)}</p>
-                <p className='text-subtext'>{member.activeStatus ? 'Active' : 'Inactive'}</p>
+                {member.activeStatus ? (
+                    <p className='text-subtext items-bottom'>{getCurrentTeam(teamHistories, member, teams) + ", " + getRole(member, teamHistories)}</p>
+                ) : (
+                    <p className='text-subtext'>Inactive</p>
+                )}  
             </div>
         </div>
     )
