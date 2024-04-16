@@ -7,31 +7,41 @@ import type { Team } from "@prisma/client";
 import Link from "next/link";
 
 const TeamListPage = () => {
-    const { data: teamsData, isLoading } = api.teams.getTeams.useQuery();
+    const { data: teamsData, isLoading: isTeamsLoading } = api.teams.getTeams.useQuery();
+    const { data: teamHistoriesData, isLoading: isTeamsHistoriesLoading } = api.teamHistories.getTeamHistories.useQuery();
 
-    const groupedTeams: Record<string, Team[]> = teamsData
-        ? teamsData.reduce((acc: Record<string, Team[]>, team) => {
-            const groupKey: string = team.group ? String(team.group) : "OTHER";
-            if (!acc[groupKey]) {
-                acc[groupKey] = [];
-            }
-            acc[groupKey]?.push(team);
-            return acc;
-        }, {})
+    const groupedTeams: Record<string, Team[]> = teamsData && teamHistoriesData
+        ? teamsData
+            .filter((team) =>
+                teamHistoriesData.some(
+                    (teamHistory) =>
+                        teamHistory.teamID === team.teamID &&
+                        teamHistory.endSem === null &&
+                        teamHistory.endYear === null
+                )
+            )
+            .reduce((acc: Record<string, Team[]>, team) => {
+                const groupKey: string = team.group ? String(team.group) : "OTHER";
+                if (!acc[groupKey]) {
+                    acc[groupKey] = [];
+                }
+                acc[groupKey]?.push(team);
+                return acc;
+            }, {})
         : {};
 
     // Sort the keys alphabetically and then reduce them into a new object with sorted keys
     const sortedGroupedTeams: Record<string, Team[]> = Object.keys(groupedTeams)
         .sort()
         .reduce((sortedAcc: Record<string, Team[]>, key) => {
-            // Check if groupedTeams[key] is defined before sorting
+            // Replace underscores with spaces in the key
+            const teamKey = key.replace(/_/g, ' ').replace(/AND/g, '&');
             const sortedTeams = groupedTeams[key]?.sort((a, b) => a.teamName.localeCompare(b.teamName));
             if (sortedTeams) {
-                sortedAcc[key] = sortedTeams;
+                sortedAcc[teamKey] = sortedTeams;
             }
             return sortedAcc;
         }, {});
-
 
     // Move the "OTHER" group to the end of the record
     if (sortedGroupedTeams.OTHER) {
@@ -50,7 +60,7 @@ const TeamListPage = () => {
             </div>
             <BreakLine />
             <div>
-                {isLoading ? (
+                {(isTeamsLoading || isTeamsHistoriesLoading) ? (
                     <Loading />
                 ) : (
                     Object.entries(sortedGroupedTeams).map(([group, teams]) => (

@@ -88,7 +88,7 @@ const TeamsPage = () => {
                 // Check if the user has entered a CPosition
                 if (Object.keys(TeamHistory_cPosition).includes(cPosition)) {
                     void createTeamHistoriesQuery.mutateAsync({
-                        priviledges: "MEMBER",
+                        priviledges: "BOARD",
                         memberID: member.memberID,
                         teamID: Number(teamID),
                         cPosition: cPosition // Assign the selected CPosition

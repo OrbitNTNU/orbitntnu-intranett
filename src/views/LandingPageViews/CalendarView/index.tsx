@@ -62,6 +62,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ combinedInfo }) => {
                         <CalendarDisplay indexes={generatedIndexes} eventColors={eventColors} eventItems={combinedInfo} />
                     </div>
                 )}
+
             </div>
         </div >
     );

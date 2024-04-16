@@ -37,7 +37,7 @@ export default function SearchPage() {
 
   // Use `useEffect` to set `loading` to `false` when the data is available
   useEffect(() => {
-    if (membersData.isSuccess && teamHistoriesData.isSuccess && teamsData.isSuccess) {
+    if (membersData.isSuccess) {
       setLoading(false);
       // Initialize searchResults with all members
       setSearchResults(members);

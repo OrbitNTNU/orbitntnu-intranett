@@ -4,6 +4,7 @@ import Layout from "@/templates/Layout";
 import { api } from "@/utils/api";
 import { SemType, type Member, type TeamHistory, TeamHistory_priviledges } from "@prisma/client";
 import Link from "next/link";
+import { Loading } from "@/components/General/Loading";
 
 export interface MemberAndHistory {
     member: Member,
@@ -78,12 +79,11 @@ const Legacy = () => {
     return (
         <Layout>
 
-            <h1>Legacy</h1>
+            <h1>Time Machine</h1>
             <BreakLine/>
 
-
             {!allMembers ?
-            <h2>Loading...</h2>
+                <Loading/>
             :
             <section className="flex flex-col gap-20">
 

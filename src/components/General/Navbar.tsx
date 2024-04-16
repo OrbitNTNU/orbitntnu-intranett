@@ -6,7 +6,7 @@ import mockShortcuts, { ShortcutType, type ShortcutsProps } from '@/mockdata/Moc
 import { signIn, signOut, useSession } from "next-auth/react";
 import Icons from './Icons';
 
-export function findInternalShortcuts (shortcuts: ShortcutsProps[]) {
+export function findInternalShortcuts(shortcuts: ShortcutsProps[]) {
   for (const shortcutGroup of shortcuts) {
     if (shortcutGroup.type == ShortcutType.INTERNAL) return shortcutGroup.shortcuts;
   }
@@ -37,26 +37,34 @@ const Navbar = () => {
             />
           </Link>
         </div>
-        <Link href="/searchpage" className="mr-10">
-          <Icons name="Search"/>
-        </Link>
-      </div>
-        <div className='flex'>
-          {session.data ? (
-            <Link href="/profile/me" className="hidden md:block">
-              <p>{session.data.user.name}</p>
-            </Link>
-          ) : (
-            <button onClick={handleLogin}>
-              <Icons name="Profile"/>
-            </button>
-          )}
-          <Dropdown
-            shortcuts={findInternalShortcuts(mockShortcuts)}
-            handleLogout={handleLogout}
-            handleLogin={handleLogin}
-          />
+        <div className="hidden md:flex">
+          <Link href="/searchpage" className="mr-10">
+            <Icons name="Search" />
+          </Link>
+          <Link href="/statistics" className="mr-10">
+            <Icons name="Statistics" />
+          </Link>
+          <Link href="/team/teamlist" className="mr-10">
+            <Icons name="Teams" />
+          </Link>
         </div>
+      </div>
+      <div className='flex'>
+        {session.data ? (
+          <Link href="/profile/me" className="hidden md:block">
+            <p>{session.data.user.name}</p>
+          </Link>
+        ) : (
+          <button onClick={handleLogin}>
+            <Icons name="Profile" />
+          </button>
+        )}
+        <Dropdown
+          shortcuts={findInternalShortcuts(mockShortcuts)}
+          handleLogout={handleLogout}
+          handleLogin={handleLogin}
+        />
+      </div>
     </nav>
   )
 }

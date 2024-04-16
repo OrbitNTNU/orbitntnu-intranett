@@ -70,7 +70,7 @@ const SearchResults = ({ members, teamHistories, teams }: SearchResultsProps) =>
       <div className="flex items-center flex-col justify-center">
         {members.filter(member => !member.activeStatus).length > 0 && (
           <div>
-            <h2 className='flex justify-center'>Inactive members / missing key data:</h2>
+            <h2 className='flex justify-center'>Inactive members:</h2>
             <div className="flex flex-wrap justify-center">
               {members.filter(member => !member.activeStatus).map((member) => (
                 <MemberInfo key={member.memberID} member={member} teams={teams} teamHistories={teamHistories} onClick={() => handleBoxClick(member)}/>
