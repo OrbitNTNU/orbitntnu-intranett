@@ -194,21 +194,6 @@ enum SemType {
   SPRING
 }
 
-enum TeamHistory_cPosition {
-  CEO
-  COO
-  CTO
-  CFO
-  CMO
-  CIO
-  CHRO
-  PM_FS1
-  PM_FS1_5 @map("PM_FS1.5")
-  PM_FS2
-  PM_BS
-  NTNU_REP
-}
-
 enum TeamHistory_priviledges {
   MEMBER
   BOARD
@@ -231,4 +216,21 @@ enum Team_group {
   MARKETING_AND_EVENT
   MENTORS
   SUPPORT
+}
+
+enum TeamHistory_cPosition {
+  CEO
+  COO
+  CTO
+  CFO
+  CMO
+  CIO
+  CHRO
+  PM_FS1
+  PM_FS1_5 @map("PM_FS1.5")
+  PM_FS2
+  PM_BS
+  NTNU_REP
+  DCEO
+  PM_SS
 }
