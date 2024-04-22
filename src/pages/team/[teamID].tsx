@@ -10,17 +10,12 @@ import { type Team, type TeamHistory, type Member, TeamHistory_cPosition } from 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const TeamsPage = () => {
     const membersData = api.members.getMembers.useQuery();
-    const members: Member[] = membersData.data ?? [];
-
     const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
-    const teamHistories: TeamHistory[] = teamHistoriesData.data ?? [];
-
     const teamsData = api.teams.getTeams.useQuery();
-    const teams: Team[] = teamsData.data ?? [];
 
     const router = useRouter();
     const { teamID } = router.query;
@@ -30,20 +25,64 @@ const TeamsPage = () => {
     const [edit, setEdit] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState("");
 
+    const [membersInTeam, setMembersInTeam] = useState<Member[]>([]);
+    const [currentTL, setCurrentTL] = useState<Member>();
+
+    const [teams, setTeams] = useState<Team[]>([]);
+    const [teamHistories, setTeamHistories] = useState<TeamHistory[]>([]);
+    const [members, setMembers] = useState<Member[]>([]);
+
     const teamHistoriesQuery = api.teamHistories.terminateTeamHistory.useMutation();
     const updateMemberQuery = api.members.updateMemberInformation.useMutation();
 
     const createTeamHistoriesQuery = api.teamHistories.createTeamHistory.useMutation();
 
-    // Function to handle removing a member
-    const handleRemoveMember = (member: Member) => {
-        // Display a confirmation dialog
-        const isSure = window.confirm(`Are you sure you want to remove ${member.name} from this team?`);
+    useEffect(() => {
+        // Ensure that all necessary data is available before proceeding
+        if (membersData.data && teamHistoriesData.data && teamsData.data && router.query.teamID) {
+            const members: Member[] = membersData.data ?? [];
+            const teamHistories: TeamHistory[] = teamHistoriesData.data ?? [];
+            const teams: Team[] = teamsData.data ?? [];
 
-        // If user confirms, call the API to remove the member
+            setMembers(members);
+            setTeamHistories(teamHistories);
+            setTeams(teams);
+
+            const { teamID } = router.query;
+    
+            // Find teamHistories associated with the current teamID and active members
+            const teamHistoriesFromUrl = teamHistories.filter(history => {
+                return history.teamID === Number(teamID) && history.endSem === null && history.endYear === null;
+            });
+    
+            // Extract the memberIDs from these teamHistories
+            const memberTeamHistories = teamHistoriesFromUrl.map(history => history.memberID);
+    
+            // Filter members based on their presence in memberTeamHistories
+            const filteredMembers = members.filter(member => memberTeamHistories.includes(member.memberID));
+    
+            // Update membersInTeam state with the filtered members
+            setMembersInTeam(filteredMembers);
+    
+            // Find the team leader among the members
+            const teamLeader = filteredMembers.find(member => {
+                const teamHistory = teamHistoriesFromUrl.find(history => history.memberID === member.memberID);
+                return teamHistory && teamHistory.priviledges === "LEADER";
+            });
+    
+            setCurrentTL(teamLeader);
+        }
+    }, [router.query.teamID, router.query]);
+    
+
+    const removeMember = (memberToRemove: Member) => {
+        const isSure = window.confirm(`Are you sure you want to remove ${memberToRemove.name} from this team?`);
+
         if (isSure) {
+            setMembersInTeam(prevMembers => prevMembers.filter(member => member.memberID !== memberToRemove.memberID));
+
             const currentTeamHistory: TeamHistory | undefined = teamHistories.find((history): history is TeamHistory =>
-                history?.memberID === member.memberID &&
+                history?.memberID === memberToRemove.memberID &&
                 history?.endSem === null &&
                 history?.endYear === null &&
                 history?.teamID === Number(teamID)
@@ -58,7 +97,7 @@ const TeamsPage = () => {
             }
 
             const allTeamHistoriesForMember: TeamHistory[] | undefined = teamHistories.filter((history): history is TeamHistory =>
-                history?.memberID === member.memberID &&
+                history?.memberID === memberToRemove.memberID &&
                 history?.endSem === null &&
                 history?.endYear === null
             );
@@ -69,33 +108,33 @@ const TeamsPage = () => {
             if (!isMemberActive) {
                 // Update the member to inactive if no active team history entry exists
                 void updateMemberQuery.mutateAsync({
-                    ...member,
+                    ...memberToRemove,
                     activeStatus: false
                 });
             }
         }
     };
 
-    const handleAddMember = (member: Member) => {
-        // Display a confirmation dialog
-        const isSure = window.confirm(`Are you sure you want to add ${member.name} to this team?`);
-        // If user confirms, call the API to remove the member
+    const addMember = (memberToAdd: Member) => {
+        const isSure = window.confirm(`Are you sure you want to add ${memberToAdd.name} to this team?`);
+        // If user confirms, call the API to add the member
         if (isSure) {
+            setMembersInTeam(prevMembers => [...prevMembers, memberToAdd]);
             if (Number(teamID) === 1) {
                 // Prompt the user to select a CPosition
                 const optionsString = Object.keys(TeamHistory_cPosition).join('\n');
-                const cPosition = prompt(`Select type C Position for ${member.name} from the following options:\n${optionsString}`) as TeamHistory_cPosition;
+                const cPosition = prompt(`Select type C Position for ${memberToAdd.name} from the following options:\n${optionsString}`) as TeamHistory_cPosition;
                 // Check if the user has entered a CPosition
                 if (Object.keys(TeamHistory_cPosition).includes(cPosition)) {
                     void createTeamHistoriesQuery.mutateAsync({
                         priviledges: "BOARD",
-                        memberID: member.memberID,
+                        memberID: memberToAdd.memberID,
                         teamID: Number(teamID),
                         cPosition: cPosition // Assign the selected CPosition
                     });
-                
+
                     void updateMemberQuery.mutateAsync({
-                        ...member,
+                        ...memberToAdd,
                         activeStatus: true
                     });
                 } else {
@@ -104,32 +143,33 @@ const TeamsPage = () => {
             } else {
                 void createTeamHistoriesQuery.mutateAsync({
                     priviledges: Number(teamID) === 18 ? "MENTOR" : "MEMBER",
-                    memberID: member.memberID,
+                    memberID: memberToAdd.memberID,
                     teamID: Number(teamID),
                     cPosition: null,
                 })
-    
+
                 void updateMemberQuery.mutateAsync({
-                    ...member,
+                    ...memberToAdd,
                     activeStatus: true
                 });
+
+                void membersData.refetch();
             }
         }
-    }
-
-    const handleSearchChange = (value: string) => {
-        setSearchQuery(value);
     };
 
-    const handleChangeTL = (members: Member[], currentTeamLeader: Member) => {
+    const addTL = (membersInTeam: Member[], currentTeamLeader: Member) => {
         // Prompt the user to select a member from the provided array of members
-        const selectedMember = window.prompt(`Choose the member you wish to promote as the new team leader:\n${members.map(member => `${member.name}`).join('\n')}`);
+        const selectedMember = window.prompt(`Choose the member you wish to promote as the new team leader:\n${membersInTeam.map(member => `${member.name}`).join('\n')}`);
 
         // Find the selected member object from the array based on the user's input
         const newTeamLeader = members.find(member => `${member.name}` === selectedMember);
 
         // Check if a member is selected and the user confirms the action
         if (newTeamLeader && window.confirm(`Are you sure you want to change the team leader to ${newTeamLeader.name}?`)) {
+            // Prompt the user to select a member from the provided array of members
+            setCurrentTL(newTeamLeader);
+            removeMember(currentTeamLeader);
 
             const oldTLHistory: TeamHistory | undefined = teamHistories.find((history): history is TeamHistory =>
                 history?.memberID === currentTeamLeader.memberID &&
@@ -180,16 +220,19 @@ const TeamsPage = () => {
         }
     };
 
+    const handleSearchChange = (value: string) => {
+        setSearchQuery(value);
+    };
+
     const filteredMembers = members.filter(member => {
         // Convert searchQuery and member names to lowercase for case-insensitive search
         const searchValue = searchQuery.toLowerCase();
-        const fullName = `${member.name}`.toLowerCase();
+        const fullName = member.name.toLowerCase();
 
+        // Check if the member is already in membersInTeam
+        const isInTeam = membersInTeam.some(teamMember => teamMember.memberID === member.memberID);
 
-        const isInTeam = teamHistories.filter(history => {
-            return history.memberID === member.memberID && history.endSem === null && history.endYear === null;
-        }).some(history => history.memberID === member.memberID && history.teamID === Number(teamID));
-
+        // Return true if the member is not already in membersInTeam and matches the search query
         return !isInTeam && (fullName.includes(searchValue) || member.orbitMail.toLowerCase().includes(searchValue));
     });
 
@@ -206,26 +249,10 @@ const TeamsPage = () => {
         }
     }
 
-    // Filter teamHistories to find all entries with the same teamID as the session member
-    const teamHistoriesFromUrl = teamHistories.filter(history => {
-        return history.teamID === Number(teamID) && history.endSem === null && history.endYear === null;
-    });
-    // Extract the memberIDs from these teamHistories
-    const memberTeamHistories = teamHistoriesFromUrl.map(history => history.memberID);
-
-    // Find members with these extracted memberIDs
-    const membersInTeam = members.filter(member => memberTeamHistories.includes(member.memberID));
-
-    // Find the team leader among the members
-    const teamLeader = membersInTeam.find(member => {
-        const teamHistory = teamHistoriesFromUrl.find(history => history.memberID === member.memberID);
-        return teamHistory && teamHistory.priviledges === "LEADER";
-    });
-
     if (!router.isReady || teamID === "find") {
         return (
             <Layout>
-                <Loading/>
+                <Loading />
             </Layout>
         )
     };
@@ -261,12 +288,12 @@ const TeamsPage = () => {
                         <BreakLine />
                         <div className="flex justify-center flex-wrap">
                             {/* Render the team leader first */}
-                            {teamLeader && (
-                                <MemberInfo isTeamLead={true} member={teamLeader} teams={teams} teamHistories={teamHistories} onClick={() => void router.push("/profile/" + teamLeader.memberID)} />
+                            {currentTL && (
+                                <MemberInfo isTeamLead={true} member={currentTL} teams={teams} teamHistories={teamHistories} onClick={() => void router.push("/profile/" + currentTL.memberID)} />
                             )}
                             {membersInTeam.map((member) => (
                                 // Skip rendering the team leader again
-                                !teamLeader || member.memberID !== teamLeader.memberID ? (
+                                !currentTL || member.memberID !== currentTL.memberID ? (
                                     <MemberInfo key={member.memberID} member={member} teams={teams} teamHistories={teamHistories} onClick={() => void router.push("/profile/" + member.memberID)} />
                                 ) : null
                             ))}
@@ -292,21 +319,21 @@ const TeamsPage = () => {
                             <>
                                 <h2 className="mb-2">Current members in your team:</h2>
                                 <div className="flex justify-center flex-wrap">
-                                    {teamLeader && (
+                                    {currentTL && (
                                         <MemberInfo
                                             isTeamLead={true}
-                                            member={teamLeader}
+                                            member={currentTL}
                                             teams={teams}
                                             teamHistories={teamHistories}
                                             icon1="Arrow45Up"
                                             icon1Click={() => {
-                                                void handleChangeTL(membersInTeam, teamLeader);
+                                                addTL(membersInTeam, currentTL);
                                             }}
                                         />
                                     )}
                                     {membersInTeam.map((member) => (
                                         // Skip rendering the team leader again
-                                        !teamLeader || member.memberID !== teamLeader.memberID ? (
+                                        !currentTL || member.memberID !== currentTL.memberID ? (
                                             <MemberInfo
                                                 key={member.memberID} // Add a unique key prop
                                                 member={member}
@@ -314,7 +341,7 @@ const TeamsPage = () => {
                                                 teamHistories={teamHistories}
                                                 icon1="Cross"
                                                 icon1Click={() => {
-                                                    handleRemoveMember(member);
+                                                    removeMember(member);
                                                 }}
                                             />
                                         ) : null // Return null if you don't want to render the member
@@ -335,7 +362,7 @@ const TeamsPage = () => {
                                                     teamHistories={teamHistories}
                                                     icon1="AddPerson"
                                                     icon1Click={() => {
-                                                        handleAddMember(member);
+                                                        addMember(member);
                                                     }}
                                                 />
                                             ))}
@@ -347,12 +374,12 @@ const TeamsPage = () => {
                             <>
                                 <div className="flex justify-center flex-wrap">
                                     {/* Render the team leader first */}
-                                    {teamLeader && (
-                                        <MemberInfo isTeamLead={true} member={teamLeader} teams={teams} teamHistories={teamHistories} onClick={() => void router.push("/profile/" + teamLeader.memberID)} />
+                                    {currentTL && (
+                                        <MemberInfo isTeamLead={true} member={currentTL} teams={teams} teamHistories={teamHistories} onClick={() => void router.push("/profile/" + currentTL.memberID)} />
                                     )}
                                     {membersInTeam.map((member) => (
                                         // Skip rendering the team leader again
-                                        !teamLeader || member.memberID !== teamLeader.memberID ? (
+                                        !currentTL || member.memberID !== currentTL.memberID ? (
                                             <MemberInfo key={member.memberID} member={member} teams={teams} teamHistories={teamHistories} onClick={() => void router.push("/profile/" + member.memberID)} />
                                         ) : null
                                     ))}

@@ -54,7 +54,7 @@ export const teamHistoriesRouter = createTRPCRouter({
             priviledges: z.enum(["MEMBER", "LEADER", "BOARD", "MENTOR"]),
             memberID: z.number(),
             teamID: z.number(),
-            cPosition: z.enum(["CEO", "COO", "CTO", "CFO", "CMO", "CIO", "CHRO", "PM_FS1", "PM_FS1_5", "PM_FS2", "PM_BS", "NTNU_REP" ,"PM_SS", "DCEO", "PM_SS", "DCEO"]).nullable()
+            cPosition: z.enum(["CEO", "COO", "CTO", "CFO", "CMO", "CIO", "CHRO", "PM_FS1", "PM_FS1_5", "PM_FS2", "PM_BS", "NTNU_REP", "PM_SS", "DCEO", "PM_SS", "DCEO"]).nullable()
         })
         )
         .mutation(async (opts) => {
@@ -67,18 +67,35 @@ export const teamHistoriesRouter = createTRPCRouter({
                 return currentMonth >= 1 && currentMonth <= 5 ? "SPRING" : "FALL"; // Assuming SPRING is from January to May, and FALL is from September to December
             }
 
-            // Create a new teamHistory entry
-            const createdTeamHistory = await db.teamHistory.create({
-                data: {
+            const historyExists = await db.teamHistory.findFirst({
+                where: {
                     memberID: input.memberID,
                     teamID: input.teamID,
-                    startSem: getCurrentSemester(),
-                    startYear: new Date().getFullYear(),
+                    startSem: getCurrentSemester(), // Ensure this function returns the correct semester
+                    startYear: new Date().getFullYear(), // Get the current year
+                    endSem: null,
+                    endYear: null,
                     priviledges: input.priviledges,
                     cPosition: input.cPosition
-                },
+                }
             });
-            return createdTeamHistory;
+
+            if (!historyExists) {
+                // Create a new teamHistory entry
+                const createdTeamHistory = await db.teamHistory.create({
+                    data: {
+                        memberID: input.memberID,
+                        teamID: input.teamID,
+                        startSem: getCurrentSemester(),
+                        startYear: new Date().getFullYear(),
+                        priviledges: input.priviledges,
+                        cPosition: input.cPosition
+                    },
+                });
+                return createdTeamHistory;
+            }
+
+            return null;
         }),
 
     getCurrentHistoriesInTeams: protectedProcedure.query(async ({ ctx }) => {
