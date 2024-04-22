@@ -72,7 +72,7 @@ const TeamsPage = () => {
     
             setCurrentTL(teamLeader);
         }
-    }, [router.query.teamID, router.query]);
+    }, [router.query.teamID, router.query, membersData.data, teamHistoriesData.data, teamsData.data]);
     
 
     const removeMember = (memberToRemove: Member) => {
