@@ -120,11 +120,12 @@ model Member {
   linkedin             String?
   showPhoneNrOnWebsite Boolean        @default(false)
   anouncements         Announcement[]
+  CV                   CV?
   events               Event[]
   interviews           Interview[]
   memes                Meme[]
   MemeLord             MemeLord?
-  team                 TeamHistory[]
+  teamHistory          TeamHistory[]
   user                 User?
 }
 
@@ -139,6 +140,7 @@ model TeamHistory {
   priviledges     TeamHistory_priviledges @default(MEMBER)
   cPosition       TeamHistory_cPosition?
   decorativeTitle String?
+  endDate         DateTime?               @db.Date
   member          Member                  @relation(fields: [memberID], references: [memberID])
   team            Team                    @relation(fields: [teamID], references: [teamID])
 
@@ -187,6 +189,19 @@ model Event {
 model MemeLord {
   memberID Int    @id
   Member   Member @relation(fields: [memberID], references: [memberID])
+}
+
+model CV {
+  memberID Int       @id
+  cv       Bytes
+  date     DateTime  @default(now())
+  Member   Member    @relation(fields: [memberID], references: [memberID])
+  KeyWord  KeyWord[]
+}
+
+model KeyWord {
+  keyword String @id
+  CV      CV[]
 }
 
 enum SemType {

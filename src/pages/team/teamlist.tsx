@@ -7,19 +7,10 @@ import type { Team } from "@prisma/client";
 import Link from "next/link";
 
 const TeamListPage = () => {
-    const { data: teamsData, isLoading: isTeamsLoading } = api.teams.getTeams.useQuery();
-    const { data: teamHistoriesData, isLoading: isTeamsHistoriesLoading } = api.teamHistories.getTeamHistories.useQuery();
+    const { data: teamsData, isLoading: isTeamsLoading } = api.teams.getActiveTeams.useQuery();
 
-    const groupedTeams: Record<string, Team[]> = teamsData && teamHistoriesData
+    const groupedTeams: Record<string, Team[]> = teamsData
         ? teamsData
-            .filter((team) =>
-                teamHistoriesData.some(
-                    (teamHistory) =>
-                        teamHistory.teamID === team.teamID &&
-                        teamHistory.endSem === null &&
-                        teamHistory.endYear === null
-                )
-            )
             .reduce((acc: Record<string, Team[]>, team) => {
                 const groupKey: string = team.group ? String(team.group) : "OTHER";
                 if (!acc[groupKey]) {
@@ -60,7 +51,7 @@ const TeamListPage = () => {
             </div>
             <BreakLine />
             <div>
-                {(isTeamsLoading || isTeamsHistoriesLoading) ? (
+                {(isTeamsLoading) ? (
                     <Loading />
                 ) : (
                     Object.entries(sortedGroupedTeams).map(([group, teams]) => (

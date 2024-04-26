@@ -16,7 +16,7 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardO
         const renderValueString = renderValue(value, key, isBoardOrTL);
         if (renderValueString !== "excluded") {
             if (renderValueString !== 'unknown') {
-                if(key === 'linkedin') {
+                if (key === 'linkedin') {
                     knownData.push(
                         <li key={key} className='flex flex-row mb-4'>
                             <strong>{key}:</strong> <Link target="_blank" className='text-blue-400 ml-2' href={renderValueString}>{renderValueString}</Link>
@@ -29,7 +29,7 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardO
                         </li>
                     );
                 }
-                
+
             } else {
                 unknownData.push(
                     <li key={key} className='flex flex-row mb-4'>
@@ -80,10 +80,13 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardO
                                     </span>
                                     <span className='text-blue-400'>{" (" + record.history.startSem.toLowerCase()}</span>
                                     <span className='text-blue-400'>{" " + record.history.startYear}</span>
-                                    {record.history.endSem ?
-                                        (<span className='text-blue-400'>{" - " + record.history.endSem.toLowerCase() + " " + record.history.endYear + ")"}</span>)
-                                        :
-                                        (<span className='text-blue-400'> - present)</span>)
+                                    {record.history.endSem && record.history.endYear ?
+                                        (record.history.startSem === record.history.endSem && record.history.startYear === record.history.endYear ? (
+                                            <span className='text-blue-400'>{")"}</span>
+                                        ) : (
+                                            <span className='text-blue-400'>{" - " + record.history.endSem.toLowerCase() + " " + record.history.endYear + ")"}</span>
+                                        )
+                                        ) : (<span className='text-blue-400'>{" - present)"}</span>)
                                     }
                                 </ul>
                             </Link>
@@ -112,7 +115,7 @@ const renderValue = (value: string | number | boolean | Date | null, key: string
         || key === 'activeStatus'
         || key === 'name'
         || key === 'nationalities'
-        )) {
+    )) {
         return 'excluded'; // Or any other value indicating exclusion
     }
 
