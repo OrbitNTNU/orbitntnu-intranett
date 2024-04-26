@@ -104,14 +104,9 @@ const EditTeamsView: React.FC<EditTeamsViewProps> = ({
                         cPosition: cPosition // Assign the selected CPosition
                     });
 
-                    if (memberToAdd.activeStatus === false) {
-                        void updateMemberQuery.mutateAsync(memberToAdd.memberID);
-                        
-                    } 
                     if (createTeamHistoriesQuery.isSuccess) {
                         onActionTriggered();
                     }
-
                 } else {
                     prompt('Please type a C position exactly as shown');
                 }
@@ -126,14 +121,11 @@ const EditTeamsView: React.FC<EditTeamsViewProps> = ({
                 if (createTeamHistoriesQuery.isSuccess) {
                     onActionTriggered();
                 }
-
-                if (memberToAdd.activeStatus === false) {
-                    void updateMemberQuery.mutateAsync(memberToAdd.memberID);
-                    if (updateMemberQuery.isSuccess) {
-                        onActionTriggered();
-                    }
-                } 
             }
+
+            if (memberToAdd.activeStatus === false) {
+                void updateMemberQuery.mutateAsync(memberToAdd.memberID);
+            } 
         }
     };
 
