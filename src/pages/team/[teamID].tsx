@@ -55,8 +55,6 @@ const TeamsPage = () => {
         }
     }
 
-    console.log(Object.values(TeamHistory_cPosition) as string[]);
-    
     if (!router.isReady || teamID === "find" || !sessionMemberData) {
         return (
             <Layout>

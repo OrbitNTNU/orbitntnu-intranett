@@ -57,8 +57,6 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                 setSelectedStudyProgram(String(parsedValue));
             }
 
-            console.log(parsedValue);
-
             setEditedMember(prevState => ({
                 ...prevState,
                 [label]: parsedValue
