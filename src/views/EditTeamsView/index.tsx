@@ -53,7 +53,7 @@ const EditTeamsView: React.FC<EditTeamsViewProps> = ({
             );
 
             if (currentTeamHistory && typeof currentTeamHistory.teamHistoryID === 'number') {
-                if(currentTeamHistory.team.teamID === 1) {
+                if (currentTeamHistory.team.teamID === 1) {
                     await teamHistoriesQuery.mutateAsync({
                         teamHistoryID: Number(currentTeamHistory?.teamHistoryID),
                     });
@@ -69,21 +69,19 @@ const EditTeamsView: React.FC<EditTeamsViewProps> = ({
                     await teamHistoriesQuery.mutateAsync({
                         teamHistoryID: Number(currentTeamHistory?.teamHistoryID),
                     });
+                    // Function to check if there is any team history entry with the same MemberID where endSem and endYear are both null
+                    if (memberToRemove.activeStatus === true && allMembers?.find((member) => member.memberID === memberToRemove.memberID)?.teamHistory.length === 1) {
+                        // Update the member to inactive if no active team history entry exists
+                        await updateMemberQuery.mutateAsync(memberToRemove.memberID);
+                    }
                 }
 
-                if(teamHistoriesQuery.isSuccess) {
+                if (teamHistoriesQuery.isSuccess) {
                     onActionTriggered();
                 }
             } else {
                 console.error("currentTeamHistory is not of the correct type or not found");
             }
-
-            // Function to check if there is any team history entry with the same MemberID where endSem and endYear are both null
-
-            if (memberToRemove.activeStatus === true && allMembers?.find((member) => member.memberID === memberToRemove.memberID)?.teamHistory.length === 1) {
-                // Update the member to inactive if no active team history entry exists
-                await updateMemberQuery.mutateAsync(memberToRemove.memberID);
-            } 
         }
     };
 
@@ -125,7 +123,7 @@ const EditTeamsView: React.FC<EditTeamsViewProps> = ({
 
             if (memberToAdd.activeStatus === false) {
                 void updateMemberQuery.mutateAsync(memberToAdd.memberID);
-            } 
+            }
         }
     };
 
