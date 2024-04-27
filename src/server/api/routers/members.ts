@@ -65,9 +65,9 @@ export const membersRouter = createTRPCRouter({
         });
 
         // Extract the teamID of the current team
-        const teamID = allMemberInformation[0]?.teamHistory[0]?.team.teamID ?? null;
+        const teams = allMemberInformation[0]?.teamHistory.map((teamHistory) => teamHistory.team);
 
-        return { hasTLorBoard, teamID };
+        return { hasTLorBoard, teams };
     }),
 
     getTeamPageInfo: protectedProcedure.input(z.number().nullable()).query(async (opts) => {

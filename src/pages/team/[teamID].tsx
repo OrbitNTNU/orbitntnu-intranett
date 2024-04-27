@@ -28,7 +28,10 @@ const TeamsPage = () => {
     const memberInfo = sessionTeamAndTLorBoard.useQuery(session.data?.user.member.memberID ?? 0);
     const sessionMemberData = memberInfo && memberInfo.data;
 
-    const teamMembersInfo = teamsPageInfoData.useQuery(Number(router.isReady && teamID !== "find" ? teamID : sessionMemberData ? sessionMemberData.teamID : 0));
+    const teamMembersInfo = teamsPageInfoData.useQuery(Number(router.isReady && teamID !== "find" ?
+        teamID : sessionMemberData ? sessionMemberData.teams?.length === 1
+            ? sessionMemberData.teams[0]?.teamID
+            : 0 : 0));
 
     const membersInTeam = teamMembersInfo && teamMembersInfo.data;
     const teamLeader = membersInTeam?.find((member) => {
@@ -48,10 +51,28 @@ const TeamsPage = () => {
     useEffect(() => {
         // Effect to handle the rerender when updateFlag changes
     }, [updateFlag]); // Dependency array includes updateFlag
-    
+
     if (teamID == "find") {
         if (sessionMemberData) {
-            void router.push("/team/" + sessionMemberData.teamID)
+            if (sessionMemberData.teams?.length === 1) {
+                void router.push("/team/" + sessionMemberData.teams[0]?.teamID)
+            } else {
+                return (
+                    <Layout>
+                        <div className='items-center flex flex-row gap-6'>
+                            <h1>Your teams</h1>
+                        </div>
+                        <BreakLine />
+                        {sessionMemberData.teams?.map((team) => (
+                            <Link href={`/team/${team.teamID}`} key={team.teamID}>
+                                <div className="bg-blue-600 hover:bg-blue-800 gap-6 p-6 m-4 rounded-md">
+                                    <h2>{team.teamName}</h2>
+                                </div>
+                            </Link>
+                        ))}
+                    </Layout>
+                )
+            }
         }
     }
 
@@ -63,10 +84,26 @@ const TeamsPage = () => {
         )
     };
 
+    if (teamID === "null") {
+        return (
+            <Layout>
+                <div className="flex justify-center items-center m-10">
+                    <h1>You do not currently have a team.</h1>
+                </div>
+                <div className="flex justify-center items-center m-10">
+                    <Link href="/" className="flex flex-row hover:bg-blue-600 pr-3 rounded-lg">
+                        <Icons name="ArrowLeft_lg" />
+                        <h2>Go back</h2>
+                    </Link>
+                </div>
+            </Layout>
+        )
+    };
+
     const handleActionTriggered = () => {
         setUpdateFlag(prevFlag => !prevFlag);
     };
-    
+
     return (
         <Layout>
             {!isSessionLeaderOrBoard ? (
