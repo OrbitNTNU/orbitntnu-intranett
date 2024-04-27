@@ -110,15 +110,6 @@ const renderValue = (value: string | number | boolean | Date | null, key: string
         return 'excluded'; // Or any other value indicating exclusion
     }
 
-    if (isBoardOrTL && (key === 'memberID'
-        || key === 'slackID' || key === 'additionalComments'
-        || key === 'activeStatus'
-        || key === 'name'
-        || key === 'nationalities'
-    )) {
-        return 'excluded'; // Or any other value indicating exclusion
-    }
-
     if (value instanceof Date) {
         return value.toLocaleDateString();
     } else if (key === 'showPhoneNrOnWebsite' || key === 'birthdayBot') {
