@@ -13,15 +13,40 @@ export const membersRouter = createTRPCRouter({
             throw new Error("Input is missing.");
         }
 
-        const member = await opts.ctx.db.member.findUnique({
-            where: { memberID: opts.input },
-        });
+        const sessionMemeberInfo = opts.ctx.session.user.memberInfo;
+        
+        if (sessionMemeberInfo.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD")) {
+            const member = await opts.ctx.db.member.findUnique({
+                where: { memberID: opts.input },
+            });
 
-        if (!member) {
-            throw new Error("Member not found");
+            if (!member) {
+                throw new Error("Member not found");
+            }
+
+            return member;
+        } else {
+            const member = await opts.ctx.db.member.findUnique({
+                select: {
+                    memberID: true,
+                    birthday: true,
+                    ntnuMail: true,
+                    phoneNumber: true,
+                    name: true,
+                    yearOfStudy: true,
+                    fieldOfStudy: true,
+                },
+                where: { 
+                    memberID: opts.input 
+                },
+            });
+
+            if (!member) {
+                throw new Error("Member not found");
+            }
+
+            return member;
         }
-
-        return member;
     }),
 
     getMemberByOrbitMail: protectedProcedure.input(z.string()).query(async (opts) => {
@@ -30,6 +55,220 @@ export const membersRouter = createTRPCRouter({
         });
 
         return member;
+    }),
+
+    getTeamAndTLorBoard: protectedProcedure.input(z.number()).query(async (opts) => {
+        // Fetch team histories for all active members
+        const allMemberInformation = await opts.ctx.db.member.findMany({
+            where: {
+                activeStatus: true,
+                memberID: opts.input,
+                teamHistory: {
+                    some: {
+                        endSem: null,
+                        endYear: null,
+                        priviledges: { in: ['BOARD', 'LEADER'] } // Check for board or leader
+                    }
+                }
+            },
+            include: {
+                teamHistory: {
+                    where: {
+                        endSem: null,
+                        endYear: null
+                    },
+                    include: {
+                        team: true
+                    }
+                }
+            }
+        });
+
+        // Check if there exists a team history with privileges board or leader
+        const hasTLorBoard = allMemberInformation.some(member => {
+            return member.teamHistory.some(history => ['BOARD', 'LEADER'].includes(history.priviledges));
+        });
+
+        // Extract the teamID of the current team
+        const teams = allMemberInformation[0]?.teamHistory.map((teamHistory) => teamHistory.team);
+
+        return { hasTLorBoard, teams };
+    }),
+
+    getTeamPageInfo: protectedProcedure.input(z.number().nullable()).query(async (opts) => {
+
+        if (!opts.input) {
+            return [];
+        }
+
+        // Fetch team histories for all active members
+        const allMemberInformation = await opts.ctx.db.member.findMany({
+            where: {
+                activeStatus: true,
+                teamHistory: {
+                    some: {
+                        teamID: opts.input,
+                        endSem: null,
+                        endYear: null
+                    },
+                }
+            },
+            include: {
+                teamHistory: {
+                    where: {
+                        teamID: opts.input,
+                        endSem: null,
+                        endYear: null
+                    },
+                    include: {
+                        team: true
+                    }
+                }
+            }
+        });
+
+        const mappedMemberInfo = allMemberInformation.map(member => ({
+            teamHistory: member.teamHistory,
+            memberID: member.memberID,
+            name: member.name,
+            activeStatus: member.activeStatus,
+            orbitMail: member.orbitMail,
+        }));
+
+        return mappedMemberInfo;
+    }),
+
+    getTeamPageInfoByMemberId: protectedProcedure.input(z.number().nullable()).query(async (opts) => {
+
+        if (!opts.input) {
+            return null;
+        }
+
+        // Fetch team histories for all active members
+        const memberInfo = await opts.ctx.db.member.findUnique({
+            where: {
+                memberID: opts.input,
+                activeStatus: true,
+            },
+            include: {
+                teamHistory: {
+                    select: {
+                        team: {
+                            select: {
+                                teamName: true,
+                                teamID: true
+                            }
+                        },
+                        cPosition: true,
+                        priviledges: true,
+                    },
+                    where: {
+                        endSem: null,
+                        endYear: null
+                    },
+                }
+            },
+        });
+
+        if (memberInfo) {
+            return {
+                teamHistory: memberInfo.teamHistory,
+                memberID: memberInfo.memberID,
+                name: memberInfo.name,
+                activeStatus: memberInfo.activeStatus,
+                orbitMail: memberInfo.orbitMail
+            };
+        }
+
+        return null;
+    }),
+
+    getAllMemberInfo: protectedProcedure.query(async ({ ctx }) => {
+
+        // Fetch team histories for all active members
+        const allMemberInformation = await ctx.db.member.findMany({
+            include: {
+                teamHistory: {
+                    where: {
+                        endSem: null,
+                        endYear: null
+                    },
+                    include: {
+                        team: true,
+                    }
+                }
+            }
+        });
+
+        const mappedMemberInfo = allMemberInformation.map(member => ({
+            teamHistory: member.teamHistory,
+            memberID: member.memberID,
+            name: member.name,
+            activeStatus: member.activeStatus,
+            orbitMail: member.orbitMail,
+        }));
+
+        return mappedMemberInfo;
+    }),
+
+    getTeamPageInfoByOrbitMail: protectedProcedure.input(z.string()).query(async (opts) => {
+
+        // Fetch team histories for all active members
+        const memberInfo = await opts.ctx.db.member.findMany({
+            where: {
+                orbitMail: opts.input,
+                activeStatus: true,
+                teamHistory: {
+                    some: {
+                        endSem: null,
+                        endYear: null
+                    },
+                }
+            },
+            include: {
+                teamHistory: {
+                    where: {
+                        endSem: null,
+                        endYear: null
+                    },
+                    include: {
+                        team: true
+                    }
+                }
+            }
+        });
+
+        return memberInfo;
+    }),
+
+    getTeamPageInfoByName: protectedProcedure.input(z.string()).query(async (opts) => {
+
+        // Fetch team histories for all active members
+        const memberInfo = await opts.ctx.db.member.findFirst({
+            where: {
+                name: opts.input,
+                activeStatus: true,
+                teamHistory: {
+                    some: {
+                        endSem: null,
+                        endYear: null
+                    },
+                }
+            },
+            include: {
+                teamHistory: {
+                    where: {
+                        endSem: null,
+                        endYear: null
+                    },
+                    include: {
+                        team: true
+                    }
+                }
+            }
+        });
+
+        return memberInfo;
     }),
 
     getStudies: protectedProcedure.query(async ({ ctx }) => {
@@ -84,43 +323,43 @@ export const membersRouter = createTRPCRouter({
             age: string;
             count: number;
         }
-        
+
         const members = await ctx.db.member.findMany();
-    
+
         // Initialize an empty object to hold the age counts
         const agesCounts: Record<string, number> = {};
-    
+
         // Function to calculate age based on birthday
         const calculateAge = (birthday: Date | null): string => {
             if (!birthday) return "No Data";
-            
+
             // Get the current date
             const today = new Date();
-            
+
             // Get the birth date
             const birthDate = new Date(birthday);
-            
+
             // Calculate the difference in years
             let age = today.getFullYear() - birthDate.getFullYear();
-            
+
             // Check if the current date is before the birthday this year
             const hasBirthdayPassedThisYear =
                 today.getMonth() > birthDate.getMonth() ||
                 (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
-            
+
             // If the birthday has not passed yet this year, decrement the age
             if (!hasBirthdayPassedThisYear) {
                 age--;
             }
-            
+
             return String(age);
         };
-    
+
         // Loop through the members and count the occurrences of each age
         members.forEach(member => {
-            if(member.activeStatus) {
+            if (member.activeStatus) {
                 const memberAge = calculateAge(member.birthday);
-    
+
                 if (agesCounts[memberAge]) {
                     agesCounts[memberAge]++;
                 } else {
@@ -128,16 +367,16 @@ export const membersRouter = createTRPCRouter({
                 }
             }
         });
-    
+
         // Convert the age counts object into an array of objects
         const ageDistribution: AgeDistribution[] = Object.entries(agesCounts).map(([age, count]) => ({
             age,
             count
         }));
-    
+
         return ageDistribution;
     }),
-    
+
     createMember: protectedProcedure
         .input(z.object({
             name: z.string(),
@@ -190,6 +429,7 @@ export const membersRouter = createTRPCRouter({
             personalMail: z.string().nullable(),
             linkedin: z.string().nullable(),
             showPhoneNrOnWebsite: z.boolean(),
+            birthdayBot: z.boolean(),
         })
         )
         .mutation(async (opts) => {
@@ -217,5 +457,39 @@ export const membersRouter = createTRPCRouter({
             // Member not found, return null or handle accordingly
             return null;
         }),
+
+    toggleMemberActiveStatus: protectedProcedure.input(z.number()).mutation(async (opts) => {
+
+        try {
+            // Find the member by memberID
+            const foundMember = await db.member.findUnique({
+                where: {
+                    memberID: opts.input,
+                },
+            });
+
+            if (foundMember) {
+                // Toggle the activeStatus
+                const updatedMember = await db.member.update({
+                    where: {
+                        memberID: opts.input,
+                    },
+                    data: {
+                        activeStatus: !foundMember.activeStatus,
+                    },
+                });
+
+                return updatedMember;
+            }
+
+            // Member not found, handle accordingly
+            throw new Error("Member not found.");
+        } catch (error) {
+            // Handle errors appropriately
+            console.error("Error toggling member active status:", error);
+            throw new Error("Failed to toggle member active status.");
+        }
+    }),
+
 })
 

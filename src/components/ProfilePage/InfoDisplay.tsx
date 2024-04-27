@@ -5,18 +5,17 @@ import React from 'react';
 interface InfoDisplayProps {
     member: Member;
     teamsRecord: { teamName: string, history: TeamHistory }[];
-    isBoardOrTL: boolean;
 }
 
-const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardOrTL }) => {
+const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord }) => {
     const knownData: JSX.Element[] = [];
     const unknownData: JSX.Element[] = [];
     // Separate known and unknown data
     Object.entries(member).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)).forEach(([key, value]) => {
-        const renderValueString = renderValue(value, key, isBoardOrTL);
+        const renderValueString = renderValue(value, key);
         if (renderValueString !== "excluded") {
             if (renderValueString !== 'unknown') {
-                if(key === 'linkedin') {
+                if (key === 'linkedin') {
                     knownData.push(
                         <li key={key} className='flex flex-row mb-4'>
                             <strong>{key}:</strong> <Link target="_blank" className='text-blue-400 ml-2' href={renderValueString}>{renderValueString}</Link>
@@ -29,7 +28,7 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardO
                         </li>
                     );
                 }
-                
+
             } else {
                 unknownData.push(
                     <li key={key} className='flex flex-row mb-4'>
@@ -80,10 +79,13 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardO
                                     </span>
                                     <span className='text-blue-400'>{" (" + record.history.startSem.toLowerCase()}</span>
                                     <span className='text-blue-400'>{" " + record.history.startYear}</span>
-                                    {record.history.endSem ?
-                                        (<span className='text-blue-400'>{" - " + record.history.endSem.toLowerCase() + " " + record.history.endYear + ")"}</span>)
-                                        :
-                                        (<span className='text-blue-400'> - present)</span>)
+                                    {record.history.endSem && record.history.endYear ?
+                                        (record.history.startSem === record.history.endSem && record.history.startYear === record.history.endYear ? (
+                                            <span className='text-blue-400'>{")"}</span>
+                                        ) : (
+                                            <span className='text-blue-400'>{" - " + record.history.endSem.toLowerCase() + " " + record.history.endYear + ")"}</span>
+                                        )
+                                        ) : (<span className='text-blue-400'>{" - present)"}</span>)
                                     }
                                 </ul>
                             </Link>
@@ -96,29 +98,10 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardO
 
 };
 
-const renderValue = (value: string | number | boolean | Date | null, key: string, isBoardOrTL: boolean) => {
-    // Exclude rendering for specified properties
-    if (!isBoardOrTL && (key === 'memberID'
-        || key === 'slackID' || key === 'additionalComments'
-        || key === 'orbitMail' || key === 'activeStatus'
-        || key === 'showPhoneNrOnWebsite' || key === 'name'
-        || key === 'linkedin' || key === 'nationalities'
-        || key === 'personalMail')) {
-        return 'excluded'; // Or any other value indicating exclusion
-    }
-
-    if (isBoardOrTL && (key === 'memberID'
-        || key === 'slackID' || key === 'additionalComments'
-        || key === 'activeStatus'
-        || key === 'name'
-        || key === 'nationalities'
-        )) {
-        return 'excluded'; // Or any other value indicating exclusion
-    }
-
+const renderValue = (value: string | number | boolean | Date | null, key: string) => {
     if (value instanceof Date) {
         return value.toLocaleDateString();
-    } else if (key === 'showPhoneNrOnWebsite') {
+    } else if (key === 'showPhoneNrOnWebsite' || key === 'birthdayBot') {
         return value === null ? 'false' : String(value === true);
     } else {
         return value ?? value === 0 ? value.toString() : 'unknown';

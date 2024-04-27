@@ -17,16 +17,19 @@ const MemberDistribution = () => {
   useEffect(() => {
     // Effect to update team membership distribution when teams data changes
     if (!teamsData.isLoading && teamsData.data) {
-      const membershipDistribution = teamsData.data.map((team) => {
-        return {
-          teamName: team.teamName,
-          memberCount: team.teamHistories.length,
-        };
-      });
-      setTeamMembershipDistribution(membershipDistribution);
+        const membershipDistribution = teamsData.data.map((team) => {
+            return {
+                teamName: team.teamName,
+                memberCount: team.teamHistories.length,
+            };
+        });
+
+        membershipDistribution.sort((a, b) => a.teamName.localeCompare(b.teamName));
+
+        setTeamMembershipDistribution(membershipDistribution);
     }
-  }, [teamsData.isLoading, teamsData.data]); // Specify the dependencies here
-  
+}, [teamsData.isLoading, teamsData.data]); // Specify the dependencies here
+
     const chartRef = useRef<HTMLCanvasElement | null>(null); // Reference to the chart canvas element
     const chartInstanceRef = useRef<Chart | null>(null); // Reference to the chart instance
         

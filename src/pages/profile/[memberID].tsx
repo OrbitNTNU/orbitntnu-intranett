@@ -5,12 +5,12 @@ import { useRouter } from 'next/router';
 import ProfileView from '@/views/ProfileView';
 import { useSession } from 'next-auth/react';
 import { Loading } from '@/components/General/Loading';
-import { TeamHistory } from '@prisma/client';
+import type { Member } from '@prisma/client';
 
 const ProfilePage = () => {
     const router = useRouter();
     const { memberID } = router.query;
-
+    
     const selectedMember = api.members.getMemberById.useQuery(Number(memberID));
     const member = selectedMember.data ?? null;
 
@@ -21,8 +21,8 @@ const ProfilePage = () => {
     const teams = teamsData.data ?? [];
 
     const session = useSession();
-
-    if(member === session.data?.user.member) {
+    
+    if(memberID === session.data?.user.memberInfo?.memberID) {
         void router.push("/profile/me");
     }
 
@@ -36,7 +36,7 @@ const ProfilePage = () => {
     }
 
     return (
-        <ProfileView member={member} edit={false} teamHistories={teamHistories} teams={teams}/>
+        <ProfileView member={member as Member} edit={false} teamHistories={teamHistories} teams={teams}/>
     );
 };
 

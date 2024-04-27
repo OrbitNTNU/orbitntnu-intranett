@@ -136,7 +136,7 @@ export const applicationsRouter = createTRPCRouter({
     
 
     getAccepted: teamLeadProcedure.query( async ({ ctx }) => {
-        const clientMember = ctx.session.user.member;
+        const clientMember = ctx.session.user.memberInfo;
         
         const clientTeamHistory = clientMember ? await ctx.db.teamHistory.findFirst({
             where: {
@@ -323,7 +323,7 @@ export const applicationsRouter = createTRPCRouter({
     postAcceptApplication: teamLeadProcedure.input(z.object ({appID: z.number()})).mutation(async (opts) => {
 
         // client info
-        const clientMember = opts.ctx.session.user.member;
+        const clientMember = opts.ctx.session.user.memberInfo;
         const clientTeamHistory = await opts.ctx.db.teamHistory.findFirst({
             where: {
                 memberID: clientMember.memberID,

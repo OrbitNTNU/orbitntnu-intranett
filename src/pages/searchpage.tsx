@@ -1,25 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import SearchResults from '@/components/ProfilePage/SearchResults';
 import { api } from '@/utils/api';
-import type { Member } from '@prisma/client';
 import SearchBar from '@/components/General/SearchBar';
 import BreakLine from '@/components/General/Breakline';
 import Layout from '@/templates/Layout';
 import { Loading } from '@/components/General/Loading';
+import type { MemberInfoData } from '@/interfaces/MemberInfo';
 
 export default function SearchPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Member[]>([]); // Initialize searchResults with an empty array
+  const [searchResults, setSearchResults] = useState<MemberInfoData[]>([]); // Initialize searchResults with an empty array
 
-  const membersData = api.members.getMembers.useQuery();
-  const members = useMemo(() => membersData.data ?? [], [membersData.data]);
-
-  const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
-  const teamHistories = teamHistoriesData.data ?? [];
-
-  const teamsData = api.teams.getTeams.useQuery();
-  const teams = teamsData.data ?? [];
+  const memberInfoData = api.members.getAllMemberInfo.useQuery();
+  const members = useMemo(() => memberInfoData.data ?? [], [memberInfoData.data]);
 
   const handleSearch = (query: string) => {
     // Filter members based on the name attribute (case-insensitive)
@@ -27,7 +21,7 @@ export default function SearchPage() {
       .filter((member) =>
         member.name.toLowerCase().includes(query.toLowerCase())
       );
-    setSearchResults(filteredResults);
+    setSearchResults(filteredResults as MemberInfoData[]);
   };
 
   const handleInputChange = (query: string) => {
@@ -37,12 +31,13 @@ export default function SearchPage() {
 
   // Use `useEffect` to set `loading` to `false` when the data is available
   useEffect(() => {
-    if (membersData.isSuccess) {
+    if (memberInfoData.isSuccess) {
       setLoading(false);
       // Initialize searchResults with all members
-      setSearchResults(members);
+      setSearchResults(members as MemberInfoData[]);
     }
-  }, [members, membersData.isSuccess, teamHistoriesData.isSuccess, teamsData.isSuccess]);
+  }, [memberInfoData.isSuccess, members]);
+
 
   return (
     <Layout>
@@ -54,7 +49,7 @@ export default function SearchPage() {
           <h1>Search for Orbiter</h1>
           <BreakLine />
           <SearchBar query={searchQuery} onChange={handleInputChange} />
-          <SearchResults members={searchResults} teamHistories={teamHistories} teams={teams} />
+          <SearchResults memberInfos={searchResults}/>
           </div>
         )}
       </div>

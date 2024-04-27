@@ -2,11 +2,10 @@ import type { Member, Team, TeamHistory } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import MemberInfo from '../General/MemberInfo';
+import type { MemberInfoData } from '@/interfaces/MemberInfo';
 
 interface SearchResultsProps {
-  members: Member[];
-  teamHistories: TeamHistory[];
-  teams: Team[]
+  memberInfos: MemberInfoData[];
 }
 
 // Helper function to get team name by tid
@@ -47,33 +46,33 @@ export const getRole = (member: Member, teamHistories: TeamHistory[]) => {
   return capitalizeFirstLetter(currentTeam.priviledges.toLowerCase())
 };
 
-const SearchResults = ({ members, teamHistories, teams }: SearchResultsProps) => {
+const SearchResults = ({ memberInfos }: SearchResultsProps) => {
   const router = useRouter();
   const session = useSession();
 
-  const handleBoxClick = (member: Member) => {
+  const handleBoxClick = (member: MemberInfoData) => {
     void router.push(session.data?.user.email === member.orbitMail ? "profile/me" : `/profile/${member.memberID}`)
   };
 
   // Sort members alphabetically by first name
-  const sortedMembers = members.filter(member => teamHistories.some(history => history.memberID === member.memberID) && member.activeStatus).sort((a, b) => a.name.localeCompare(b.name));
+  const sortedMembers = memberInfos.filter(member => member.activeStatus).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <>
       <div className="flex items-center flex-col justify-center">
         <div className="flex flex-wrap justify-center">
           {sortedMembers.map((member) => (
-            <MemberInfo key={member.memberID} member={member} teams={teams} teamHistories={teamHistories} onClick={() => handleBoxClick(member)}/>
+            <MemberInfo key={member.memberID} memberInfo={member} onClick={() => handleBoxClick(member)}/>
           ))}
         </div>
       </div>
       <div className="flex items-center flex-col justify-center">
-        {members.filter(member => !member.activeStatus).length > 0 && (
+        {memberInfos.filter(member => !member.activeStatus).length > 0 && (
           <div>
             <h2 className='flex justify-center'>Inactive members:</h2>
             <div className="flex flex-wrap justify-center">
-              {members.filter(member => !member.activeStatus).map((member) => (
-                <MemberInfo key={member.memberID} member={member} teams={teams} teamHistories={teamHistories} onClick={() => handleBoxClick(member)}/>
+              {memberInfos.filter(member => !member.activeStatus).map((member) => (
+                <MemberInfo key={member.memberID} memberInfo={member} onClick={() => handleBoxClick(member)}/>
               ))}
             </div>
           </div>

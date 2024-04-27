@@ -1,7 +1,13 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, teamLeadProcedure } from "../trpc";
 import { db } from "@/server/db";
-import { SemType, type Team, type TeamHistory } from "@prisma/client";
+import { SemType, TeamHistory_cPosition, type Team, type TeamHistory, TeamHistory_priviledges } from "@prisma/client";
+
+function getCurrentSemester() {
+    const currentMonth = new Date().getMonth() + 1; // January is month 0
+    // Determine the current semester based on the current month
+    return currentMonth >= 1 && currentMonth <= 5 ? "SPRING" : "FALL"; // Assuming SPRING is from January to May, and FALL is from September to December
+}
 
 export const teamHistoriesRouter = createTRPCRouter({
     getTeamHistories: protectedProcedure.query(async ({ ctx }) => {
@@ -22,14 +28,7 @@ export const teamHistoriesRouter = createTRPCRouter({
                     teamHistoryID: input.teamHistoryID,
                 }
             });
-
-            // Function to determine the current semester
-            function getCurrentSemester() {
-                const currentMonth = new Date().getMonth() + 1; // January is month 0
-                // Determine the current semester based on the current month
-                return currentMonth >= 1 && currentMonth <= 5 ? "SPRING" : "FALL"; // Assuming SPRING is from January to May, and FALL is from September to December
-            }
-
+            
             if (foundHistory) {
                 // Update the existing member information
                 const updatedTeamHistory = await db.teamHistory.update({
@@ -39,6 +38,7 @@ export const teamHistoriesRouter = createTRPCRouter({
                     data: {
                         endSem: getCurrentSemester(), // Set endSem to the current semester
                         endYear: new Date().getFullYear(), // Set endYear to the current year
+                        endDate: new Date()
                     },
                 });
 
@@ -51,21 +51,14 @@ export const teamHistoriesRouter = createTRPCRouter({
 
     createTeamHistory: teamLeadProcedure
         .input(z.object({
-            priviledges: z.enum(["MEMBER", "LEADER", "BOARD", "MENTOR"]),
+            priviledges: z.nativeEnum(TeamHistory_priviledges),
             memberID: z.number(),
             teamID: z.number(),
-            cPosition: z.enum(["CEO", "COO", "CTO", "CFO", "CMO", "CIO", "CHRO", "PM_FS1", "PM_FS1_5", "PM_FS2", "PM_BS", "NTNU_REP", "PM_SS", "DCEO", "PM_SS", "DCEO"]).nullable()
+            cPosition: z.nativeEnum(TeamHistory_cPosition).nullable()
         })
         )
         .mutation(async (opts) => {
             const { input } = opts;
-
-            // Function to determine the current semester
-            const getCurrentSemester = () => {
-                const currentMonth = new Date().getMonth() + 1; // January is month 0
-                // Determine the current semester based on the current month
-                return currentMonth >= 1 && currentMonth <= 5 ? "SPRING" : "FALL"; // Assuming SPRING is from January to May, and FALL is from September to December
-            }
 
             const historyExists = await db.teamHistory.findFirst({
                 where: {
@@ -81,18 +74,43 @@ export const teamHistoriesRouter = createTRPCRouter({
             });
 
             if (!historyExists) {
-                // Create a new teamHistory entry
-                const createdTeamHistory = await db.teamHistory.create({
-                    data: {
+                const sameSemHistory = await db.teamHistory.findFirst({
+                    where: {
                         memberID: input.memberID,
                         teamID: input.teamID,
-                        startSem: getCurrentSemester(),
-                        startYear: new Date().getFullYear(),
+                        endSem: getCurrentSemester(), // Ensure this function returns the correct semester
+                        endYear: new Date().getFullYear(), // Get the current year
                         priviledges: input.priviledges,
                         cPosition: input.cPosition
-                    },
+                    }
                 });
-                return createdTeamHistory;
+
+                if (sameSemHistory) {
+                    const editedTeamHistory = await db.teamHistory.update({
+                        where: {
+                            teamHistoryID: sameSemHistory.teamHistoryID,
+                        },
+                        data: {
+                            endSem: null, 
+                            endYear: null, 
+                        },
+                    });
+                    return editedTeamHistory;
+
+                } else {
+                    // Create a new teamHistory entry
+                    const createdTeamHistory = await db.teamHistory.create({
+                        data: {
+                            memberID: input.memberID,
+                            teamID: input.teamID,
+                            startSem: getCurrentSemester(),
+                            startYear: new Date().getFullYear(),
+                            priviledges: input.priviledges,
+                            cPosition: input.cPosition
+                        },
+                    });
+                    return createdTeamHistory;
+                }
             }
 
             return null;

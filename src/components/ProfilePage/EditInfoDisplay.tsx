@@ -41,7 +41,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
         };
 
         void fetchData();
-    }, [query.isLoading, query.data]);
+    }, [query.isLoading, query.data, query]);
 
     const getInputElement = (label: string) => {
         const handleChange = (newValue: string | boolean | Date | number | undefined) => {
@@ -56,8 +56,6 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
             } else if (label === 'fieldOfStudy') {
                 setSelectedStudyProgram(String(parsedValue));
             }
-
-            console.log(parsedValue);
 
             setEditedMember(prevState => ({
                 ...prevState,
@@ -145,6 +143,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                     />
                 );
             case 'showPhoneNrOnWebsite':
+            case 'birthdayBot':
                 return (
                     <input
                         className='md:ml-2 rounded-md text-black px-2 max-w-sm overflow-x-auto w-[25px]'
