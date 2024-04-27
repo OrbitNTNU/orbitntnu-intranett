@@ -119,6 +119,7 @@ model Member {
   name                 String
   linkedin             String?
   showPhoneNrOnWebsite Boolean        @default(false)
+  birthdayBot          Boolean        @default(true)
   anouncements         Announcement[]
   CV                   CV?
   events               Event[]
@@ -196,12 +197,12 @@ model CV {
   cv       Bytes
   date     DateTime  @default(now())
   Member   Member    @relation(fields: [memberID], references: [memberID])
-  KeyWord  KeyWord[]
+  KeyWord  KeyWord[] @relation("CVToKeyWord")
 }
 
 model KeyWord {
   keyword String @id
-  CV      CV[]
+  CV      CV[]   @relation("CVToKeyWord")
 }
 
 enum SemType {

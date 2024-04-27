@@ -1,7 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 import { z } from "zod";
 import { db } from "@/server/db";
-import { MemberInfoData } from "@/interfaces/MemberInfo";
 
 export const membersRouter = createTRPCRouter({
     getMembers: protectedProcedure.query(async ({ ctx }) => {
@@ -59,21 +58,21 @@ export const membersRouter = createTRPCRouter({
                 }
             }
         });
-    
+
         // Check if there exists a team history with privileges board or leader
         const hasTLorBoard = allMemberInformation.some(member => {
             return member.teamHistory.some(history => ['BOARD', 'LEADER'].includes(history.priviledges));
         });
-    
+
         // Extract the teamID of the current team
         const teamID = allMemberInformation[0]?.teamHistory[0]?.team.teamID ?? null;
-    
+
         return { hasTLorBoard, teamID };
-    }),    
+    }),
 
     getTeamPageInfo: protectedProcedure.input(z.number().nullable()).query(async (opts) => {
 
-        if(!opts.input) {
+        if (!opts.input) {
             return [];
         }
 
@@ -116,10 +115,10 @@ export const membersRouter = createTRPCRouter({
 
     getTeamPageInfoByMemberId: protectedProcedure.input(z.number().nullable()).query(async (opts) => {
 
-        if(!opts.input) {
+        if (!opts.input) {
             return null;
         }
-        
+
         // Fetch team histories for all active members
         const memberInfo = await opts.ctx.db.member.findUnique({
             where: {
@@ -145,8 +144,8 @@ export const membersRouter = createTRPCRouter({
                 }
             },
         });
-        
-        if(memberInfo) {
+
+        if (memberInfo) {
             return {
                 teamHistory: memberInfo.teamHistory,
                 memberID: memberInfo.memberID,
@@ -155,7 +154,7 @@ export const membersRouter = createTRPCRouter({
                 orbitMail: memberInfo.orbitMail
             };
         }
-        
+
         return null;
     }),
 
@@ -186,7 +185,7 @@ export const membersRouter = createTRPCRouter({
 
         return mappedMemberInfo;
     }),
-    
+
     getTeamPageInfoByOrbitMail: protectedProcedure.input(z.string()).query(async (opts) => {
 
         // Fetch team histories for all active members
@@ -246,7 +245,7 @@ export const membersRouter = createTRPCRouter({
 
         return memberInfo;
     }),
-    
+
     getStudies: protectedProcedure.query(async ({ ctx }) => {
         const members = await ctx.db.member.findMany();
 
@@ -405,6 +404,7 @@ export const membersRouter = createTRPCRouter({
             personalMail: z.string().nullable(),
             linkedin: z.string().nullable(),
             showPhoneNrOnWebsite: z.boolean(),
+            birthdayBot: z.boolean(),
         })
         )
         .mutation(async (opts) => {
@@ -433,38 +433,38 @@ export const membersRouter = createTRPCRouter({
             return null;
         }),
 
-        toggleMemberActiveStatus: protectedProcedure.input(z.number()).mutation(async (opts) => {
-        
-            try {
-                // Find the member by memberID
-                const foundMember = await db.member.findUnique({
+    toggleMemberActiveStatus: protectedProcedure.input(z.number()).mutation(async (opts) => {
+
+        try {
+            // Find the member by memberID
+            const foundMember = await db.member.findUnique({
+                where: {
+                    memberID: opts.input,
+                },
+            });
+
+            if (foundMember) {
+                // Toggle the activeStatus
+                const updatedMember = await db.member.update({
                     where: {
                         memberID: opts.input,
                     },
+                    data: {
+                        activeStatus: !foundMember.activeStatus,
+                    },
                 });
-        
-                if (foundMember) {
-                    // Toggle the activeStatus
-                    const updatedMember = await db.member.update({
-                        where: {
-                            memberID: opts.input,
-                        },
-                        data: {
-                            activeStatus: !foundMember.activeStatus,
-                        },
-                    });
-        
-                    return updatedMember;
-                }
-        
-                // Member not found, handle accordingly
-                throw new Error("Member not found.");
-            } catch (error) {
-                // Handle errors appropriately
-                console.error("Error toggling member active status:", error);
-                throw new Error("Failed to toggle member active status.");
+
+                return updatedMember;
             }
-        }),
-        
+
+            // Member not found, handle accordingly
+            throw new Error("Member not found.");
+        } catch (error) {
+            // Handle errors appropriately
+            console.error("Error toggling member active status:", error);
+            throw new Error("Failed to toggle member active status.");
+        }
+    }),
+
 })
 

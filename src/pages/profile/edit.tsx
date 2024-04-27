@@ -55,8 +55,7 @@ const EditProfile = () => {
                             additionalComments: null,
                             slackToken: null,
                             personalMail: null,
-                            showPhoneNrOnWebsite: null,
-                            linkedin: null,                            
+                            linkedin: null,   
                         };
     
                         await newMemberQuery.mutateAsync(tempMember);

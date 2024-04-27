@@ -106,7 +106,7 @@ const renderValue = (value: string | number | boolean | Date | null, key: string
         || key === 'orbitMail' || key === 'activeStatus'
         || key === 'showPhoneNrOnWebsite' || key === 'name'
         || key === 'linkedin' || key === 'nationalities'
-        || key === 'personalMail')) {
+        || key === 'personalMail' || key === 'birthdayBot')) {
         return 'excluded'; // Or any other value indicating exclusion
     }
 
@@ -121,7 +121,7 @@ const renderValue = (value: string | number | boolean | Date | null, key: string
 
     if (value instanceof Date) {
         return value.toLocaleDateString();
-    } else if (key === 'showPhoneNrOnWebsite') {
+    } else if (key === 'showPhoneNrOnWebsite' || key === 'birthdayBot') {
         return value === null ? 'false' : String(value === true);
     } else {
         return value ?? value === 0 ? value.toString() : 'unknown';

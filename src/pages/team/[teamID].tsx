@@ -7,7 +7,7 @@ import type { MemberInfoData } from "@/interfaces/MemberInfo";
 import Layout from "@/templates/Layout";
 import { api } from "@/utils/api";
 import EditTeamsView from "@/views/EditTeamsView";
-import { TeamHistory_cPosition, type TeamHistory } from "@prisma/client";
+import { type TeamHistory } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";

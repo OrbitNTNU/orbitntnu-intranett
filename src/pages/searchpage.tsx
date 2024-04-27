@@ -38,6 +38,7 @@ export default function SearchPage() {
     }
   }, [memberInfoData.isSuccess, members]);
 
+
   return (
     <Layout>
       <div>
