@@ -1,4 +1,5 @@
-// pages/profile/[memberId].js
+'use client';
+import { useEffect } from 'react';
 import Layout from '@/templates/Layout';
 import { api } from '@/utils/api';
 import { useRouter } from 'next/router';
@@ -21,16 +22,27 @@ const ProfilePage = () => {
     const teams = teamsData.data ?? [];
 
     const session = useSession();
-    
-    if(memberID === session.data?.user.memberInfo?.memberID) {
-        void router.push("/profile/me");
-    }
 
-    if (!member) {
-        // Handle the case where the member is not found
+    useEffect(() => {
+        if (memberID === session.data?.user.memberInfo?.memberID) {
+            void router.push("/profile/me");
+        }
+    }, [memberID, session, router]);
+
+    if (!member || selectedMember.isLoading || teamHistoriesData.isLoading || teamsData.isLoading) {
+        // Handle loading state
         return (
             <Layout>
-                <Loading/>
+                <Loading />
+            </Layout>
+        );
+    }
+
+    if (selectedMember.isError || teamHistoriesData.isError || teamsData.isError) {
+        // Handle error state
+        return (
+            <Layout>
+                <div>Error occurred while loading data.</div>
             </Layout>
         );
     }
