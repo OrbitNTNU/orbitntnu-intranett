@@ -5,15 +5,14 @@ import React from 'react';
 interface InfoDisplayProps {
     member: Member;
     teamsRecord: { teamName: string, history: TeamHistory }[];
-    isBoardOrTL: boolean;
 }
 
-const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardOrTL }) => {
+const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord }) => {
     const knownData: JSX.Element[] = [];
     const unknownData: JSX.Element[] = [];
     // Separate known and unknown data
     Object.entries(member).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)).forEach(([key, value]) => {
-        const renderValueString = renderValue(value, key, isBoardOrTL);
+        const renderValueString = renderValue(value, key);
         if (renderValueString !== "excluded") {
             if (renderValueString !== 'unknown') {
                 if (key === 'linkedin') {
@@ -99,17 +98,7 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord, isBoardO
 
 };
 
-const renderValue = (value: string | number | boolean | Date | null, key: string, isBoardOrTL: boolean) => {
-    // Exclude rendering for specified properties
-    if (!isBoardOrTL && (key === 'memberID'
-        || key === 'slackID' || key === 'additionalComments'
-        || key === 'orbitMail' || key === 'activeStatus'
-        || key === 'showPhoneNrOnWebsite' || key === 'name'
-        || key === 'linkedin' || key === 'nationalities'
-        || key === 'personalMail' || key === 'birthdayBot')) {
-        return 'excluded'; // Or any other value indicating exclusion
-    }
-
+const renderValue = (value: string | number | boolean | Date | null, key: string) => {
     if (value instanceof Date) {
         return value.toLocaleDateString();
     } else if (key === 'showPhoneNrOnWebsite' || key === 'birthdayBot') {

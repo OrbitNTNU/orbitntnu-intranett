@@ -9,7 +9,7 @@ import GoogleProvider, { type GoogleProfile } from "next-auth/providers/google";
 
 import { env } from "@/env.mjs";
 import { db } from "@/server/db";
-import type { Member } from "@prisma/client";
+import type { MemberInfoData } from "@/interfaces/MemberInfo";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -22,7 +22,7 @@ declare module "next-auth" {
     user: DefaultSession["user"] & {
       id: string;
       // ...other properties
-      member: Member;
+      memberInfo: MemberInfoData;
     };
   }
 
@@ -41,15 +41,36 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, user }) {
       // Fetch Member data from the database based on user ID
-      const member = await db.member.findUnique({
-        where: { orbitMail: user.email }, // Assuming there's a field 'userId' in Member table linking to the User
+      const memberInfo = await db.member.findUnique({
+        where: {
+          activeStatus: true,
+          orbitMail: user.email,
+        },
+        include: {
+          teamHistory: {
+            where: {
+              endSem: null,
+              endYear: null
+            },
+            include: {
+              team: true
+            }
+          }
+        }
       });
+
       return {
         ...session,
         user: {
           ...session.user,
           id: user.id,
-          member: member ?? null, // Include Member data in the session
+          memberInfo: memberInfo ? {
+            teamHistory: memberInfo.teamHistory,
+            memberID: memberInfo.memberID,
+            name: memberInfo.name,
+            activeStatus: memberInfo.activeStatus,
+            orbitMail: memberInfo.orbitMail} 
+            : null, // Include Member data in the session
         },
       };
     },

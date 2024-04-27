@@ -14,7 +14,7 @@ interface CreateEventDisplayProps {
 
 const CreateEventDisplay = ({ toggleEdit }: CreateEventDisplayProps) => {
     const session = useSession();
-    const member = session.data?.user.member;
+    const member = session.data?.user.memberInfo;
 
     const [createdEvent, setCreatedEvent] = useState<Event>({
         eventID: 0,

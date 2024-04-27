@@ -21,16 +21,13 @@ const TeamsPage = () => {
     const { teamID } = router.query;
 
     const session = useSession();
+    const sessionMemberData = session.data?.user.memberInfo;
 
     const teamsPageInfoData = api.members.getTeamPageInfo;
-    const sessionTeamAndTLorBoard = api.members.getTeamAndTLorBoard;
-
-    const memberInfo = sessionTeamAndTLorBoard.useQuery(session.data?.user.member.memberID ?? 0);
-    const sessionMemberData = memberInfo && memberInfo.data;
 
     const teamMembersInfo = teamsPageInfoData.useQuery(Number(router.isReady && teamID !== "find" ?
-        teamID : sessionMemberData ? sessionMemberData.teams?.length === 1
-            ? sessionMemberData.teams[0]?.teamID
+        teamID : sessionMemberData ? sessionMemberData.teamHistory.length === 1
+            ? sessionMemberData.teamHistory[0]?.team.teamID
             : 0 : 0));
 
     const membersInTeam = teamMembersInfo && teamMembersInfo.data;
@@ -46,16 +43,16 @@ const TeamsPage = () => {
         member.teamHistory?.some((history) => history.teamID === Number(teamID))
     )?.teamHistory[0]?.team;
 
-    const isSessionLeaderOrBoard = sessionMemberData?.hasTLorBoard;
-
     useEffect(() => {
         // Effect to handle the rerender when updateFlag changes
     }, [updateFlag]); // Dependency array includes updateFlag
 
     if (teamID == "find") {
         if (sessionMemberData) {
-            if (sessionMemberData.teams?.length === 1) {
-                void router.push("/team/" + sessionMemberData.teams[0]?.teamID)
+            if (sessionMemberData.teamHistory.length === 1) {
+                void router.push("/team/" + sessionMemberData.teamHistory[0]?.team.teamID)
+            } else if (sessionMemberData.teamHistory.length === 0) {
+                void router.push("/team/null")
             } else {
                 return (
                     <Layout>
@@ -63,10 +60,10 @@ const TeamsPage = () => {
                             <h1>Your teams</h1>
                         </div>
                         <BreakLine />
-                        {sessionMemberData.teams?.map((team) => (
-                            <Link href={`/team/${team.teamID}`} key={team.teamID}>
+                        {sessionMemberData.teamHistory?.map((teamHistory) => (
+                            <Link href={`/team/${teamHistory.team.teamID}`} key={teamHistory.team.teamID}>
                                 <div className="bg-blue-600 hover:bg-blue-800 gap-6 p-6 m-4 rounded-md">
-                                    <h2>{team.teamName}</h2>
+                                    <h2>{teamHistory.team.teamName}</h2>
                                 </div>
                             </Link>
                         ))}
@@ -104,9 +101,11 @@ const TeamsPage = () => {
         setUpdateFlag(prevFlag => !prevFlag);
     };
 
+    const isLeaderOrBoard = sessionMemberData.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD" || teamHistory.priviledges === "LEADER") ;
+    
     return (
         <Layout>
-            {!isSessionLeaderOrBoard ? (
+            {!isLeaderOrBoard ? (
                 // Render content when the user is not a leader or board member
                 <>
                     <div className='md:flex justify-between items-center'>

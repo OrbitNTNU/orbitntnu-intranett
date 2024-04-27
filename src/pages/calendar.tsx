@@ -47,7 +47,7 @@ const CalendarPage = () => {
                 // Handle the response if needed
                 if (allEventsResponse.data) {
                     setEventCombos(allEventsResponse.data);
-                    setOwnEventCombos(allEventsResponse.data.filter((eventCombo) => eventCombo.author.memberID === session.data?.user.member.memberID))
+                    setOwnEventCombos(allEventsResponse.data.filter((eventCombo) => eventCombo.author.memberID === session.data?.user.memberInfo.memberID))
                 }
             } catch (error) {
                 console.error('Error refetching study plan:', error);
@@ -69,7 +69,7 @@ const CalendarPage = () => {
     const eventColors = generateColors();
     const generatedIndexes = generateIndexes();
 
-    const sessionMember = session.data?.user.member;
+    const sessionMember = session.data?.user.memberInfo;
     const teamHistoriesData = api.teamHistories.getTeamHistories.useQuery();
     const teamHistories: TeamHistory[] = teamHistoriesData.data ?? [];
 

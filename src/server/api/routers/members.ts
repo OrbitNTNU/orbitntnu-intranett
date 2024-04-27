@@ -13,15 +13,39 @@ export const membersRouter = createTRPCRouter({
             throw new Error("Input is missing.");
         }
 
-        const member = await opts.ctx.db.member.findUnique({
-            where: { memberID: opts.input },
-        });
+        const sessionMemeberInfo = opts.ctx.session.user.memberInfo;
+        
+        if (sessionMemeberInfo.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD")) {
+            const member = await opts.ctx.db.member.findUnique({
+                where: { memberID: opts.input },
+            });
 
-        if (!member) {
-            throw new Error("Member not found");
+            if (!member) {
+                throw new Error("Member not found");
+            }
+
+            return member;
+        } else {
+            const member = await opts.ctx.db.member.findUnique({
+                select: {
+                    memberID: true,
+                    birthday: true,
+                    ntnuMail: true,
+                    phoneNumber: true,
+                    name: true,
+                    yearOfStudy: true
+                },
+                where: { 
+                    memberID: opts.input 
+                },
+            });
+
+            if (!member) {
+                throw new Error("Member not found");
+            }
+
+            return member;
         }
-
-        return member;
     }),
 
     getMemberByOrbitMail: protectedProcedure.input(z.string()).query(async (opts) => {

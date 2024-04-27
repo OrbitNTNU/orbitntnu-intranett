@@ -41,7 +41,7 @@ const EventDisplay: React.FC<EventDisplayProps> = ({ eventCombo, eventColors, in
     const isCalendarPage = location.pathname === '/calendar';
 
     const session = useSession();
-    const sessionMember = session.data?.user.member;
+    const sessionMember = session.data?.user.memberInfo;
 
     const canDelete = !!(
         (sessionMember &&
