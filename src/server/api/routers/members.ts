@@ -33,7 +33,8 @@ export const membersRouter = createTRPCRouter({
                     ntnuMail: true,
                     phoneNumber: true,
                     name: true,
-                    yearOfStudy: true
+                    yearOfStudy: true,
+                    fieldOfStudy: true,
                 },
                 where: { 
                     memberID: opts.input 
