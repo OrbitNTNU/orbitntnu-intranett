@@ -99,7 +99,9 @@ const InfoDisplay: React.FC<InfoDisplayProps> = ({ member, teamsRecord }) => {
 };
 
 const renderValue = (value: string | number | boolean | Date | null, key: string) => {
-    if (value instanceof Date) {
+    if(key === 'memberID' || key === 'additionalComments') {
+        return 'excluded'
+    } else if (value instanceof Date) {
         return value.toLocaleDateString();
     } else if (key === 'showPhoneNrOnWebsite' || key === 'birthdayBot') {
         return value === null ? 'false' : String(value === true);
