@@ -24,7 +24,7 @@ const ProfilePage = () => {
     const session = useSession();
 
     useEffect(() => {
-        if (memberID === session.data?.user.memberInfo?.memberID) {
+        if (router.isReady && memberID === session.data?.user.memberInfo?.memberID) {
             void router.push("/profile/me");
         }
     }, [memberID, session, router]);

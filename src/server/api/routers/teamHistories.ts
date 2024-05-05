@@ -164,6 +164,7 @@ export const teamHistoriesRouter = createTRPCRouter({
                 } else if (year === teamHistory.endYear && teamHistory.endSem === SemType.SPRING) {
                     const semYearKey = `${year}_${SemType.SPRING}`;
                     acc[semYearKey] = [...(acc[semYearKey] ?? []), identifiedTeam];
+
                 } else if (year === new Date().getFullYear()) {
                     const currentMonth = new Date().getMonth() + 1; // January is month 0
                     const currentSem = currentMonth >= 1 && currentMonth <= 5 ? SemType.SPRING : SemType.FALL;

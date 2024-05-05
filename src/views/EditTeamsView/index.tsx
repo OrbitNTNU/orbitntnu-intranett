@@ -246,12 +246,13 @@ const EditTeamsView: React.FC<EditTeamsViewProps> = ({
                         icon1="Cross"
                         icon1Click={() => {
                             void removeMember(projectManager);
-                        }}                    
+                        }}
                     />
                 ))}
                 {membersInTeam.map((member) => (
                     // Skip rendering the team leader again
-                    !teamLeader || member.memberID !== teamLeader.memberID ? (
+                    (!teamLeader || member.memberID !== teamLeader.memberID) &&
+                        !projectManagement?.find(manager => manager.memberID === member.memberID) ? (
                         <MemberInfo
                             key={member.memberID} // Add a unique key prop
                             memberInfo={member}
