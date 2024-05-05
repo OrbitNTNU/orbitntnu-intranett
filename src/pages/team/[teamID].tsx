@@ -170,7 +170,7 @@ const TeamsPage = () => {
                     <BreakLine />
                     {edit ? (
                         <EditTeamsView
-                            projectManagement={projectManagement ? projectManagement as MemberInfoData[] : null}
+                            projectManagement={projectManagement ? projectManagement as MemberInfoData[] : undefined}
                             teamLeader={teamLeader as MemberInfoData}
                             membersInTeam={membersInTeam as MemberInfoData[]}
                             team={team}
