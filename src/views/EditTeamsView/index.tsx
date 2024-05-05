@@ -7,6 +7,7 @@ import SearchBar from "@/components/General/SearchBar";
 import { TeamHistory_cPosition, type Team } from "@prisma/client";
 
 type EditTeamsViewProps = {
+    projectManagement?: MemberInfoData[],
     teamLeader: MemberInfoData | null;
     membersInTeam: MemberInfoData[];
     team: Team | undefined;
@@ -15,6 +16,7 @@ type EditTeamsViewProps = {
 
 const EditTeamsView: React.FC<EditTeamsViewProps> = ({
     teamLeader,
+    projectManagement,
     membersInTeam,
     team,
     onActionTriggered
@@ -91,7 +93,11 @@ const EditTeamsView: React.FC<EditTeamsViewProps> = ({
         if (isSure) {
             if (Number(team?.teamID) === 1) {
                 // Prompt the user to select a CPosition
-                const optionsString = Object.keys(TeamHistory_cPosition).sort().join('\n');
+                const optionsString = Object.keys(TeamHistory_cPosition)
+                    .filter(option => !option.includes('PM') && !option.includes('PD'))
+                    .sort()
+                    .join('\n');
+
                 const cPosition = prompt(`Select type C Position for ${memberToAdd.name} from the following options:\n${optionsString}`) as TeamHistory_cPosition;
                 // Check if the user has entered a CPosition
                 if (Object.keys(TeamHistory_cPosition).includes(cPosition)) {
@@ -106,7 +112,44 @@ const EditTeamsView: React.FC<EditTeamsViewProps> = ({
                         onActionTriggered();
                     }
                 } else {
-                    prompt('Please type a C position exactly as shown');
+                    alert('Please type a C position exactly as shown');
+                }
+            } else if (Number(team?.teamID) === 17) {
+                // Prompt the user to select a CPosition
+                const optionsString = Object.keys(TeamHistory_cPosition)
+                    .filter(option => (option.includes('PM') && !option.includes('PD')) || option === 'Engineer')
+                    .sort()
+                    .concat('Engineer') // Append "Engineer"
+                    .join('\n');
+
+                const position = prompt(`Select a position for ${memberToAdd.name} from the following options:\n${optionsString}`);
+                // Check if the user has entered a CPosition
+                if (Object.keys(TeamHistory_cPosition).includes(position as TeamHistory_cPosition)) {
+                    await createTeamHistoriesQuery.mutateAsync({
+                        priviledges: "BOARD",
+                        memberID: memberToAdd.memberID,
+                        teamID: Number(team?.teamID),
+                        cPosition: position as TeamHistory_cPosition // Assign the selected CPosition
+                    });
+
+                    if (createTeamHistoriesQuery.isSuccess) {
+                        onActionTriggered();
+                    }
+                } else if (position === "Engineer") {
+                    await createTeamHistoriesQuery.mutateAsync({
+                        priviledges: "MEMBER",
+                        memberID: memberToAdd.memberID,
+                        teamID: Number(team?.teamID),
+                        cPosition: null,
+                    });
+
+                    if (createTeamHistoriesQuery.isSuccess) {
+                        onActionTriggered();
+                    }
+                }
+
+                else {
+                    alert('Please type the position exactly as shown:\n\n' + optionsString);
                 }
             } else {
                 await createTeamHistoriesQuery.mutateAsync({
@@ -195,6 +238,17 @@ const EditTeamsView: React.FC<EditTeamsViewProps> = ({
                         }}
                     />
                 )}
+                {projectManagement?.map((projectManager) => (
+                    <MemberInfo
+                        key={projectManager.memberID}
+                        isTeamLead={true}
+                        memberInfo={projectManager}
+                        icon1="Cross"
+                        icon1Click={() => {
+                            void removeMember(projectManager);
+                        }}                    
+                    />
+                ))}
                 {membersInTeam.map((member) => (
                     // Skip rendering the team leader again
                     !teamLeader || member.memberID !== teamLeader.memberID ? (

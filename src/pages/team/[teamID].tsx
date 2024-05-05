@@ -39,6 +39,16 @@ const TeamsPage = () => {
         }
         return false; // Return false if member has no team history
     });
+
+    const projectManagement = membersInTeam?.filter((member) => {
+        // Check if member has team history
+        if (member.teamHistory) {
+            // Check if any team history has the privilege "LEADER"
+            return member.teamHistory.some((history: TeamHistory) => history.priviledges === "BOARD" && history.teamID === 17)
+        }
+        return false; // Return false if member has no team history
+    });
+
     const team = membersInTeam?.find((member) =>
         member.teamHistory?.some((history) => history.teamID === Number(teamID))
     )?.teamHistory[0]?.team;
@@ -101,8 +111,8 @@ const TeamsPage = () => {
         setUpdateFlag(prevFlag => !prevFlag);
     };
 
-    const isLeaderOrBoard = sessionMemberData.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD" || teamHistory.priviledges === "LEADER") ;
-    
+    const isLeaderOrBoard = sessionMemberData.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD" || teamHistory.priviledges === "LEADER");
+
     return (
         <Layout>
             {!isLeaderOrBoard ? (
@@ -122,10 +132,23 @@ const TeamsPage = () => {
                         {teamLeader && (
                             <MemberInfo isTeamLead={true} memberInfo={teamLeader as MemberInfoData} onClick={() => void router.push("/profile/" + teamLeader.memberID)} />
                         )}
+                        {projectManagement?.map((projectManager) => (
+                            <MemberInfo
+                                key={projectManager.memberID}
+                                isTeamLead={true}
+                                memberInfo={projectManager as MemberInfoData}
+                                onClick={() => void router.push("/profile/" + projectManager.memberID)}
+                            />
+                        ))}
                         {membersInTeam?.map((member) => (
-                            // Skip rendering the team leader again
-                            !teamLeader || member.memberID !== teamLeader.memberID ? (
-                                <MemberInfo key={member.memberID} memberInfo={member as MemberInfoData} onClick={() => void router.push("/profile/" + member.memberID)} />
+                            // Skip rendering the team leader and members in project management
+                            (!teamLeader || member.memberID !== teamLeader.memberID) &&
+                                !projectManagement?.find(manager => manager.memberID === member.memberID) ? (
+                                <MemberInfo
+                                    key={member.memberID}
+                                    memberInfo={member as MemberInfoData}
+                                    onClick={() => void router.push("/profile/" + member.memberID)}
+                                />
                             ) : null
                         ))}
                     </div>
@@ -147,6 +170,7 @@ const TeamsPage = () => {
                     <BreakLine />
                     {edit ? (
                         <EditTeamsView
+                            projectManagement={projectManagement ? projectManagement as MemberInfoData[] : null}
                             teamLeader={teamLeader as MemberInfoData}
                             membersInTeam={membersInTeam as MemberInfoData[]}
                             team={team}
@@ -159,10 +183,23 @@ const TeamsPage = () => {
                                 {teamLeader && (
                                     <MemberInfo isTeamLead={true} memberInfo={teamLeader as MemberInfoData} onClick={() => void router.push("/profile/" + teamLeader.memberID)} />
                                 )}
+                                {projectManagement?.map((projectManager) => (
+                                    <MemberInfo
+                                        key={projectManager.memberID}
+                                        isTeamLead={true}
+                                        memberInfo={projectManager as MemberInfoData}
+                                        onClick={() => void router.push("/profile/" + projectManager.memberID)}
+                                    />
+                                ))}
                                 {membersInTeam?.map((member) => (
-                                    // Skip rendering the team leader again
-                                    !teamLeader || member.memberID !== teamLeader.memberID ? (
-                                        <MemberInfo key={member.memberID} memberInfo={member as MemberInfoData} onClick={() => void router.push("/profile/" + member.memberID)} />
+                                    // Skip rendering the team leader and members in project management
+                                    (!teamLeader || member.memberID !== teamLeader.memberID) &&
+                                        !projectManagement?.find(manager => manager.memberID === member.memberID) ? (
+                                        <MemberInfo
+                                            key={member.memberID}
+                                            memberInfo={member as MemberInfoData}
+                                            onClick={() => void router.push("/profile/" + member.memberID)}
+                                        />
                                     ) : null
                                 ))}
                             </div>
