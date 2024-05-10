@@ -156,7 +156,7 @@ export const teamHistoriesRouter = createTRPCRouter({
             let year = teamHistory.startYear;
             while (year <= (teamHistory.endYear ?? new Date().getFullYear())) {
                 const identifiedTeam = allTeams.find((team) => team.teamID === teamHistory.teamID)!;
-
+                
                 if (year === teamHistory.startYear && teamHistory.startSem === SemType.FALL) {
                     const semYearKey = `${year}_${SemType.FALL}`;
                     acc[semYearKey] = [...(acc[semYearKey] ?? []), identifiedTeam];

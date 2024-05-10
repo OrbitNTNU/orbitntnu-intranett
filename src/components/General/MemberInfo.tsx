@@ -29,7 +29,7 @@ const MemberInfo = ({ onClick, icon1, icon1Click, isTeamLead, memberInfo }: Memb
         if (memberInfo.activeStatus) {
             if (memberInfo.teamHistory.length === 1 && memberInfo.teamHistory[0]) {
                 const teamHistory = memberInfo.teamHistory[0];
-                if (teamHistory?.priviledges === "BOARD") {
+                if (teamHistory?.priviledges === "BOARD" || teamHistory?.cPosition === "NTNU_REP") {
                     return teamHistory?.cPosition;
                 } else if (teamHistory?.priviledges === "MENTOR") { 
                     return teamHistory?.priviledges.charAt(0).toUpperCase() + teamHistory?.priviledges.slice(1).toLowerCase();
