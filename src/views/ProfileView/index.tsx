@@ -1,7 +1,7 @@
 import BreakLine from "@/components/General/Breakline";
 import Button from "@/components/General/Button";
 import InfoDisplay from "@/components/ProfilePage/InfoDisplay";
-import Layout from "@/templates/Layout";
+import Layout from "@/components/General/Layout";
 import type { Member, Team, TeamHistory } from "@prisma/client";
 
 interface ProfileViewProps {

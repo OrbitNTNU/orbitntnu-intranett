@@ -9,15 +9,15 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <>
-    <Navbar />
-    <div className="min-h-screen flex flex-col mt-10">
-      <main className="flex w-full flex-col items-center mb-10">
-        <div className="md:w-2/3 w-full p-4 md:p-0">
-          {children}
-        </div>
-      </main>
-    </div>
-    <Footer />
+      <Navbar />
+      <div className="min-h-screen flex flex-col mt-10">
+        <main className="flex w-full flex-col items-center mb-10">
+          <div className="md:w-2/3 w-full p-4 md:p-0">
+            {children}
+          </div>
+        </main>
+      </div>
+      <Footer />
     </>
   );
 };

@@ -4,7 +4,7 @@ import { formatDateTime } from "@/components/CalendarPage/EventDisplay";
 import BreakLine from "@/components/General/Breakline";
 import Button from "@/components/General/Button";
 import Icons from "@/components/General/Icons";
-import Layout from "@/templates/Layout";
+import Layout from "@/components/General/Layout";
 import { api } from "@/utils/api";
 import Link from "next/link";
 

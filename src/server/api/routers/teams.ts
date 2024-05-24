@@ -17,6 +17,30 @@ export const teamsRouter = createTRPCRouter({
         return teams;
     }),
 
+    getActiveTeamNameByID: protectedProcedure.input(z.number().nullable()).query(async ( opts ) => {
+
+        if(!opts.input) {
+            return;
+        }
+
+        const teamName = await opts.ctx.db.team.findUnique({
+            select: {
+                teamName: true,
+            },
+            where: {
+                teamID: opts.input,
+                members: {
+                    some: {
+                        endSem: null,
+                        endYear: null
+                    },
+                }
+            },
+        });
+
+        return teamName;
+    }),
+
     getActiveTeams: protectedProcedure.query(async ({ ctx }) => {
         const teams = await ctx.db.team.findMany({
             where: {

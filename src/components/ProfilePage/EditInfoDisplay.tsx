@@ -164,6 +164,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
 
     return (
         <div>
+            <h1>Editing: {member.name}</h1>
             <h2>Member information:</h2>
             <ul className='list-disc mb-4 text-xl'>
                 {Object.entries(editedMember).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)).map(([key, value]) => {
@@ -188,7 +189,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
 
 const renderValue = (value: string | number | boolean | Date | null, key: string) => {
     // Exclude rendering for specified properties
-    if (key === 'memberID' || key === 'additionalComments' || key === 'slackID' || key === 'orbitMail' || key === 'activeStatus') {
+    if (key === 'memberID' || key === 'teamHistory' || key === 'additionalComments' || key === 'slackID' || key === 'orbitMail' || key === 'activeStatus') {
         return 'excluded'; // Or any other value indicating exclusion
     }
     if (value instanceof Date) {

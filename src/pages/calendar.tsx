@@ -1,5 +1,5 @@
 import CalendarDisplay from "@/components/CalendarPage/CalendarDisplay";
-import Layout from "@/templates/Layout";
+import Layout from "@/components/General/Layout";
 import { api } from "@/utils/api";
 import { useEffect, useState } from "react";
 import type { Event, Member, TeamHistory } from "@prisma/client";

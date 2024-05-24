@@ -1,4 +1,4 @@
-import Layout from '@/templates/Layout';
+import Layout from "@/components/General/Layout";
 import MemberDistribution from '@/components/StatisticsPage/TeamDistribution';
 import BreakLine from '@/components/General/Breakline';
 import TeamsGrowth from '@/components/StatisticsPage/TeamsGrowth';

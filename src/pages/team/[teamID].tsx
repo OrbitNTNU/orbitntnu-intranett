@@ -4,7 +4,7 @@ import Icons from "@/components/General/Icons";
 import { Loading } from "@/components/General/Loading";
 import MemberInfo from "@/components/General/MemberInfo";
 import type { MemberInfoData } from "@/interfaces/MemberInfo";
-import Layout from "@/templates/Layout";
+import Layout from "@/components/General/Layout";
 import { api } from "@/utils/api";
 import EditTeamsView from "@/views/EditTeamsView";
 import { type TeamHistory } from "@prisma/client";
@@ -120,9 +120,6 @@ const TeamsPage = () => {
                 <>
                     <div className='md:flex justify-between items-center'>
                         <ul className='items-center flex flex-row gap-6'>
-                            <Link href="/team/teamlist">
-                                <Icons name="ArrowLeft_lg" />
-                            </Link>
                             <h1>{team?.teamName}</h1>
                         </ul>
                     </div>
@@ -158,9 +155,6 @@ const TeamsPage = () => {
                 <>
                     <div className='md:flex justify-between items-center'>
                         <ul className='items-center flex flex-row gap-6'>
-                            <Link href="/team/teamlist">
-                                <Icons name="ArrowLeft_lg" />
-                            </Link>
                             <h1>{team?.teamName}</h1>
                         </ul>
                         <div className="md:mt-0 mt-4">

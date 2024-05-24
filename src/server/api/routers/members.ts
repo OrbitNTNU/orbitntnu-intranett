@@ -9,45 +9,69 @@ export const membersRouter = createTRPCRouter({
     }),
 
     getMemberById: protectedProcedure.input(z.number()).query(async (opts) => {
-        if (!opts.input) {
-            throw new Error("Input is missing.");
+    if (!opts.input) {
+        throw new Error("Input is missing.");
+    }
+
+    const sessionMemeberInfo = opts.ctx.session.user.memberInfo;
+
+    const memberID = opts.input;
+
+    if (sessionMemeberInfo.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD")) {
+        const member = await opts.ctx.db.member.findUnique({
+            where: { memberID },
+            include: {
+                teamHistory: {
+                    include: {
+                        team: true
+                    }
+                }
+            }
+        });
+
+        if (!member) {
+            throw new Error("Member not found");
         }
 
-        const sessionMemeberInfo = opts.ctx.session.user.memberInfo;
-        
-        if (sessionMemeberInfo.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD")) {
-            const member = await opts.ctx.db.member.findUnique({
-                where: { memberID: opts.input },
-            });
-
-            if (!member) {
-                throw new Error("Member not found");
+        return member;
+    } else {
+        const member = await opts.ctx.db.member.findUnique({
+            where: { memberID },
+            select: {
+                birthday: true,
+                linkedin: true,
+                orbitMail: true,
+                phoneNumber: true,
+                name: true,
+                yearOfStudy: true,
+                fieldOfStudy: true,
+                teamHistory: {
+                    select: {
+                        startSem: true,
+                        startYear: true,
+                        endSem: true,
+                        endYear: true,
+                        priviledges: true,
+                        cPosition: true,
+                        team: {
+                            select: {
+                                teamName: true,
+                                // add more fields from team if needed
+                            }
+                        }
+                    }
+                }
             }
+        });
 
-            return member;
-        } else {
-            const member = await opts.ctx.db.member.findUnique({
-                select: {
-                    memberID: true,
-                    birthday: true,
-                    ntnuMail: true,
-                    phoneNumber: true,
-                    name: true,
-                    yearOfStudy: true,
-                    fieldOfStudy: true,
-                },
-                where: { 
-                    memberID: opts.input 
-                },
-            });
-
-            if (!member) {
-                throw new Error("Member not found");
-            }
-
-            return member;
+        if (!member) {
+            throw new Error("Member not found");
         }
-    }),
+
+        return member;
+    }
+}),
+
 
     getMemberByOrbitMail: protectedProcedure.input(z.string()).query(async (opts) => {
         const member = await opts.ctx.db.member.findFirst({
@@ -55,6 +79,31 @@ export const membersRouter = createTRPCRouter({
         });
 
         return member;
+    }),
+
+    getNameByID: protectedProcedure.input(z.number().nullable()).query(async (opts) => {
+        if(!opts.input) {
+            return;
+        }
+
+        const name = await opts.ctx.db.member.findUnique({
+            select: { name: true },
+            where: { memberID: opts.input },
+        });
+    
+        return name ? { name: name.name } : null;
+    }),
+    
+    getNameBySession: protectedProcedure.query(async (opts) => {
+        const orbitMail = opts.ctx.session.user.email;
+    
+        if (orbitMail) {
+            const response = await opts.ctx.db.member.findUnique({
+                select: { name: true },
+                where: { orbitMail: orbitMail },
+            });
+            return { name: response ? response.name : 'Me' }; // Return { name: null } if name is not available
+        }
     }),
 
     getTeamAndTLorBoard: protectedProcedure.input(z.number()).query(async (opts) => {
