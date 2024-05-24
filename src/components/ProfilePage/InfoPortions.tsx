@@ -34,10 +34,10 @@ export type MemberInput = Member | MemberSubset;
 
 export const ContactInfo = ({ member }: { member: MemberInput }) => {
     const hasContactInfo =
-    ('orbitMail' in member && member.orbitMail !== undefined) ||
-    ('ntnuMail' in member && member.ntnuMail !== undefined) ||
-    ('personalMail' in member && member.personalMail !== undefined) ||
-    ('phoneNumber' in member && member.phoneNumber !== undefined);
+    ('orbitMail' in member && member.orbitMail) ??
+    ('ntnuMail' in member && member.ntnuMail) ??
+    ('personalMail' in member && member.personalMail) ??
+    ('phoneNumber' in member && member.phoneNumber);
 
     if (!hasContactInfo) return null;
 
@@ -57,11 +57,11 @@ export const ContactInfo = ({ member }: { member: MemberInput }) => {
 export const SystemInfo = ({ member }: { member: MemberInput }) => {
     // Check if each attribute we are working with is present in the member object
     const hasSystemInfo =
-        ('slackID' in member && member.slackID !== undefined) ||
-        ('memberID' in member && member.memberID !== undefined) ||
-        ('activeStatus' in member && member.activeStatus !== undefined) ||
-        ('showPhoneNrOnWebsite' in member && member.showPhoneNrOnWebsite !== undefined) ||
-        ('birthdayBot' in member && member.birthdayBot !== undefined);
+        ('slackID' in member && member.slackID) ??
+        ('memberID' in member && member.memberID) ??
+        ('activeStatus' in member && member.activeStatus) ??
+        ('showPhoneNrOnWebsite' in member && member.showPhoneNrOnWebsite) ??
+        ('birthdayBot' in member && member.birthdayBot)
 
     if (!hasSystemInfo) return null;
 
@@ -71,21 +71,21 @@ export const SystemInfo = ({ member }: { member: MemberInput }) => {
                 <BreakLine />
                 <h3 className='text-lg font-semibold'>System Information:</h3>
             </li>
-            {member.slackID && <ListItem label="Slack ID" value={member.slackID}/>}
-            {member.memberID && <ListItem label="Member ID" value={String(member.memberID)}/>}
-            {member.activeStatus !== undefined && <ListItem label="Active Status" value={String(member.activeStatus)} />}
-            {member.showPhoneNrOnWebsite !== undefined && <ListItem label="Public Phone Number" value={String(member.showPhoneNrOnWebsite)} />}
-            {member.birthdayBot !== undefined && <ListItem label="BirthdayBot" value={String(member.birthdayBot)} />}
+            {'slackID' in member && member.slackID && <ListItem label="Slack ID" value={member.slackID}/>}
+            {'memberID' in member && member.memberID && <ListItem label="Member ID" value={String(member.memberID)}/>}
+            {'activeStatus' in member && member.activeStatus !== undefined && <ListItem label="Active Status" value={String(member.activeStatus)} />}
+            {'showPhoneNrOnWebsite' in member && member.showPhoneNrOnWebsite !== undefined && <ListItem label="Public Phone Number" value={String(member.showPhoneNrOnWebsite)} />}
+            {'birthdayBot' in member && member.birthdayBot !== undefined && <ListItem label="BirthdayBot" value={String(member.birthdayBot)} />}
         </div>
     );
 };
 export const OtherInfo = ({ member }: { member: MemberInput }) => {
     const hasOtherInfo =
-        ('birthday' in member && member.birthday !== undefined) ||
-        ('fieldOfStudy' in member && member.fieldOfStudy !== undefined) ||
-        ('yearOfStudy' in member && member.yearOfStudy !== undefined) ||
-        ('additionalComments' in member && member.additionalComments !== undefined) ||
-        ('nationalities' in member && member.nationalities !== undefined);
+        ('birthday' in member && member.birthday) ??
+        ('fieldOfStudy' in member && member.fieldOfStudy) ??
+        ('yearOfStudy' in member && member.yearOfStudy) ??
+        ('additionalComments' in member && member.additionalComments) ??
+        ('nationalities' in member && member.nationalities);
 
     if (!hasOtherInfo) return null;
 
@@ -107,7 +107,7 @@ export const OtherInfo = ({ member }: { member: MemberInput }) => {
 
 export const Links = ({ member }: { member: MemberInput }) => {
     const hasLinks =
-        ('linkedin' in member && member.linkedin !== null && member.linkedin !== "");
+        ('linkedin' in member && member.linkedin && member.linkedin !== "");
 
     if (!hasLinks) return null;
 
@@ -144,7 +144,6 @@ export const UnknownInfo = ({ member }: { member: MemberInput }) => {
                 <h3 className='text-lg font-semibold'>Unknown Information:</h3>
             </li>
             {unknownFields.map((field, index) => {
-                console.log(field);
                 const formattedField = formatCamelCaseToReadable(field);
                 return (
                     <ListItem key={index} label={formattedField} value="Unknown" />

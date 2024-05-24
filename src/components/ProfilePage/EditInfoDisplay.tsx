@@ -15,7 +15,6 @@ interface InfoDisplayProps {
 const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) => {
     const [editedMember, setEditedMember] = useState<MemberInput>(member);
     const [programs, setPrograms] = useState<Program[]>([]);
-    const [selectedStudyProgram, setSelectedStudyProgram] = useState<string | null>(member.fieldOfStudy);
 
     // Use useQuery directly within the functional component
     const query = api.programs.getPrograms.useQuery();
@@ -54,8 +53,6 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
             } else if (label === 'birthday' && typeof newValue === 'string') {
                 // Parse newValue as a Date object for birthday
                 parsedValue = new Date(newValue);
-            } else if (label === 'fieldOfStudy') {
-                setSelectedStudyProgram(String(parsedValue));
             }
 
             setEditedMember(prevState => ({
@@ -82,7 +79,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                 return (
                     <select
                         className='md:ml-2 rounded-md text-black px-2 max-w-sm overflow-x-auto'
-                        value={selectedStudyProgram ?? ''}
+                        value={programs.find((program) => editedMember.fieldOfStudy?.includes(program.studyprogcode ?? ''))?.studyprogcode}
                         onChange={(e) => handleChange(e.target.value)}
                     >
                         {programs.sort((a, b) => a.studyprogcode.localeCompare(b.studyprogcode)).map((program, index) => (
