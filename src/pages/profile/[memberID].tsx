@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Loading } from '@/components/General/Loading';
 import type { $Enums, Member, Team, TeamHistory } from '@prisma/client';
-import { ContactInfo, SystemInfo, OtherInfo, Links, UnknownInfo } from '@/components/ProfilePage/InfoPortions';
+import { ContactInfo, SystemInfo, OtherInfo, Links, UnknownInfo, type MemberInput } from '@/components/ProfilePage/InfoPortions';
 import Icons from '@/components/General/Icons';
 import EditInfoDisplay from '@/components/ProfilePage/EditInfoDisplay';
 
@@ -185,7 +185,7 @@ const ProfilePage = () => {
                 </div>
             </div>
             ) : (
-                <EditInfoDisplay member={member} onUpdateInfo={handleUpdateInfo} />
+                <EditInfoDisplay member={member as unknown as Member & {teamHistories: (TeamHistory & { team: Team })}} onUpdateInfo={handleUpdateInfo} />
             )}
         </Layout>
     );

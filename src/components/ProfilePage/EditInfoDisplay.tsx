@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import Button from '../General/Button';
 import 'react-phone-number-input/style.css';
 import PhoneInput from 'react-phone-number-input';
-import type { Member } from '@prisma/client';
 import { api } from '@/utils/api';
 import type { Program } from '@/server/api/routers/studyPrograms';
+import type { MemberInput } from './InfoPortions';
+import type { Member, Team, TeamHistory } from '@prisma/client';
 
 interface InfoDisplayProps {
-    member: Member;
+    member: Member & {teamHistories: (TeamHistory & { team: Team })};
     onUpdateInfo: (member: Member) => Promise<void>;
 }
 
 const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) => {
-    const [editedMember, setEditedMember] = useState<Member>(member);
+    const [editedMember, setEditedMember] = useState<MemberInput>(member);
     const [programs, setPrograms] = useState<Program[]>([]);
     const [selectedStudyProgram, setSelectedStudyProgram] = useState<string | null>(member.fieldOfStudy);
 
@@ -73,7 +74,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                     <input
                         className='md:ml-2 rounded-md text-black px-2'
                         type='text'
-                        defaultValue={member[label] ?? undefined}
+                        defaultValue={label in editedMember ? (editedMember[label as keyof MemberInput]?.toString() ?? '') : undefined}
                         onChange={(e) => handleChange(e.target.value)}
                     />
                 );
@@ -101,14 +102,14 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                         type='date'
                         defaultValue={
                             editedMember.birthday instanceof Date &&  // Check if input is an instance of Date
-                            editedMember.birthday !== null &&  // Check if input is not null
-                            editedMember.birthday !== undefined &&
-                            editedMember !== undefined ?  // Check if input is not undefined
-                            !isNaN(editedMember.birthday?.getTime()) &&  // Check if input is a valid Date object
-                            !isNaN(new Date(editedMember.birthday).getDate()) // Check if the date part is valid
-                            ? new Date(editedMember.birthday).toISOString().split('T')[0]
-                            : ''
-                            : ''
+                                editedMember.birthday !== null &&  // Check if input is not null
+                                editedMember.birthday !== undefined &&
+                                editedMember !== undefined ?  // Check if input is not undefined
+                                !isNaN(editedMember.birthday?.getTime()) &&  // Check if input is a valid Date object
+                                    !isNaN(new Date(editedMember.birthday).getDate()) // Check if the date part is valid
+                                    ? new Date(editedMember.birthday).toISOString().split('T')[0]
+                                    : ''
+                                : ''
                         }
 
                         onChange={(e) => handleChange(e.target.value)}
@@ -148,7 +149,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
                     <input
                         className='md:ml-2 rounded-md text-black px-2 max-w-sm overflow-x-auto w-[25px]'
                         type='checkbox'
-                        checked={editedMember[label] ?? false}
+                        checked={label in editedMember ? (editedMember[label as keyof MemberInput]) as unknown as boolean: false}
                         onChange={(e) => handleChange(e.target.checked)}
                         style={{ borderRadius: '0.375rem' }} // Apply rounded style directly to the input
                     />
@@ -159,7 +160,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
     };
 
     const handleUpdateInfo = () => {
-        void onUpdateInfo(editedMember);
+        void onUpdateInfo(editedMember as Member);
     };
 
     return (
@@ -168,7 +169,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
             <h2>Member information:</h2>
             <ul className='list-disc mb-4 text-xl'>
                 {Object.entries(editedMember).sort(([keyA], [keyB]) => keyA.localeCompare(keyB)).map(([key, value]) => {
-                    const renderValueString = renderValue(value, key);
+                    const renderValueString = renderValue(value as unknown, key);
                     if (renderValueString === 'excluded') {
                         return null;
                     }
@@ -187,7 +188,7 @@ const EditInfoDisplay: React.FC<InfoDisplayProps> = ({ member, onUpdateInfo }) =
     );
 };
 
-const renderValue = (value: string | number | boolean | Date | null, key: string) => {
+const renderValue = (value: unknown, key: string) => {
     // Exclude rendering for specified properties
     if (key === 'memberID' || key === 'teamHistory' || key === 'additionalComments' || key === 'slackID' || key === 'orbitMail' || key === 'activeStatus') {
         return 'excluded'; // Or any other value indicating exclusion
@@ -195,7 +196,7 @@ const renderValue = (value: string | number | boolean | Date | null, key: string
     if (value instanceof Date) {
         return value.toLocaleDateString(); // or any other format you prefer
     } else {
-        return value ? value.toString() : 'unknown';
+        return value;
     }
 };
 

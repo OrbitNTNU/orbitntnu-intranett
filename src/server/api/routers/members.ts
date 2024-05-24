@@ -46,19 +46,8 @@ export const membersRouter = createTRPCRouter({
                 yearOfStudy: true,
                 fieldOfStudy: true,
                 teamHistory: {
-                    select: {
-                        startSem: true,
-                        startYear: true,
-                        endSem: true,
-                        endYear: true,
-                        priviledges: true,
-                        cPosition: true,
-                        team: {
-                            select: {
-                                teamName: true,
-                                // add more fields from team if needed
-                            }
-                        }
+                    include: {
+                        team: true
                     }
                 }
             }
