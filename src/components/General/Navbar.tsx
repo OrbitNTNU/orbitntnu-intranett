@@ -18,6 +18,7 @@ export function findInternalShortcuts(shortcuts: ShortcutsProps[]) {
 
 const Navbar = () => {
   const pathname = usePathname();
+  const session = useSession();
 
   const memberNameQuery = api.members.getNameByID;
   const teamNameQuery = api.teams.getActiveTeamNameByID;
@@ -26,11 +27,17 @@ const Navbar = () => {
   const lastSegment = pathSegments[pathSegments.length - 1];
 
   const isProfilePage = pathname?.includes('profile');
-  const isTeamPage = pathname?.includes('team') && !pathname.includes('teams') && !pathname.includes('find');
+  const isTeamPage = pathname?.includes('team') && !pathname?.includes('teams');
   const isEditPage = pathname?.includes('edit');
 
-  const memberID = isProfilePage ? Number(lastSegment) : null;
-  const teamID = isTeamPage ? Number(lastSegment) : null;
+  const memberID = isProfilePage ? pathname?.includes('me') && session.data ? session.data?.user.memberInfo.memberID : Number(lastSegment) : null;
+
+  const teamID = isTeamPage 
+    ? pathname?.includes('find') && session.data?.user.memberInfo.teamHistory[0]
+    ? session.data?.user.memberInfo.teamHistory.length === 1 
+    ? session.data?.user.memberInfo.teamHistory[0]?.team.teamID : null
+    : Number(lastSegment) : null;
+
 
   const memberQueryResult = memberNameQuery.useQuery(memberID, {
     enabled: !!memberID,
@@ -45,8 +52,6 @@ const Navbar = () => {
     : memberQueryResult.data?.name;
 
   const teamName = teamQueryResult.data?.teamName;
-
-  const session = useSession();
 
   const handleLogin = () => {
     void signIn("google");

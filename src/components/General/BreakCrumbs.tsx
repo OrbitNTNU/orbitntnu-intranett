@@ -64,7 +64,15 @@ const NextBreadcrumb = ({ homeElement, separator, listClasses, activeClasses, te
     };
 
     const resetHistory = (path: string) => {
-        const alias = (path.split('/')[path.split('/').length - 1] ?? path).charAt(0).toUpperCase() + (path.split('/')[path.split('/').length - 1] ?? path).slice(1);
+        const alias = path.includes('profile') ? memberName ?? 'Loading...' 
+            : path.includes('team') && !path.includes('teams') ? teamName ?? 'Loading...' 
+            : (path.split('/')[path.split('/').length - 1] ?? path).charAt(0).toUpperCase() 
+            + (path.split('/')[path.split('/').length - 1] ?? path).slice(1);;
+        
+        if (alias === 'Loading...') {
+            return
+        }
+
         const newHistory = [{ url: '/', alias: 'Home' }, { url: path, alias: alias }];
         setHistory(newHistory);
         localStorage.setItem('breadcrumbHistory', JSON.stringify(newHistory));
@@ -119,7 +127,7 @@ const NextBreadcrumb = ({ homeElement, separator, listClasses, activeClasses, te
                     <Link href={'/'} onClick={() => handleLinkClick('/')}>
                         {homeElement}
                     </Link>
-                    </li>
+                </li>
                 {history.length > 0 && separator}
                 {history.map((breadcrumb, index) => {
                     const { url, alias } = breadcrumb;

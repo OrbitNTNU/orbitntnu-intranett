@@ -1,6 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 import { z } from "zod";
 import { db } from "@/server/db";
+import type { Member, Team, TeamHistory } from "@prisma/client";
 
 export const membersRouter = createTRPCRouter({
     getMembers: protectedProcedure.query(async ({ ctx }) => {
@@ -9,57 +10,88 @@ export const membersRouter = createTRPCRouter({
     }),
 
     getMemberById: protectedProcedure.input(z.number()).query(async (opts) => {
-    if (!opts.input) {
-        throw new Error("Input is missing.");
-    }
-
-    const sessionMemeberInfo = opts.ctx.session.user.memberInfo;
-
-    const memberID = opts.input;
-
-    if (sessionMemeberInfo.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD")) {
-        const member = await opts.ctx.db.member.findUnique({
-            where: { memberID },
-            include: {
-                teamHistory: {
-                    include: {
-                        team: true
-                    }
-                }
-            }
-        });
-
-        if (!member) {
-            throw new Error("Member not found");
+        if (!opts.input) {
+            throw new Error("Input is missing.");
         }
 
-        return member;
-    } else {
-        const member = await opts.ctx.db.member.findUnique({
-            where: { memberID },
-            select: {
-                birthday: true,
-                linkedin: true,
-                orbitMail: true,
-                phoneNumber: true,
-                name: true,
-                yearOfStudy: true,
-                fieldOfStudy: true,
-                teamHistory: {
-                    include: {
-                        team: true
+        const sessionMemeberInfo = opts.ctx.session.user.memberInfo;
+
+        const memberID = opts.input;
+
+        type TeamWithDetails = TeamHistory & { team: Team };
+        type MemberWithTeamHistory = Member & { teamHistory: TeamWithDetails[] };
+
+
+        const removeAdditionalComments = (member: MemberWithTeamHistory): Omit<MemberWithTeamHistory, "additionalComments"> => {
+            const { additionalComments, ...rest } = member;
+            return rest;
+        };
+
+        // Board gets total access
+        if (sessionMemeberInfo.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD")) {
+            const member = await opts.ctx.db.member.findUnique({
+                where: { memberID },
+                include: {
+                    teamHistory: {
+                        include: {
+                            team: true
+                        }
                     }
                 }
+            });
+
+            if (!member) {
+                throw new Error("Member not found");
             }
-        });
 
-        if (!member) {
-            throw new Error("Member not found");
+            return member;
+
+            // If it is own profile, do not show additionalComments
+        } else if (sessionMemeberInfo.memberID === memberID) {
+            const member = await opts.ctx.db.member.findUnique({
+                where: { memberID },
+                include: {
+                    teamHistory: {
+                        include: {
+                            team: true
+                        }
+                    }
+                }
+            });
+
+            if (!member) {
+                throw new Error("Member not found");
+            }
+
+            return removeAdditionalComments(member);
+
+            // Rest of the members see limited view
+        } else {
+            const member = await opts.ctx.db.member.findUnique({
+                where: { memberID },
+                select: {
+                    birthday: true,
+                    linkedin: true,
+                    orbitMail: true,
+                    phoneNumber: true,
+                    name: true,
+                    yearOfStudy: true,
+                    fieldOfStudy: true,
+                    teamHistory: {
+                        include: {
+                            team: true
+                        }
+                    }
+                }
+            });
+
+            if (!member) {
+                throw new Error("Member not found");
+            }
+
+            return member;
         }
-
-        return member;
-    }
-}),
+    }),
 
 
     getMemberByOrbitMail: protectedProcedure.input(z.string()).query(async (opts) => {
@@ -71,7 +103,7 @@ export const membersRouter = createTRPCRouter({
     }),
 
     getNameByID: protectedProcedure.input(z.number().nullable()).query(async (opts) => {
-        if(!opts.input) {
+        if (!opts.input) {
             return;
         }
 
@@ -79,13 +111,13 @@ export const membersRouter = createTRPCRouter({
             select: { name: true },
             where: { memberID: opts.input },
         });
-    
+
         return name ? { name: name.name } : null;
     }),
-    
+
     getNameBySession: protectedProcedure.query(async (opts) => {
         const orbitMail = opts.ctx.session.user.email;
-    
+
         if (orbitMail) {
             const response = await opts.ctx.db.member.findUnique({
                 select: { name: true },

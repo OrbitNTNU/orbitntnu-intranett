@@ -50,40 +50,37 @@ const TeamsPage = () => {
     });
 
     const team = membersInTeam?.find((member) =>
-        member.teamHistory?.some((history) => history.teamID === Number(teamID))
+        member.teamHistory?.some((history) => history.teamID === (teamID == "find" && sessionMemberData ? sessionMemberData.teamHistory.length === 1
+            ? sessionMemberData.teamHistory[0]?.team.teamID : null : Number(teamID)))
     )?.teamHistory[0]?.team;
 
     useEffect(() => {
         // Effect to handle the rerender when updateFlag changes
     }, [updateFlag]); // Dependency array includes updateFlag
 
-    if (teamID == "find") {
-        if (sessionMemberData) {
-            if (sessionMemberData.teamHistory.length === 1) {
-                void router.push("/team/" + sessionMemberData.teamHistory[0]?.team.teamID)
-            } else if (sessionMemberData.teamHistory.length === 0) {
-                void router.push("/team/null")
-            } else {
-                return (
-                    <Layout>
-                        <div className='items-center flex flex-row gap-6'>
-                            <h1>Your teams</h1>
-                        </div>
-                        <BreakLine />
-                        {sessionMemberData.teamHistory?.map((teamHistory) => (
-                            <Link href={`/team/${teamHistory.team.teamID}`} key={teamHistory.team.teamID}>
-                                <div className="bg-blue-600 hover:bg-blue-800 gap-6 p-6 m-4 rounded-md">
-                                    <h2>{teamHistory.team.teamName}</h2>
-                                </div>
-                            </Link>
-                        ))}
-                    </Layout>
-                )
-            }
+    if (sessionMemberData) {
+        if (sessionMemberData.teamHistory.length === 0) {
+            void router.push("/team/null")
+        } else if (sessionMemberData.teamHistory.length > 1) {
+            return (
+                <Layout>
+                    <div className='items-center flex flex-row gap-6'>
+                        <h1>Your teams</h1>
+                    </div>
+                    <BreakLine />
+                    {sessionMemberData.teamHistory?.map((teamHistory) => (
+                        <Link href={`/team/${teamHistory.team.teamID}`} key={teamHistory.team.teamID}>
+                            <div className="bg-blue-600 hover:bg-blue-800 gap-6 p-6 m-4 rounded-md">
+                                <h2>{teamHistory.team.teamName}</h2>
+                            </div>
+                        </Link>
+                    ))}
+                </Layout>
+            )
         }
     }
 
-    if (!router.isReady || teamID === "find" || !sessionMemberData) {
+    if (!router.isReady || !sessionMemberData) {
         return (
             <Layout>
                 <Loading />
