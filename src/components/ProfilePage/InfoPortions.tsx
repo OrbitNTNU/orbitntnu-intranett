@@ -34,10 +34,10 @@ export type MemberInput = Member | MemberSubset;
 
 export const ContactInfo = ({ member }: { member: MemberInput }) => {
     const hasContactInfo =
-    ('orbitMail' in member && member.orbitMail) ??
-    ('ntnuMail' in member && member.ntnuMail) ??
-    ('personalMail' in member && member.personalMail) ??
-    ('phoneNumber' in member && member.phoneNumber);
+        ('orbitMail' in member && member.orbitMail) ??
+        ('ntnuMail' in member && member.ntnuMail) ??
+        ('personalMail' in member && member.personalMail) ??
+        ('phoneNumber' in member && member.phoneNumber);
 
     if (!hasContactInfo) return null;
 
@@ -71,8 +71,8 @@ export const SystemInfo = ({ member }: { member: MemberInput }) => {
                 <BreakLine />
                 <h3 className='text-lg font-semibold'>System Information:</h3>
             </li>
-            {'slackID' in member && member.slackID && <ListItem label="Slack ID" value={member.slackID}/>}
-            {'memberID' in member && member.memberID && <ListItem label="Member ID" value={String(member.memberID)}/>}
+            {'slackID' in member && member.slackID && <ListItem label="Slack ID" value={member.slackID} />}
+            {'memberID' in member && member.memberID && <ListItem label="Member ID" value={String(member.memberID)} />}
             {'activeStatus' in member && member.activeStatus !== undefined && <ListItem label="Active Status" value={String(member.activeStatus)} />}
             {'showPhoneNrOnWebsite' in member && member.showPhoneNrOnWebsite !== undefined && <ListItem label="Public Phone Number" value={String(member.showPhoneNrOnWebsite)} />}
             {'birthdayBot' in member && member.birthdayBot !== undefined && <ListItem label="BirthdayBot" value={String(member.birthdayBot)} />}
@@ -144,10 +144,12 @@ export const UnknownInfo = ({ member }: { member: MemberInput }) => {
                 <h3 className='text-lg font-semibold'>Unknown Information:</h3>
             </li>
             {unknownFields.map((field, index) => {
-                const formattedField = formatCamelCaseToReadable(field);
-                return (
-                    <ListItem key={index} label={formattedField} value="Unknown" />
-                )
+                if (field !== 'userId') {
+                    const formattedField = formatCamelCaseToReadable(field);
+                    return (
+                        <ListItem key={index} label={formattedField} value="Unknown" />
+                    )
+                }
             })}
         </>
     );
