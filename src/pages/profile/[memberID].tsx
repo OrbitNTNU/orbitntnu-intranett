@@ -126,7 +126,7 @@ const ProfilePage = () => {
                 <>
                 <div className='w-full p-2'>
                 {member.name && (
-                    <li className='m-4 flex justify-center flex flex-row gap-4'>
+                    <li className='flex justify-center flex flex-row gap-4 rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
                         <h2>{member.name}</h2>
                         {(memberID === "me" || session.data?.user.memberInfo.teamHistory.some((teamHistory) => teamHistory.priviledges === "BOARD")) && (
                             <button onClick={toggleGodMode}>
@@ -138,7 +138,7 @@ const ProfilePage = () => {
             </div>
                 <div className='w-full flex flex-col lg:flex-row gap-4'>
                     <div className='w-full lg:w-3/5 p-2'>
-                        <div className='h-full rounded-2xl p-4 shadow-2xl'>
+                        <div className='h-full rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
                             <ul>
                                 <ContactInfo member={member} />
                                 <SystemInfo member={member} />
@@ -149,7 +149,7 @@ const ProfilePage = () => {
                         </div>
                     </div>
                     <div className='flex flex-col w-full lg:w-2/5 p-2 gap-4'>
-                        <div className='rounded-2xl p-4 shadow-2xl'>
+                        <div className='rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
                             <ul>
                                 <li className='mb-2'>
                                     <h3 className='text-lg font-semibold'>{currentPositionsTitle}:</h3>
@@ -157,7 +157,7 @@ const ProfilePage = () => {
                                 {formatCurrentPosition(member.teamHistory)}
                             </ul>
                         </div>
-                        <div className='p-4 rounded-2xl h-full shadow-2xl'>
+                        <div className='p-4 rounded-2xl h-full shadow-gray-900 shadow-2xl'>
                             <div className='flex justify-between items-center mb-4'>
                                 <h2 className='text-xl font-semibold'>Team History</h2>
                             </div>
