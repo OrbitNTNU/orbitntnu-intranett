@@ -9,7 +9,7 @@ const TeamsGrowth = () => {
     const [selectedTeam, setSelectedTeam] = useState<number>(0); // Initialize growth state with an empty object
 
     // Fetch teams data
-    const teamsData = api.teamHistories.getGrowth.useQuery(selectedTeam > 0 ? true : false);
+    const teamsData = api.teamHistories.getGrowth.useQuery(selectedTeam !== 0 ? true : false);
     const allTeams = api.teams.getTeams.useQuery();
 
     useEffect(() => {
