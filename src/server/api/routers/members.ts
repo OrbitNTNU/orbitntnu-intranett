@@ -21,7 +21,6 @@ export const membersRouter = createTRPCRouter({
         type TeamWithDetails = TeamHistory & { team: Team };
         type MemberWithTeamHistory = Member & { teamHistory: TeamWithDetails[] };
 
-
         const removeAdditionalComments = (member: MemberWithTeamHistory): Omit<MemberWithTeamHistory, "additionalComments"> => {
             const { additionalComments, ...rest } = member;
             return rest;

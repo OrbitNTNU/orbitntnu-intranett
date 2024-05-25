@@ -145,9 +145,15 @@ export const teamHistoriesRouter = createTRPCRouter({
         return filteredTeamsWithTeamHistories;
     }),
 
-    getTeamsFromSem: protectedProcedure.query(async ({ ctx }) => {
+    getGrowth: protectedProcedure.input(z.boolean()).query(async (opts) => {
+        if (opts.input === undefined) {
+            throw new Error("Input is missing.");
+        }
+
+        const countDuplicates = opts.input;
+
         // Fetch all team histories
-        const allTeamHistories = await ctx.db.teamHistory.findMany({
+        const allTeamHistories = await opts.ctx.db.teamHistory.findMany({
             include: {
                 team: true
             }
@@ -167,18 +173,22 @@ export const teamHistoriesRouter = createTRPCRouter({
                     const semYearKey = `${year}_${SemType.FALL}`;
                     hasBeenAddedForSemYear[semYearKey] = hasBeenAddedForSemYear[semYearKey] ?? new Set();
 
-                    if (!hasBeenAddedForSemYear[semYearKey]?.has(identifiedMember)) {
+                    if (!hasBeenAddedForSemYear[semYearKey]?.has(identifiedMember) && !countDuplicates) {
                         acc[semYearKey] = [...(acc[semYearKey] ?? []), identifiedTeam];
                         hasBeenAddedForSemYear[semYearKey]?.add(identifiedMember);
+                    } else {
+                        acc[semYearKey] = [...(acc[semYearKey] ?? []), identifiedTeam];
                     }
 
                 } else if (year === teamHistory.endYear && teamHistory.endSem === SemType.SPRING) {
                     const semYearKey = `${year}_${SemType.SPRING}`;
                     hasBeenAddedForSemYear[semYearKey] = hasBeenAddedForSemYear[semYearKey] ?? new Set();
 
-                    if (!hasBeenAddedForSemYear[semYearKey]?.has(identifiedMember)) {
+                    if (!hasBeenAddedForSemYear[semYearKey]?.has(identifiedMember) && !countDuplicates) {
                         acc[semYearKey] = [...(acc[semYearKey] ?? []), identifiedTeam];
                         hasBeenAddedForSemYear[semYearKey]?.add(identifiedMember);
+                    } else {
+                        acc[semYearKey] = [...(acc[semYearKey] ?? []), identifiedTeam];
                     }
 
                 } else if (year === new Date().getFullYear()) {
@@ -192,38 +202,49 @@ export const teamHistoriesRouter = createTRPCRouter({
                         hasBeenAddedForSemYear[semYearKey1] = hasBeenAddedForSemYear[semYearKey1] ?? new Set();
                         hasBeenAddedForSemYear[semYearKey2] = hasBeenAddedForSemYear[semYearKey2] ?? new Set();
 
-                        if (!hasBeenAddedForSemYear[semYearKey1]?.has(identifiedMember)) {
+                        if (!hasBeenAddedForSemYear[semYearKey1]?.has(identifiedMember) && !countDuplicates) {
                             acc[semYearKey1] = [...(acc[semYearKey1] ?? []), identifiedTeam];
                             hasBeenAddedForSemYear[semYearKey1]?.add(identifiedMember);
+                        } else {
+                            acc[semYearKey1] = [...(acc[semYearKey1] ?? []), identifiedTeam];
                         }
 
-                        if (!hasBeenAddedForSemYear[semYearKey2]?.has(identifiedMember)) {
+                        if (!hasBeenAddedForSemYear[semYearKey2]?.has(identifiedMember) && !countDuplicates) {
                             acc[semYearKey2] = [...(acc[semYearKey2] ?? []), identifiedTeam];
                             hasBeenAddedForSemYear[semYearKey2]?.add(identifiedMember);
+                        } else {
+                            acc[semYearKey2] = [...(acc[semYearKey2] ?? []), identifiedTeam];
                         }
                     } else {
                         const semYearKey = `${year}_${SemType.SPRING}`;
                         hasBeenAddedForSemYear[semYearKey] = hasBeenAddedForSemYear[semYearKey] ?? new Set();
 
-                        if (!hasBeenAddedForSemYear[semYearKey]?.has(identifiedMember)) {
+                        if (!hasBeenAddedForSemYear[semYearKey]?.has(identifiedMember) && !countDuplicates) {
                             acc[semYearKey] = [...(acc[semYearKey] ?? []), identifiedTeam];
                             hasBeenAddedForSemYear[semYearKey]?.add(identifiedMember);
+                        } else {
+                            acc[semYearKey] = [...(acc[semYearKey] ?? []), identifiedTeam];
                         }
                     }
                 } else {
                     const semYearKey1 = `${year}_${SemType.FALL}`;
                     const semYearKey2 = `${year}_${SemType.SPRING}`;
+
                     hasBeenAddedForSemYear[semYearKey1] = hasBeenAddedForSemYear[semYearKey1] ?? new Set();
                     hasBeenAddedForSemYear[semYearKey2] = hasBeenAddedForSemYear[semYearKey2] ?? new Set();
 
-                    if (!hasBeenAddedForSemYear[semYearKey1]?.has(identifiedMember)) {
+                    if (!hasBeenAddedForSemYear[semYearKey1]?.has(identifiedMember) && !countDuplicates) {
                         acc[semYearKey1] = [...(acc[semYearKey1] ?? []), identifiedTeam];
                         hasBeenAddedForSemYear[semYearKey1]?.add(identifiedMember);
+                    } else {
+                        acc[semYearKey1] = [...(acc[semYearKey1] ?? []), identifiedTeam];
                     }
 
-                    if (!hasBeenAddedForSemYear[semYearKey2]?.has(identifiedMember)) {
+                    if (!hasBeenAddedForSemYear[semYearKey2]?.has(identifiedMember) && !countDuplicates) {
                         acc[semYearKey2] = [...(acc[semYearKey2] ?? []), identifiedTeam];
                         hasBeenAddedForSemYear[semYearKey2]?.add(identifiedMember);
+                    } else {
+                        acc[semYearKey2] = [...(acc[semYearKey2] ?? []), identifiedTeam];
                     }
                 }
                 // Move to the next year

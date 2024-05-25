@@ -9,10 +9,11 @@ const TeamsGrowth = () => {
     const [selectedTeam, setSelectedTeam] = useState<number>(0); // Initialize growth state with an empty object
 
     // Fetch teams data
-    const teamsData = api.teamHistories.getTeamsFromSem.useQuery();
+    const teamsData = api.teamHistories.getGrowth.useQuery(selectedTeam > 0 ? true : false);
     const allTeams = api.teams.getTeams.useQuery();
 
     useEffect(() => {
+        
         // Effect to update team membership distribution when teams data changes
         if (!teamsData.isLoading && teamsData.data) {
             // Sort the entries of the growth object based on keys (year_sem)
@@ -30,7 +31,7 @@ const TeamsGrowth = () => {
             );
             setGrowth(sortedGrowth);
         }
-    }, [teamsData.isLoading, teamsData.data]);
+    }, [teamsData.isLoading, teamsData.data, selectedTeam]);
 
     useEffect(() => {
         // Effect to update team membership distribution when teams data changes
