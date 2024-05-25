@@ -97,7 +97,7 @@ export const OtherInfo = ({ member }: { member: MemberInput }) => {
             </li>
             {member.fieldOfStudy && <ListItem label="Field of Study" value={member.fieldOfStudy} />}
             {member.yearOfStudy && <ListItem label="Year of Study" value={String(member.yearOfStudy)} />}
-            {member.birthday && <ListItem label="Birthday" value={member.birthday.toLocaleDateString()} />}
+            {member.birthday && <ListItem label="Birthday" value={new Date(member.birthday).toLocaleDateString('en-GB')} />}
             {'additionalComments' in member && member.additionalComments && <ListItem label="Additional Comments" value={member.additionalComments} />}
             {'nationalities' in member && member.nationalities && <ListItem label="Nationalities" value={member.nationalities} />}
         </>
