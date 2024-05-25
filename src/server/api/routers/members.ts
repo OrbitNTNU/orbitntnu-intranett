@@ -495,7 +495,6 @@ export const membersRouter = createTRPCRouter({
             yearOfStudy: z.number().nullable(),
             birthday: z.date().nullable(),
             nationalities: z.string().nullable(),
-            additionalComments: z.string().nullable(),
             personalMail: z.string().nullable(),
             linkedin: z.string().nullable(),
             showPhoneNrOnWebsite: z.boolean(),
