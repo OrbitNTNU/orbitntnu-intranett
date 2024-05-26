@@ -94,6 +94,11 @@ const mockShortcuts: ShortcutsProps[] = [
                 description: 'View Documentation in Orbit',
                 url: 'https://docs.orbitntnu.com'
             },
+            {
+                header: 'Orbit Notion',
+                description: "Access Orbit's Notion",
+                url: 'https://www.notion.so/Home-3fa65bc83ba04164b60c8fa7ae99840b'
+            },
         ]
     }
 ]

@@ -8,8 +8,7 @@ export const Shortcuts = () => {
             <h2 className="flex font-bold text-5xl mb-4">
                 Shortcuts
             </h2>
-            <div className="flex flex-col justify-center gap-4">
-
+            <div className="flex flex-col justify-center gap-4 ">
                 {/* Display each group of shortcuts */}
                 {mockShortcuts.map((shortcutGroup) => (
                     <div key={shortcutGroup.type}>
