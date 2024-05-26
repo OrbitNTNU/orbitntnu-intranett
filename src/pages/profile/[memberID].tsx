@@ -136,7 +136,7 @@ const ProfilePage = () => {
                     </li>
                 )}
             </div>
-                <div className='w-full flex flex-col lg:flex-row gap-4'>
+                <div className='w-full flex flex-col lg:flex-row'>
                     <div className='w-full lg:w-3/5 p-2'>
                         <div className='h-full rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
                             <ul>
