@@ -124,9 +124,8 @@ const ProfilePage = () => {
         <Layout>
             {!godMode ? (
                 <>
-                <div className='w-full p-2'>
                 {member.name && (
-                    <li className='flex justify-center flex flex-row gap-4 rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
+                    <li className='flex justify-center flex-row gap-4 rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
                         <h2>{member.name}</h2>
                         {(memberID === "me" || session.data?.user.memberInfo.teamHistory.some((teamHistory) => teamHistory.priviledges === "BOARD")) && (
                             <button onClick={toggleGodMode}>
@@ -135,7 +134,6 @@ const ProfilePage = () => {
                         )}
                     </li>
                 )}
-            </div>
                 <div className='w-full flex flex-col lg:flex-row'>
                     <div className='w-full lg:w-3/5 p-2'>
                         <div className='h-full rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
