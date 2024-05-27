@@ -93,7 +93,7 @@ const Navbar = () => {
               <p>{session.data.user.name}</p>
             </Link>
           ) : (
-            <button onClick={handleLogin}>
+            <button onClick={handleLogin} className="hidden md:block">
               <Icons name="Profile" />
             </button>
           )}

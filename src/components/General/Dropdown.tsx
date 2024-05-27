@@ -46,7 +46,7 @@ const Dropdown: React.FC<DropdownProps> = ({ shortcuts, handleLogout, handleLogi
                 }
             </button>
             {/* Dropdown content */}
-            <div className={`absolute right-0 mt-4 w-48 rounded-2xl shadow-black shadow-2xl ${isOpen ? 'block' : 'hidden'}`}>
+            <div className={`absolute right-0 mt-4 w-48 rounded-2xl shadow-black shadow-2xl backdrop-blur-lg ${isOpen ? 'block' : 'hidden'}`}>
                 {shortcuts.map((shortcut, index) => (
                     <a
                         key={index}
