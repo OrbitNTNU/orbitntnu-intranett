@@ -4,6 +4,7 @@ import BreakLine from '@/components/General/Breakline';
 import TeamsGrowth from '@/components/StatisticsPage/TeamsGrowth';
 import Studies from '@/components/StatisticsPage/Studies';
 import Age from '@/components/StatisticsPage/Age';
+import LongestMembers from "@/components/StatisticsPage/LongestMembers";
 
 const Statistics = () => {
   return (
@@ -15,6 +16,8 @@ const Statistics = () => {
         <Studies/>
         <BreakLine/>
         <Age/>
+        <BreakLine/>
+        <LongestMembers/>
     </Layout>
   );
 };
