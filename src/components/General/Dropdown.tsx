@@ -54,7 +54,6 @@ const Dropdown: React.FC<DropdownProps> = ({ shortcuts, handleLogout, handleLogi
                         className={`block px-4 py-2 text-sm text-white hover:bg-blue-500 hover:text-white ${index === 0 ? 'rounded-t-2xl' : ''}`}
                     >
                         <h3>{shortcut.header}</h3>
-                        <p className="text-xs text-subtext">{shortcut.description}</p>
                     </a>
                 ))}
 

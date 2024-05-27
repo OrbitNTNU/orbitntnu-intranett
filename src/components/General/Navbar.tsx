@@ -85,6 +85,9 @@ const Navbar = () => {
             <Link href="/teams" className="mr-10">
               <Icons name="Teams" />
             </Link>
+            <Link href="/legacy" className="mr-10">
+              <Icons name="Clock" />
+            </Link>
           </div>
         </div>
         <div className='flex relative z-50'>
