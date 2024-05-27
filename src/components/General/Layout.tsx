@@ -12,7 +12,7 @@ const Layout = ({ children }: LayoutProps) => {
       <Navbar />
       <div className="min-h-screen flex flex-col mt-10">
         <main className="flex w-full flex-col items-center mb-10">
-          <div className="md:w-2/3 w-full p-4 md:p-0">
+          <div className="lg:w-2/3 md:w-4/5 w-full p-4 md:p-0">
             {children}
           </div>
         </main>
