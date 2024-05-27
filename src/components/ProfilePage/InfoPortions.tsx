@@ -156,8 +156,8 @@ export const UnknownInfo = ({ member }: { member: MemberInput }) => {
 };
 
 function formatCamelCaseToReadable(camelCaseString: string) {
-    // Split the camelCase string by capital letters
-    const words = camelCaseString.split(/(?=[A-Z])/);
+    // Split the camelCase string by capital letters, excluding consecutive capitals and lowercase letters
+    const words = camelCaseString.split(/(?<=[a-z])(?=[A-Z])/);
 
     // Capitalize the first letter of each word and join them with spaces
     const formattedString = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
