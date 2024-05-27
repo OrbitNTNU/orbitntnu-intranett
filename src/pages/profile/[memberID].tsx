@@ -17,10 +17,10 @@ const ProfilePage = () => {
 
     const [godMode, setGodMode] = useState<boolean>(false);
 
-    if(!session || !router) {
+    if (!session || !router) {
         return (
             <Layout>
-                <Loading/>
+                <Loading />
             </Layout>
         )
     }
@@ -124,72 +124,74 @@ const ProfilePage = () => {
         <Layout>
             {!godMode ? (
                 <>
-                {member.name && (
-                    <li className='flex justify-center flex-row gap-4 rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
-                        <h2>{member.name}</h2>
-                        {(memberID === "me" || session.data?.user.memberInfo.teamHistory.some((teamHistory) => teamHistory.priviledges === "BOARD")) && (
-                            <button onClick={toggleGodMode}>
-                                <Icons name={'Settings'} />
-                            </button>
-                        )}
-                    </li>
-                )}
-                <div className='w-full flex flex-col lg:flex-row'>
-                    <div className='w-full lg:w-3/5 p-2'>
-                        <div className='h-full rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
-                            <ul>
-                                <ContactInfo member={member} />
-                                <SystemInfo member={member} />
-                                <OtherInfo member={member} />
-                                <Links member={member} />
-                                <UnknownInfo member={member} />
-                            </ul>
-                        </div>
-                    </div>
-                    <div className='flex flex-col w-full lg:w-2/5 p-2 gap-4'>
-                        <div className='rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
-                            <ul>
-                                <li className='mb-2'>
-                                    <h3 className='text-lg font-semibold'>{currentPositionsTitle}:</h3>
-                                </li>
-                                {formatCurrentPosition(member.teamHistory)}
-                            </ul>
-                        </div>
-                        <div className='p-4 rounded-2xl h-full shadow-gray-900 shadow-2xl'>
-                            <div className='flex justify-between items-center mb-4'>
-                                <h2 className='text-xl font-semibold'>Team History</h2>
-                            </div>
-                            <ul>
-                                {member.teamHistory && member.teamHistory.slice().filter((teamHistory) => teamHistory.endSem !== null && teamHistory.endYear !== null).length > 0 ? (
-                                    member.teamHistory
-                                        .slice() // Create a copy to avoid mutating the original array
-                                        .filter((teamHistory) => teamHistory.endSem !== null && teamHistory.endYear !== null)
-                                        .sort((a, b) => {
-                                            if (a.startYear !== b.startYear) {
-                                                return b.startYear - a.startYear;
-                                            }
-                                            // Sort by semester using the predefined order
-                                            return semesterOrder[b.startSem] - semesterOrder[a.startSem];
-                                        })
-                                        .map((teamHistory, index) => (
-                                            <li key={index} className="flex justify-between mb-2 p-2 border-b border-gray-200">
-                                                <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
-                                                    <span className='font-medium'>{teamHistory.team.teamName}</span>
-                                                    <span className='text-gray-500'>{teamHistory.priviledges === "BOARD" ? teamHistory.cPosition : teamHistory.priviledges}</span>
-                                                </div>
-                                                <span>{formatTeamHistory(teamHistory)}</span>
-                                            </li>
-                                        ))
-                                ) : (
-                                    <li>
-                                        Member has not had any previous positions.
-                                    </li>
+                    <div className='w-full p-2'>
+                        {member.name && (
+                            <li className='flex justify-center flex-row gap-4 rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
+                                <h2>{member.name}</h2>
+                                {(memberID === "me" || session.data?.user.memberInfo.teamHistory.some((teamHistory) => teamHistory.priviledges === "BOARD")) && (
+                                    <button onClick={toggleGodMode}>
+                                        <Icons name={'Settings'} />
+                                    </button>
                                 )}
-                            </ul>
+                            </li>
+                        )}
+                    </div>
+                    <div className='w-full flex flex-col lg:flex-row'>
+                        <div className='w-full lg:w-3/5 p-2'>
+                            <div className='h-full rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
+                                <ul>
+                                    <ContactInfo member={member} />
+                                    <SystemInfo member={member} />
+                                    <OtherInfo member={member} />
+                                    <Links member={member} />
+                                    <UnknownInfo member={member} />
+                                </ul>
+                            </div>
+                        </div>
+                        <div className='flex flex-col w-full lg:w-2/5 p-2 gap-4'>
+                            <div className='rounded-2xl p-4 shadow-gray-900 shadow-2xl'>
+                                <ul>
+                                    <li className='mb-2'>
+                                        <h3 className='text-lg font-semibold'>{currentPositionsTitle}:</h3>
+                                    </li>
+                                    {formatCurrentPosition(member.teamHistory)}
+                                </ul>
+                            </div>
+                            <div className='p-4 rounded-2xl h-full shadow-gray-900 shadow-2xl'>
+                                <div className='flex justify-between items-center mb-4'>
+                                    <h2 className='text-xl font-semibold'>Team History</h2>
+                                </div>
+                                <ul>
+                                    {member.teamHistory && member.teamHistory.slice().filter((teamHistory) => teamHistory.endSem !== null && teamHistory.endYear !== null).length > 0 ? (
+                                        member.teamHistory
+                                            .slice() // Create a copy to avoid mutating the original array
+                                            .filter((teamHistory) => teamHistory.endSem !== null && teamHistory.endYear !== null)
+                                            .sort((a, b) => {
+                                                if (a.startYear !== b.startYear) {
+                                                    return b.startYear - a.startYear;
+                                                }
+                                                // Sort by semester using the predefined order
+                                                return semesterOrder[b.startSem] - semesterOrder[a.startSem];
+                                            })
+                                            .map((teamHistory, index) => (
+                                                <li key={index} className="flex justify-between mb-2 p-2 border-b border-gray-200">
+                                                    <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+                                                        <span className='font-medium'>{teamHistory.team.teamName}</span>
+                                                        <span className='text-gray-500'>{teamHistory.priviledges === "BOARD" ? teamHistory.cPosition : teamHistory.priviledges}</span>
+                                                    </div>
+                                                    <span>{formatTeamHistory(teamHistory)}</span>
+                                                </li>
+                                            ))
+                                    ) : (
+                                        <li>
+                                            Member has not had any previous positions.
+                                        </li>
+                                    )}
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </>
+                </>
 
             ) : (
                 <EditInfoDisplay member={member as unknown as Member & { teamHistories: (TeamHistory & { team: Team }) }} onUpdateInfo={handleUpdateInfo} />
