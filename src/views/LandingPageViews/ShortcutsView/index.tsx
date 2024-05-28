@@ -7,7 +7,7 @@ export const Shortcuts = () => {
     return (
         <div className="w-full p-4 rounded-2xl shadow-2xl">
             <span className="flex font-bold text-5xl my-2">
-                Shotcuts
+                Shortcuts
             </span>
             <BreakLine/>
             <div className="flex flex-col justify-center gap-4 mb-6 ">
