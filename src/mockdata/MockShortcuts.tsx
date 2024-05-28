@@ -1,3 +1,4 @@
+import Icons from "@/components/General/Icons";
 import type { ShortcutLink } from "@/interfaces/ShortcutLink"
 
 export interface ShortcutsProps {
@@ -17,47 +18,56 @@ const mockShortcuts: ShortcutsProps[] = [
             {
                 header: 'Your profile',
                 description: 'Check out your profile',
-                url: '/profile/me'
-            },
-            {
-                header: 'Calendar',
-                description: 'Check out Orbit events',
-                url: '/calendar',
+                url: '/profile/me',
+                icon: <Icons name='Profile'/>
             },
             {
                 header: 'Search for Orbiter',
                 description: 'Search for your friends',
                 url: '/search',
-            },
-            {
-                header: 'Announcements',
-                description: 'Announcements from Orbit',
-                url: '/announcements',
-            },
-            {
-                header: 'Time machine',
-                description: 'View earlier Orbit teams',
-                url: '/legacy',
-            },
-            {
-                header: 'Meme gallery',
-                description: 'Check out our digital meme page',
-                url: '/memegallery',
+                icon: <Icons name='Search'/>
             },
             {
                 header: 'Orbit Teams',
                 description: 'Explore the teams in Orbit',
                 url: '/teams',
+                icon: <Icons name='Teams'/>
             },
             {
                 header: 'Your team',
                 description: 'See your own team',
                 url: '/team/find',
+                icon: <Icons name='Team'/>
+            },
+            {
+                header: 'Calendar',
+                description: 'Check out Orbit events',
+                url: '/calendar',
+                icon: <Icons name='Calendar'/>
+            },
+            {
+                header: 'Announcements',
+                description: 'Announcements from Orbit',
+                url: '/announcements',
+                icon: <Icons name='Bell'/>
+            },
+            {
+                header: 'Time machine',
+                description: 'View earlier Orbit teams',
+                url: '/legacy',
+                icon: <Icons name='Clock'/>
+            },
+            {
+                header: 'Meme gallery',
+                description: 'Our digital meme page',
+                url: '/memegallery',
+                icon: <Icons name='Memes'/>
             },
             {
                 header: 'Insights',
                 description: 'View Orbit Statistics',
                 url: '/statistics',
+                icon: <Icons name='Statistics'/>
             }
         ],
     },
@@ -90,12 +100,12 @@ const mockShortcuts: ShortcutsProps[] = [
                 url: 'https://orbitntnu.com'
             },
             {
-                header: 'Orbit Documentation',
+                header: 'Documentation',
                 description: 'View Documentation in Orbit',
                 url: 'https://docs.orbitntnu.com'
             },
             {
-                header: 'Orbit Notion',
+                header: 'Notion',
                 description: "Access Orbit's Notion",
                 url: 'https://www.notion.so/Home-3fa65bc83ba04164b60c8fa7ae99840b'
             },

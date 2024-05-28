@@ -46,7 +46,7 @@ export default function SearchPage() {
           <Loading/>
         ) : (
           <div>
-          <h1>Search for Orbiter</h1>
+          <h2>Search for Orbiter</h2>
           <BreakLine />
           <SearchBar query={searchQuery} onChange={handleInputChange} />
           <SearchResults memberInfos={searchResults}/>

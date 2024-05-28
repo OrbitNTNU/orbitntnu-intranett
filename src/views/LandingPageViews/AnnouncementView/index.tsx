@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Member } from "@prisma/client";
 import Icons from "@/components/General/Icons";
 import { formatDateTime } from "@/components/CalendarPage/EventDisplay";
+import BreakLine from "@/components/General/Breakline";
 
 export interface AnnAndMember {
     announcement: Announcement,
@@ -18,13 +19,14 @@ const ShortAnnouncements = ({ announcements }: Props) => {
     const colors = ["bg-[#6c7156]", "bg-[#898176]", "bg-[#997950]"];
 
     return (
-        <section>
+        <section className="w-full p-4 rounded-2xl shadow-2xl">
             <Link href="/announcements" className="flex flex-row">
                 <h2 className="flex items-center mb-4 font-bold text-5xl gap-4">
                     Latest announcements
                     <Icons name="Arrow45Up" />
                 </h2>
             </Link>
+            <BreakLine/>
             {announcements.map(ann => (
                 <div
                     key={ann.announcement.announcementID}

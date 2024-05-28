@@ -32,11 +32,11 @@ const Navbar = () => {
 
   const memberID = isProfilePage ? pathname?.includes('me') && session.data ? session.data?.user.memberInfo.memberID : Number(lastSegment) : null;
 
-  const teamID = isTeamPage 
+  const teamID = isTeamPage
     ? pathname?.includes('find') && session.data?.user.memberInfo.teamHistory[0]
-    ? session.data?.user.memberInfo.teamHistory.length === 1 
-    ? session.data?.user.memberInfo.teamHistory[0]?.team.teamID : null
-    : Number(lastSegment) : null;
+      ? session.data?.user.memberInfo.teamHistory.length === 1
+        ? session.data?.user.memberInfo.teamHistory[0]?.team.teamID : null
+      : Number(lastSegment) : null;
 
 
   const memberQueryResult = memberNameQuery.useQuery(memberID, {
@@ -46,7 +46,7 @@ const Navbar = () => {
   const teamQueryResult = teamNameQuery.useQuery(teamID, {
     enabled: !!teamID,
   });
-  
+
   const memberName = isEditPage
     ? "Edit"
     : memberQueryResult.data?.name;
@@ -75,17 +75,17 @@ const Navbar = () => {
               />
             </Link>
           </div>
-          <div className="hidden md:flex">
-            <Link href="/search" className="mr-10">
+          <div className="hidden md:flex gap-10">
+            <Link href="/search">
               <Icons name="Search" />
             </Link>
-            <Link href="/statistics" className="mr-10">
+            <Link href="/statistics">
               <Icons name="Statistics" />
             </Link>
-            <Link href="/teams" className="mr-10">
+            <Link href="/teams">
               <Icons name="Teams" />
             </Link>
-            <Link href="/legacy" className="mr-10">
+            <Link href="/legacy">
               <Icons name="Clock" />
             </Link>
           </div>

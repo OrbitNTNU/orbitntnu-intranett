@@ -5,6 +5,7 @@ import Link from "next/link";
 import EventDisplay from "@/components/CalendarPage/EventDisplay";
 import router from "next/router";
 import Icons from "@/components/General/Icons";
+import BreakLine from "@/components/General/Breakline";
 
 interface CalendarViewProps {
     combinedInfo: { event: Event, author: Member }[];
@@ -23,13 +24,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ combinedInfo }) => {
     const generatedIndexes = generateIndexes();
 
     return (
-        <div className="w-full">
+        <div className="w-full p-4 rounded-2xl shadow-2xl">
             <Link href={"/calendar"}>
                 <h2 className="flex font-bold items-center text-5xl mb-4 gap-4">
                     Calendar
                     <Icons name="Arrow45Up" />
                 </h2>
             </Link>
+            <BreakLine/>
             <div className="flex flex-row flex-wrap md:flex-nowrap">
                 {combinedInfo.filter((combo) => new Date(combo.event.startTime) > new Date()).length >= 3 ? (
                     <>
@@ -58,7 +60,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ combinedInfo }) => {
                         </div>
                     </>
                 ) : (
-                    <div className="w-full mr-0 md:mr-4">
+                    <div className="w-full mr-0 md:mr-4 mb-6">
                         <CalendarDisplay indexes={generatedIndexes} eventColors={eventColors} eventItems={combinedInfo} />
                     </div>
                 )}

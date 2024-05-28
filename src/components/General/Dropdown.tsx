@@ -39,7 +39,7 @@ const Dropdown: React.FC<DropdownProps> = ({ shortcuts, handleLogout, handleLogi
 
 
     return (
-        <div className="ml-10 relative group" ref={dropdownRef}>
+        <div className="ml-10 relative group sticky top-0" ref={dropdownRef}>
             <button onClick={toggleDropdown}>
                 {isOpen ?
                     <Icons name="Cross" /> : <Icons name="Dropdown" />
@@ -51,8 +51,9 @@ const Dropdown: React.FC<DropdownProps> = ({ shortcuts, handleLogout, handleLogi
                     <a
                         key={index}
                         href={shortcut.url}
-                        className={`block px-4 py-2 text-sm text-white hover:bg-blue-500 hover:text-white ${index === 0 ? 'rounded-t-2xl' : ''}`}
-                    >
+                        className={`block px-4 py-2 text-sm flex flex-row gap-2 text-white hover:bg-blue-500 hover:text-white ${index === 0 ? 'rounded-t-2xl' : ''}`}
+                    >   
+                        {shortcut.icon}
                         <h3>{shortcut.header}</h3>
                     </a>
                 ))}
