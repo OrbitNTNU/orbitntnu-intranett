@@ -20,7 +20,7 @@ export const Shortcut = ({ type, shortcut }: ShortcutProp) => {
                 flex flex-col justify-between items-start 
                 p-4 m-2 rounded-lg w-full sm:w-50 md:w-64 lg:w-64 transition-all duration-300
                 ${isExternal ? 'bg-gray-600 hover:bg-gray-700' : 'bg-blue-600 hover:bg-blue-700'}
-                shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5
+                shadow-lg hover:shadow-2xl hover:translate-y-0.5
             `}
         >
             <div className="w-full mb-2 flex items-center justify-between">
