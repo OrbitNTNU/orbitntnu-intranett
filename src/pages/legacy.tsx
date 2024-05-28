@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BreakLine from "@/components/General/Breakline";
-import Layout from "@/templates/Layout";
+import Layout from "@/components/General/Layout";
 import { api } from "@/utils/api";
 import { SemType, type Member, type TeamHistory, TeamHistory_priviledges } from "@prisma/client";
 import Link from "next/link";

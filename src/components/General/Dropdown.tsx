@@ -46,24 +46,23 @@ const Dropdown: React.FC<DropdownProps> = ({ shortcuts, handleLogout, handleLogi
                 }
             </button>
             {/* Dropdown content */}
-            <div className={`absolute right-0 mt-4 w-48 bg-gray-600 rounded-md shadow-lg ${isOpen ? 'block' : 'hidden'}`}>
+            <div className={`absolute right-0 mt-4 w-48 rounded-2xl shadow-black shadow-2xl backdrop-blur-2xl ${isOpen ? 'block' : 'hidden'}`}>
                 {shortcuts.map((shortcut, index) => (
                     <a
                         key={index}
                         href={shortcut.url}
-                        className={`block px-4 py-2 text-sm text-white hover:bg-blue-500 hover:text-white ${index === 0 ? 'rounded-t-md' : ''}`}
+                        className={`block px-4 py-2 text-sm text-white hover:bg-blue-500 hover:text-white ${index === 0 ? 'rounded-t-2xl' : ''}`}
                     >
                         <h3>{shortcut.header}</h3>
-                        <p className="text-xs text-subtext">{shortcut.description}</p>
                     </a>
                 ))}
 
                 {session ? (
-                    <button key={"logOut"} onClick={handleLogout} className="rounded-b-md w-full items-left block px-4 py-2 text-sm hover:bg-red-500 hover:text-white">
+                    <button key={"logOut"} onClick={handleLogout} className="rounded-b-2xl w-full items-left block px-4 py-2 text-sm hover:bg-red-500 hover:text-white">
                         <h3 className="font-semibold">{"Log out"}</h3>
                     </button>
                 ) : (
-                    <button key={"logOut"} onClick={handleLogin} className="rounded-b-md w-full items-left block px-4 py-2 text-sm hover:bg-green-500 hover:text-white">
+                    <button key={"logOut"} onClick={handleLogin} className="rounded-b-2xl w-full items-left block px-4 py-2 text-sm hover:bg-green-500 hover:text-white">
                         <h3 className="font-semibold">{"Log out"}</h3>
                     </button>
                 )}

@@ -3,7 +3,7 @@ import SearchResults from '@/components/ProfilePage/SearchResults';
 import { api } from '@/utils/api';
 import SearchBar from '@/components/General/SearchBar';
 import BreakLine from '@/components/General/Breakline';
-import Layout from '@/templates/Layout';
+import Layout from "@/components/General/Layout";
 import { Loading } from '@/components/General/Loading';
 import type { MemberInfoData } from '@/interfaces/MemberInfo';
 

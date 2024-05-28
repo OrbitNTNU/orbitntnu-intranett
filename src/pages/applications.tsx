@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Layout from "@/templates/Layout"
+import Layout from "@/components/General/Layout";
 import ApplicantPopUp, { AppType } from "@/views/ApplicantPopUp";
 import { api } from "@/utils/api";
 import { type Application, type ApplyForTeam } from "@prisma/client";

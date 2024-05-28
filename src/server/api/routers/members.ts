@@ -1,6 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc"
 import { z } from "zod";
 import { db } from "@/server/db";
+import type { Member, Team, TeamHistory } from "@prisma/client";
 
 export const membersRouter = createTRPCRouter({
     getMembers: protectedProcedure.query(async ({ ctx }) => {
@@ -14,10 +15,28 @@ export const membersRouter = createTRPCRouter({
         }
 
         const sessionMemeberInfo = opts.ctx.session.user.memberInfo;
-        
+
+        const memberID = opts.input;
+
+        type TeamWithDetails = TeamHistory & { team: Team };
+        type MemberWithTeamHistory = Member & { teamHistory: TeamWithDetails[] };
+
+        const removeAdditionalComments = (member: MemberWithTeamHistory): Omit<MemberWithTeamHistory, "additionalComments"> => {
+            const { additionalComments, ...rest } = member;
+            return rest;
+        };
+
+        // Board gets total access
         if (sessionMemeberInfo.teamHistory.find((teamHistory) => teamHistory.priviledges === "BOARD")) {
             const member = await opts.ctx.db.member.findUnique({
-                where: { memberID: opts.input },
+                where: { memberID },
+                include: {
+                    teamHistory: {
+                        include: {
+                            team: true
+                        }
+                    }
+                }
             });
 
             if (!member) {
@@ -25,20 +44,44 @@ export const membersRouter = createTRPCRouter({
             }
 
             return member;
+
+            // If it is own profile, do not show additionalComments
+        } else if (sessionMemeberInfo.memberID === memberID) {
+            const member = await opts.ctx.db.member.findUnique({
+                where: { memberID },
+                include: {
+                    teamHistory: {
+                        include: {
+                            team: true
+                        }
+                    }
+                }
+            });
+
+            if (!member) {
+                throw new Error("Member not found");
+            }
+
+            return removeAdditionalComments(member);
+
+            // Rest of the members see limited view
         } else {
             const member = await opts.ctx.db.member.findUnique({
+                where: { memberID },
                 select: {
-                    memberID: true,
                     birthday: true,
-                    ntnuMail: true,
+                    linkedin: true,
+                    orbitMail: true,
                     phoneNumber: true,
                     name: true,
                     yearOfStudy: true,
                     fieldOfStudy: true,
-                },
-                where: { 
-                    memberID: opts.input 
-                },
+                    teamHistory: {
+                        include: {
+                            team: true
+                        }
+                    }
+                }
             });
 
             if (!member) {
@@ -49,12 +92,38 @@ export const membersRouter = createTRPCRouter({
         }
     }),
 
+
     getMemberByOrbitMail: protectedProcedure.input(z.string()).query(async (opts) => {
         const member = await opts.ctx.db.member.findFirst({
             where: { orbitMail: opts.input },
         });
 
         return member;
+    }),
+
+    getNameByID: protectedProcedure.input(z.number().nullable()).query(async (opts) => {
+        if (!opts.input) {
+            return;
+        }
+
+        const name = await opts.ctx.db.member.findUnique({
+            select: { name: true },
+            where: { memberID: opts.input },
+        });
+
+        return name ? { name: name.name } : null;
+    }),
+
+    getNameBySession: protectedProcedure.query(async (opts) => {
+        const orbitMail = opts.ctx.session.user.email;
+
+        if (orbitMail) {
+            const response = await opts.ctx.db.member.findUnique({
+                select: { name: true },
+                where: { orbitMail: orbitMail },
+            });
+            return { name: response ? response.name : 'Me' }; // Return { name: null } if name is not available
+        }
     }),
 
     getTeamAndTLorBoard: protectedProcedure.input(z.number()).query(async (opts) => {
@@ -377,6 +446,103 @@ export const membersRouter = createTRPCRouter({
         return ageDistribution;
     }),
 
+    getLongestMembers: protectedProcedure.query(async ({ ctx }) => {
+        interface LongestMembers {
+            name: string;
+            memberID: number;
+            duration: number;
+        }
+
+        const members = await ctx.db.member.findMany();
+
+        const teamHistories = await ctx.db.teamHistory.findMany({
+            where: {
+                member: {
+                    activeStatus: true,
+                },
+            },
+            include: {
+                member: true,
+            },
+        });
+
+        // Function to calculate duration between two dates in years
+        const calculateDuration = (startDate: Date, endDate: Date): number => {
+            const durationInMonths = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+            return durationInMonths / 12;
+        };
+
+        // Function to merge overlapping periods
+        const mergePeriods = (periods: { startDate: Date; endDate: Date }[]): { startDate: Date; endDate: Date }[] => {
+            if (!periods.length) return [];
+
+            periods.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+
+            return periods.reduce((merged, current) => {
+                if (current) {
+                    const last = merged[merged.length - 1];
+
+                    if (last && current.startDate <= last.endDate) {
+                        last.endDate = new Date(Math.max(last.endDate.getTime(), current.endDate.getTime()));
+                    } else {
+                        merged.push(current);
+                    }
+                }
+                return merged;
+            }, [] as { startDate: Date; endDate: Date }[]);
+        };
+
+        // Collect all periods for each member
+        const memberPeriods: Record<number, { startDate: Date; endDate: Date }[]> = {};
+
+        teamHistories.forEach(history => {
+            const { memberID, startYear, startSem, endYear, endSem } = history;
+
+            const startMonth = startSem === 'FALL' ? 9 : 1;
+            const endMonth = endSem === 'FALL' ? 12 : (endSem === 'SPRING' ? 5 : new Date().getMonth() + 1);
+            const endEffectiveYear = endYear ?? new Date().getFullYear();
+
+            const startDate = new Date(startYear, startMonth - 1);
+            const endDate = new Date(endEffectiveYear, endMonth - 1);
+
+            if (!memberPeriods[memberID]) {
+                memberPeriods[memberID] = [];
+            }
+
+            memberPeriods[memberID]?.push({ startDate, endDate });
+        });
+
+        // Calculate the total duration for each member
+        const memberDurations: Record<number, number> = {};
+
+        Object.keys(memberPeriods).forEach(memberIDStr => {
+            const memberID = Number(memberIDStr);
+            const periods = memberPeriods[memberID];
+            const mergedPeriods = periods && mergePeriods(periods);
+        
+            const totalDurationInYears = mergedPeriods?.reduce((acc, period) => {
+                const duration = calculateDuration(period.startDate, period.endDate);
+                return acc + duration;
+            }, 0) ?? 0; // Use nullish coalescing operator to provide a default value if totalDurationInYears is undefined
+        
+            memberDurations[memberID] = totalDurationInYears;
+        });
+
+        // Map member durations to the members array
+        const memberDurationList: LongestMembers[] = members.map(member => ({
+            name: member.name,
+            memberID: member.memberID,
+            duration: memberDurations[member.memberID] ?? 0,
+        }));
+
+        // Sort members by duration and get the top 10
+        const top10Members = memberDurationList
+            .sort((a, b) => b.duration - a.duration)
+            .slice(0, 10);
+
+        return top10Members;
+    }),
+
     createMember: protectedProcedure
         .input(z.object({
             name: z.string(),
@@ -425,7 +591,6 @@ export const membersRouter = createTRPCRouter({
             yearOfStudy: z.number().nullable(),
             birthday: z.date().nullable(),
             nationalities: z.string().nullable(),
-            additionalComments: z.string().nullable(),
             personalMail: z.string().nullable(),
             linkedin: z.string().nullable(),
             showPhoneNrOnWebsite: z.boolean(),

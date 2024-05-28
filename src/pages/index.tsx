@@ -1,4 +1,4 @@
-import Layout from "@/templates/Layout";
+import Layout from "@/components/General/Layout";
 import { api } from "@/utils/api";
 import { Shortcuts } from "@/views/LandingPageViews/ShortcutsView";
 import Welcome from "@/views/WelcomeView";

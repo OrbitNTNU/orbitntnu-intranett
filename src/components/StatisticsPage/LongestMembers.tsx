@@ -2,31 +2,32 @@ import { api } from "@/utils/api";
 import { Chart } from "chart.js/auto";
 import { useEffect, useRef, useState } from "react";
 
-interface AgeDistribution {
-    age: string;
-    count: number;
+interface LongestMembers {
+    name: string;
+    memberID: number;
+    duration: number;
 }
 
-const Age = () => {
+const LongestMembers = () => {
     // Fetch ages data
-    const agesData = api.members.getAges.useQuery();
+    const longestMembersData = api.members.getLongestMembers.useQuery();
 
     // State to hold age distribution
-    const [ageDistribution, setAgeDistribution] = useState<AgeDistribution[]>([]);
+    const [longestMembers, setLongestMembers] = useState<LongestMembers[]>([]);
 
     useEffect(() => {
         // Effect to update age distribution when ages data changes
-        if (!agesData.isLoading && agesData.data) {
-            setAgeDistribution(agesData.data);
+        if (!longestMembersData.isLoading && longestMembersData.data) {
+            setLongestMembers(longestMembersData.data);
         }
-    }, [agesData.isLoading, agesData.data]); // Specify the dependencies here
+    }, [longestMembersData.isLoading, longestMembersData.data]); // Specify the dependencies here
 
     const chartRef = useRef<HTMLCanvasElement | null>(null); // Reference to the chart canvas element
     const chartInstanceRef = useRef<Chart | null>(null); // Reference to the chart instance
 
     // Create or update the chart when age distribution changes
     useEffect(() => {
-        if (ageDistribution.length > 0 && chartRef.current) {
+        if (longestMembers.length > 0 && chartRef.current) {
             const ctx = chartRef.current.getContext('2d');
             if (ctx) {
                 // Destroy existing chart instance if it exists
@@ -37,11 +38,11 @@ const Age = () => {
                 chartInstanceRef.current = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ageDistribution.map((age) => age.age), // Extracting the age labels
+                        labels: longestMembers.map((age) => age.name), // Extracting the age labels
                         datasets: [
                             {
-                                label: 'Number of People',
-                                data: ageDistribution.map((age) => age.count), // Extracting the count data
+                                label: 'Time in Orbit',
+                                data: longestMembers.map((age) => age.duration), // Extracting the count data
                                 backgroundColor: 'rgba(54, 162, 235, 0.8)', // Blue color
                                 hoverBackgroundColor: 'rgba(75, 250, 100, 0.8)', // Bright green hover color
                             },
@@ -55,14 +56,13 @@ const Age = () => {
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: 'Age',
                                 },
                             },
                             y: {
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    text: 'Number of members', 
+                                    text: 'Duration (Years)', // Y-axis label
                                 },
                             },
                         },
@@ -77,14 +77,14 @@ const Age = () => {
                 });
             }
         }
-    }, [ageDistribution]); // Update chart when age distribution changes
+    }, [longestMembers]); // Update chart when age distribution changes
 
     return (
         <div>
-            <h2>Age Distribution (Active Members)</h2>
+            <h2>Longest Memberships in Orbit (Active Members)</h2>
             <canvas ref={chartRef} width="400" height="200" />
         </div>
     );
 };
 
-export default Age;
+export default LongestMembers;

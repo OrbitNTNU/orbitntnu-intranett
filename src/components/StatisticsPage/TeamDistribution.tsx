@@ -9,30 +9,30 @@ interface TeamMembership {
 
 const MemberDistribution = () => {
     // Fetch teams data
-  const teamsData = api.teamHistories.getCurrentHistoriesInTeams.useQuery();
+    const teamsData = api.teamHistories.getCurrentHistoriesInTeams.useQuery();
 
-  // State to hold team membership distribution
-  const [teamMembershipDistribution, setTeamMembershipDistribution] = useState<TeamMembership[]>([]);
+    // State to hold team membership distribution
+    const [teamMembershipDistribution, setTeamMembershipDistribution] = useState<TeamMembership[]>([]);
 
-  useEffect(() => {
-    // Effect to update team membership distribution when teams data changes
-    if (!teamsData.isLoading && teamsData.data) {
-        const membershipDistribution = teamsData.data.map((team) => {
-            return {
-                teamName: team.teamName,
-                memberCount: team.teamHistories.length,
-            };
-        });
+    useEffect(() => {
+        // Effect to update team membership distribution when teams data changes
+        if (!teamsData.isLoading && teamsData.data) {
+            const membershipDistribution = teamsData.data.map((team) => {
+                return {
+                    teamName: team.teamName,
+                    memberCount: team.teamHistories.length,
+                };
+            });
 
-        membershipDistribution.sort((a, b) => a.teamName.localeCompare(b.teamName));
+            membershipDistribution.sort((a, b) => a.teamName.localeCompare(b.teamName));
 
-        setTeamMembershipDistribution(membershipDistribution);
-    }
-}, [teamsData.isLoading, teamsData.data]); // Specify the dependencies here
+            setTeamMembershipDistribution(membershipDistribution);
+        }
+    }, [teamsData.isLoading, teamsData.data]); // Specify the dependencies here
 
     const chartRef = useRef<HTMLCanvasElement | null>(null); // Reference to the chart canvas element
     const chartInstanceRef = useRef<Chart | null>(null); // Reference to the chart instance
-        
+
     // Effect to create or update the chart when team membership distribution changes
     if (teamMembershipDistribution.length > 0 && chartRef.current) {
         const ctx = chartRef.current.getContext('2d');

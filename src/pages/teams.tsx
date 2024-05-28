@@ -1,7 +1,6 @@
 import BreakLine from "@/components/General/Breakline";
-import Icons from "@/components/General/Icons";
 import { Loading } from "@/components/General/Loading";
-import Layout from "@/templates/Layout";
+import Layout from "@/components/General/Layout";
 import { api } from "@/utils/api";
 import type { Team } from "@prisma/client";
 import Link from "next/link";
@@ -44,9 +43,6 @@ const TeamListPage = () => {
     return (
         <Layout>
             <div className='items-center flex flex-row gap-6'>
-                <Link href="/">
-                    <Icons name="ArrowLeft_lg" />
-                </Link>
                 <h1>Current Teams in Orbit</h1>
             </div>
             <BreakLine />

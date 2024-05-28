@@ -44,7 +44,7 @@ const LoginPage = ({
       <>
         <div className="min-h-screen flex flex-col mt-10">
           <main className="flex w-full flex-col items-center mb-10">
-            <div className='w-full p-4 md:w-2/3 md:p-0'>
+            <div className='w-full p-4 md:w-2/3 md:p-0 mb-4'>
               <Welcome />
             </div>
             {Object.values(providers).map((provider) => (
@@ -56,7 +56,6 @@ const LoginPage = ({
               </div>
             ))}
           </main>
-
         </div>
         <Footer />
       </>

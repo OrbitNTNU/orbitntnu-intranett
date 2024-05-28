@@ -27,7 +27,7 @@ const mockShortcuts: ShortcutsProps[] = [
             {
                 header: 'Search for Orbiter',
                 description: 'Search for your friends',
-                url: '/searchpage',
+                url: '/search',
             },
             {
                 header: 'Announcements',
@@ -47,7 +47,7 @@ const mockShortcuts: ShortcutsProps[] = [
             {
                 header: 'Orbit Teams',
                 description: 'Explore the teams in Orbit',
-                url: '/team/teamlist',
+                url: '/teams',
             },
             {
                 header: 'Your team',
@@ -93,6 +93,11 @@ const mockShortcuts: ShortcutsProps[] = [
                 header: 'Orbit Documentation',
                 description: 'View Documentation in Orbit',
                 url: 'https://docs.orbitntnu.com'
+            },
+            {
+                header: 'Orbit Notion',
+                description: "Access Orbit's Notion",
+                url: 'https://www.notion.so/Home-3fa65bc83ba04164b60c8fa7ae99840b'
             },
         ]
     }

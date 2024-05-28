@@ -4,7 +4,7 @@ import Icons from "@/components/General/Icons";
 import { Loading } from "@/components/General/Loading";
 import MemberInfo from "@/components/General/MemberInfo";
 import type { MemberInfoData } from "@/interfaces/MemberInfo";
-import Layout from "@/templates/Layout";
+import Layout from "@/components/General/Layout";
 import { api } from "@/utils/api";
 import EditTeamsView from "@/views/EditTeamsView";
 import { type TeamHistory } from "@prisma/client";
@@ -50,40 +50,37 @@ const TeamsPage = () => {
     });
 
     const team = membersInTeam?.find((member) =>
-        member.teamHistory?.some((history) => history.teamID === Number(teamID))
+        member.teamHistory?.some((history) => history.teamID === (teamID == "find" && sessionMemberData ? sessionMemberData.teamHistory.length === 1
+            ? sessionMemberData.teamHistory[0]?.team.teamID : null : Number(teamID)))
     )?.teamHistory[0]?.team;
 
     useEffect(() => {
         // Effect to handle the rerender when updateFlag changes
     }, [updateFlag]); // Dependency array includes updateFlag
 
-    if (teamID == "find") {
-        if (sessionMemberData) {
-            if (sessionMemberData.teamHistory.length === 1) {
-                void router.push("/team/" + sessionMemberData.teamHistory[0]?.team.teamID)
-            } else if (sessionMemberData.teamHistory.length === 0) {
-                void router.push("/team/null")
-            } else {
-                return (
-                    <Layout>
-                        <div className='items-center flex flex-row gap-6'>
-                            <h1>Your teams</h1>
-                        </div>
-                        <BreakLine />
-                        {sessionMemberData.teamHistory?.map((teamHistory) => (
-                            <Link href={`/team/${teamHistory.team.teamID}`} key={teamHistory.team.teamID}>
-                                <div className="bg-blue-600 hover:bg-blue-800 gap-6 p-6 m-4 rounded-md">
-                                    <h2>{teamHistory.team.teamName}</h2>
-                                </div>
-                            </Link>
-                        ))}
-                    </Layout>
-                )
-            }
+    if (sessionMemberData) {
+        if (sessionMemberData.teamHistory.length === 0) {
+            void router.push("/team/null")
+        } else if (sessionMemberData.teamHistory.length > 1) {
+            return (
+                <Layout>
+                    <div className='items-center flex flex-row gap-6'>
+                        <h1>Your teams</h1>
+                    </div>
+                    <BreakLine />
+                    {sessionMemberData.teamHistory?.map((teamHistory) => (
+                        <Link href={`/team/${teamHistory.team.teamID}`} key={teamHistory.team.teamID}>
+                            <div className="bg-blue-600 hover:bg-blue-800 gap-6 p-6 m-4 rounded-md">
+                                <h2>{teamHistory.team.teamName}</h2>
+                            </div>
+                        </Link>
+                    ))}
+                </Layout>
+            )
         }
     }
 
-    if (!router.isReady || teamID === "find" || !sessionMemberData) {
+    if (!router.isReady || !sessionMemberData) {
         return (
             <Layout>
                 <Loading />
@@ -120,9 +117,6 @@ const TeamsPage = () => {
                 <>
                     <div className='md:flex justify-between items-center'>
                         <ul className='items-center flex flex-row gap-6'>
-                            <Link href="/team/teamlist">
-                                <Icons name="ArrowLeft_lg" />
-                            </Link>
                             <h1>{team?.teamName}</h1>
                         </ul>
                     </div>
@@ -158,9 +152,6 @@ const TeamsPage = () => {
                 <>
                     <div className='md:flex justify-between items-center'>
                         <ul className='items-center flex flex-row gap-6'>
-                            <Link href="/team/teamlist">
-                                <Icons name="ArrowLeft_lg" />
-                            </Link>
                             <h1>{team?.teamName}</h1>
                         </ul>
                         <div className="md:mt-0 mt-4">
