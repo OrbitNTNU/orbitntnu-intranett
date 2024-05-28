@@ -1,5 +1,5 @@
 import type { AppAndTeams } from "@/pages/applications";
-import { teamLeadProcedure, createTRPCRouter} from "@/server/api/trpc";
+import { teamLeadProcedure, createTRPCRouter, protectedProcedure} from "@/server/api/trpc";
 import { TeamHistory_priviledges, type Application, type ApplyForTeam, type Interview} from "@prisma/client";
 import { z } from "zod";
 
@@ -253,7 +253,7 @@ export const applicationsRouter = createTRPCRouter({
     }),
 
 
-    teamIDAndNames: teamLeadProcedure.query(async ({ ctx }) => {
+    teamIDAndNames: protectedProcedure.query(async ({ ctx }) => {
         const allTeams = await ctx.db.team.findMany();
         return allTeams;
     }),
